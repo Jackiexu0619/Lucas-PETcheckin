@@ -1,0 +1,9 @@
+{
+  "name": "PET 打卡",
+  "short_name": "PET打卡",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f5f7fb",
+  "theme_color": "#2563eb",
+  "description": "PET词汇听力、反应速度、错词滚动复习与固定搭配打卡"
+}
