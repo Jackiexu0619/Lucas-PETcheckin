@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#2563eb">
-<title>Lucas PET 词汇打卡 v0.5.6</title>
+<title>Lucas PET 词汇打卡 v0.5.7</title>
 <link rel="manifest" href="manifest.webmanifest">
 <style>
 :root{--bg:#f5f7fb;--card:#fff;--ink:#172033;--muted:#6b7280;--line:#e5e9f2;--blue:#2563eb;--soft:#eaf2ff;--good:#198754;--warn:#b97900;--bad:#c0392b;--purple:#7c3aed}
@@ -20,7 +20,7 @@
 <body>
 <div class="app">
 <section id="home" class="section active">
-  <h1>PET 打卡</h1><div class="sub">智能每日测试 · 间隔记忆 · 听觉词汇 · 词族 · 固定搭配 <span class="tag">v0.5.6</span></div>
+  <h1>PET 打卡</h1><div class="sub">智能每日测试 · 间隔记忆 · 听觉词汇 · 词族 · 固定搭配 <span class="tag">v0.5.7</span></div>
   <div class="gap"></div>
   <div class="checkinHero">
     <div id="checkinLead" class="checkinLead">Lucas，你已经坚持打卡 <span class="checkinNum" id="checkinDays">—</span> 天了</div>
@@ -28,7 +28,7 @@
   </div>
   <div class="gap"></div>
   <div class="grid metrics"><div class="card metric"><div class="k">英→中正确率</div><div class="v" id="eAcc">—</div></div><div class="card metric"><div class="k">英→中平均反应</div><div class="v" id="eRt">—</div></div><div class="card metric"><div class="k">中→英正确率</div><div class="v" id="zAcc">—</div></div><div class="card metric"><div class="k">中→英平均反应</div><div class="v" id="zRt">—</div></div></div>
-  <div class="gap"></div><div class="card"><h2>今日智能测试</h2><div id="today" class="sub"></div><div class="gap"></div><div class="row"><button class="primary" onclick="quickStart('e2z')">开始今日 英→中</button><button class="soft" onclick="quickStart('z2e')">开始今日 中→英</button></div><div class="small" style="margin-top:8px">家长只需录入陌生词。新词先进入“待首次学习”队列；只有正式测过以后，才进入真正的到期复习周期。当天测试过的词不会因答错再次自动塞回当天测试。</div></div>
+  <div class="gap"></div><div class="card"><h2>今日智能测试</h2><div id="today" class="sub"></div><div class="gap"></div><div class="row"><button class="primary" onclick="quickStart('e2z')">开始今日 英→中</button><button class="soft" onclick="quickStart('z2e')">开始今日 中→英</button></div><div class="small" style="margin-top:8px">Test 是快速筛查：每天自动计划总预算 20 项，已完成的测试会占用当天预算；方向不再固定 8/4。新词先进入待首次学习，只有正式测过以后才进入真正复习周期。</div></div>
   <div class="gap"></div><div class="card"><h2>今日复习</h2><div id="reviewPreview"></div><div class="gap"></div><button class="purple wide" onclick="showSecById('review')">查看今日复习</button></div>
   <div class="gap"></div><div class="card"><h2>最近14天速度变化</h2><div class="trendLegend"><span class="trendLegendItem"><i class="trendSwatch e2z"></i>英→中平均反应时间</span><span class="trendLegendItem"><i class="trendSwatch z2e"></i>中→英平均反应时间</span></div><div class="canvas"><canvas id="trend"></canvas></div><div class="small"><b>横轴：</b>日期（最近14天）｜<b>纵轴：</b>平均反应时间（秒，越低越好）。回答错误、人工剔除的操作延迟不计入平均反应时间；某天没有该方向有效测试时，曲线会断开。</div></div>
 </section>
@@ -41,10 +41,10 @@
 <div id="reasonPanel" class="hidden" style="width:100%;margin-top:14px"><div class="small">给这次慢/错标一个原因（可跳过）：</div><div class="reasonBtns" id="reasonBtns"></div><button class="gray wide" style="margin-top:8px" onclick="finishPendingRecord('')">暂不标记</button></div>
 </div><div id="result" class="card hidden"></div></section>
 
-<section id="review" class="section" hidden><h1>今日复习</h1><div class="sub">这里只出现已经正式测过、并且到了复查日的词。尚未做过首次正式测试的词留在“待首次学习”队列，不会冒充到期复习。同一个词即使两个方向同时到期，也只出现一次。</div><div id="reviewClearSummary" class="notice" style="margin-top:10px"></div><div class="gap"></div><div class="card"><div class="reviewStudyToolbar"><div><h2 style="margin-bottom:2px">逐词复习</h2><div class="small">每张卡至少停留 5 秒，并且必须先揭晓答案，才能完成并进入下一词。揭晓答案不会自动算作完成复习。</div></div></div><div id="reviewUnified"></div></div></section>
+<section id="review" class="section" hidden><h1>今日复习</h1><div class="sub">Review 是慢复习：每天默认最多 12 个词，只处理已经正式测过、真正到复查日的词；当天安排进正式 Test 的词不提前在 Review 里泄题。同一个词两个方向同时到期仍只出现一次。</div><div id="reviewClearSummary" class="notice" style="margin-top:10px"></div><div class="gap"></div><div class="card"><div class="reviewStudyToolbar"><div><h2 style="margin-bottom:2px">逐词复习</h2><div class="small">每张卡至少停留 5 秒，并且必须先揭晓答案，才能完成并进入下一词。揭晓答案不会自动算作完成复习。</div></div></div><div id="reviewUnified"></div></div></section>
 
 <section id="words" class="section" hidden><h1>词汇池</h1><div class="sub">家长主要负责录入陌生词；软件负责每日测试内容和间隔复习。两个方向的掌握状态、排期相互独立。</div><div class="gap"></div>
-<div class="card"><h2>今日智能计划</h2><div id="smartPlanInfo" class="sub"></div><div class="gap"></div><div class="small">每天最多 12 个正式测试任务。优先处理已经测过但未掌握/不稳定的到期词；有空位时每天最多放行 5 个首次学习任务。新词先英→中，最早次日才开放中→英；已掌握维护词最后补位。</div></div>
+<div class="card"><h2>今日智能计划</h2><div id="smartPlanInfo" class="sub"></div><div class="gap"></div><div class="small">每天自动 Test 总预算 20 项，英→中 / 中→英不再固定配额。优先：真实到期的未掌握/不稳定 → 首次学习（每天最多 12 项）→ 已掌握维护；当天已经完成的正式测试会从 20 项预算中扣除。</div></div>
 <div class="gap"></div><details class="advanced"><summary>人工加测清单（通常不用）</summary><div class="gap"></div><div class="card"><h2>人工加测</h2><div class="planBar"><div><label>计划日期</label><input id="planDate" type="date" onchange="renderWords()"></div><div><div id="planCountE2Z" class="planCount"></div><button class="gray selectBtn" onclick="addDueToPlan('e2z')">到期词加入英→中</button></div><div><div id="planCountZ2E" class="planCount"></div><button class="gray selectBtn" onclick="addDueToPlan('z2e')">到期词加入中→英</button></div></div><div id="planPreviewE2Z" class="small" style="margin-top:9px"></div><div id="planPreviewZ2E" class="small" style="margin-top:5px"></div><div class="row" style="margin-top:9px"><button class="bad selectBtn" onclick="clearPlan('e2z')">清空英→中</button><button class="bad selectBtn" onclick="clearPlan('z2e')">清空中→英</button></div></div></details>
 <div class="gap"></div><div class="card"><input id="search" placeholder="搜索英文、中文或词族…" oninput="renderWords()"><div id="wordList"></div></div>
 <div class="gap"></div><div class="card"><h2>词族视图</h2><div id="familyList"></div></div>
@@ -60,10 +60,10 @@
 <section id="history" class="section" hidden><h1>测试记录</h1><div class="sub">保留原始反应时间；人工修正只新增“修正值 / 剔除标记 / 备注”，不会覆盖原始记录。</div><div class="gap"></div><div class="card"><div class="historyFilters"><div><label>搜索项目</label><input id="histSearch" placeholder="单词/搭配英文或中文…" oninput="renderHistory()"></div><div><label>方向</label><select id="histMode" onchange="renderHistory()"><option value="all">全部</option><option value="e2z">英→中</option><option value="z2e">中→英</option><option value="structure_e2z">固定搭配</option></select></div><div><label>结果</label><select id="histResult" onchange="renderHistory()"><option value="all">全部</option><option value="correct">正确</option><option value="slow">慢</option><option value="wrong">错误</option></select></div><div><label>显示</label><select id="histLimit" onchange="renderHistory()"><option value="30">最近30次</option><option value="100">最近100次</option><option value="9999">全部记录</option></select></div></div><div class="gap"></div><div id="historySummary" class="small"></div><div id="historyList"></div></div></section>
 
 <section id="data" class="section" hidden><h1>数据与设置</h1>
-<div class="notice"><b>v0.5.6：首次学习与到期复习正式分流。</b> 从未正式测过的方向不再显示为“今日到期”，也不会进入 Review；它们进入待首次学习队列。每日正式测试优先处理真实到期弱项，再最多放行 5 个首次学习任务。新词先英→中，中→英最早次日开放。历史测试与真实复习周期不改。</div><div class="gap"></div>
+<div class="notice"><b>v0.5.7：快 Test + 限量 Review。</b> 自动 Test 每天总预算 20 项，英→中/中→英动态分配；当天已经完成的正式测试会占用预算，重建计划不会再额外灌满。首次学习每天最多 12 项，新词先英→中、再开放中→英。Review 每天默认最多 12 个词，优先未掌握/不稳定和逾期更久的词；当天正式 Test 已安排/已测试的词不会先在 Review 中出现。若当天状态好，可手动“再复习 5 个”。</div><div class="gap"></div>
 <div class="card"><h2>v0.3 记忆周期</h2><div class="small">错词：1天后；慢 / 重听 / 发音需练习：2天后；连续快速正确（≤3秒且不重听）：1天 → 3天 → 7天 → 14天 → 30天。任何阶段再错，重新回到1天。英→中与中→英分别计算。</div></div><div class="gap"></div>
 <div class="card"><h2>语音设置</h2><label>英语地区</label><select id="voiceLang"><option value="en-GB">英式英语 en-GB</option><option value="en-US">美式英语 en-US</option></select><div class="gap"></div><label>语速：<span id="rateText">0.90</span></label><input id="voiceRate" type="range" min="0.72" max="1.05" step="0.01" value="0.90"><div class="gap"></div><button class="soft" onclick="testVoice()">试听 persuade</button></div>
-<div class="gap"></div><div class="card"><h2>新增词汇</h2><div class="sub">家长只需录入 Lucas 真正遇到的陌生词。新增后先进入待首次学习队列：最早次日英→中；中→英必须等英→中至少正式测过一次并跨过一天后开放。</div><div class="gap"></div><div class="row"><input id="newEn" placeholder="English" oninput="updateFamilyHint()"><input id="newZh" placeholder="中文意思"></div><div class="gap"></div><div id="familyHint" class="familyHint neutral">输入英文后，这里会显示词族判断。</div><div class="gap"></div><input id="newNote" placeholder="例句/备注（可选）"><div class="gap"></div><div class="notice"><b>固定搭配（可选）</b><div class="small">只填真正有价值的搭配，不需要每个单词都加。</div><div class="gap"></div><div class="row"><input id="newLinkedStructureEn" placeholder="例如 recommend doing something"><input id="newLinkedStructureZh" placeholder="例如 建议做某事"></div><div class="gap"></div><label class="checkline"><input id="newLinkedStructureKey" type="checkbox" checked>重点 / 易考搭配</label><label class="checkline"><input id="newLinkedStructureReplace" type="checkbox" checked>英→中时优先用这个搭配替代独立单词</label></div><div class="gap"></div><details class="advanced"><summary>高级：手动指定词族（通常不用）</summary><div class="gap"></div><input id="newFamily" placeholder="例如 decorate；留空则由软件判断"></details><div class="gap"></div><button class="primary" onclick="addWord()">加入词汇池</button></div>
+<div class="gap"></div><div class="card"><h2>新增词汇</h2><div class="sub">家长只需录入 Lucas 真正遇到的陌生词。新增后进入“待首次学习”：最早次日开始英→中；中→英必须等英→中至少正式测过一次，并且最早跨一天后开放。</div><div class="gap"></div><div class="row"><input id="newEn" placeholder="English" oninput="updateFamilyHint()"><input id="newZh" placeholder="中文意思"></div><div class="gap"></div><div id="familyHint" class="familyHint neutral">输入英文后，这里会显示词族判断。</div><div class="gap"></div><input id="newNote" placeholder="例句/备注（可选）"><div class="gap"></div><div class="notice"><b>固定搭配（可选）</b><div class="small">只填真正有价值的搭配，不需要每个单词都加。</div><div class="gap"></div><div class="row"><input id="newLinkedStructureEn" placeholder="例如 recommend doing something"><input id="newLinkedStructureZh" placeholder="例如 建议做某事"></div><div class="gap"></div><label class="checkline"><input id="newLinkedStructureKey" type="checkbox" checked>重点 / 易考搭配</label><label class="checkline"><input id="newLinkedStructureReplace" type="checkbox" checked>英→中时优先用这个搭配替代独立单词</label></div><div class="gap"></div><details class="advanced"><summary>高级：手动指定词族（通常不用）</summary><div class="gap"></div><input id="newFamily" placeholder="例如 decorate；留空则由软件判断"></details><div class="gap"></div><button class="primary" onclick="addWord()">加入词汇池</button></div>
 <div class="gap"></div><div class="card"><h2>云端自动备份 <span class="tag">v0.4</span></h2>
 <div id="cloudStatus" class="cloudStatus small"><span id="cloudDot" class="cloudDot"></span><span id="cloudStatusText">尚未启用</span></div>
 <div class="gap"></div><div id="cloudRecoveryWrap" class="hidden"><div class="small">恢复码（请单独保存在 iCloud Drive / 文件 App / 密码管理器。只要保留这串码，即使 iPad 本地数据清空，也能从云端恢复。）</div><div class="gap"></div><div id="cloudRecoveryCode" class="cloudCode"></div><div class="gap"></div><div class="row"><button class="soft" onclick="copyRecoveryCode()">复制恢复码</button><button class="gray" onclick="downloadRecoveryCode()">下载恢复码.txt</button></div></div>
@@ -91,7 +91,7 @@ const CLOUD_ENDPOINT='https://gemzboxhkkrfjqresxjt.supabase.co/functions/v1/pet-
 const CLOUD_KEY_STORAGE='pet_checkin_cloud_recovery_key';
 const CLOUD_ENABLED_STORAGE='pet_checkin_cloud_enabled';
 const CLOUD_META_STORAGE='pet_checkin_cloud_meta';
-const APP_VERSION='0.5.5';
+const APP_VERSION='0.5.7';
 let cloudTimer=null,cloudBusy=false,cloudQueued=false,cloudSuppressPush=false,cloudConflictState=null;
 const ROLLING_BACKUP_PREFIXES=[
   'pet_checkin_v1_backup_pre_cloud_autopull_',
@@ -159,7 +159,7 @@ window.addEventListener('online',()=>cloudSmartSync(false));
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&cloudIsEnabled())cloudSmartSync(false)});
 window.addEventListener('pageshow',()=>{if(cloudIsEnabled())setTimeout(()=>cloudSmartSync(false),250)});
 
-const SMART_TOTAL=12, SMART_E2Z_BASE=8, SMART_Z2E_BASE=4, SMART_STANDALONE_STRUCTURE_BASE=1;
+const SMART_TOTAL=20, SMART_E2Z_BASE=8, SMART_Z2E_BASE=4, SMART_STANDALONE_STRUCTURE_BASE=1;
 const SEED={"words":[{"en":"persuade","zh":"说服","note":"persuade somebody to do something","status":"focus"},{"en":"support","zh":"支持；帮助","note":"support somebody / a project","status":"focus"},{"en":"technique","zh":"技巧；技术","note":"a useful technique","status":"maintenance"},{"en":"organiser","zh":"组织者","note":"the event organiser","status":"maintenance"},{"en":"concentrate","zh":"集中注意力","note":"concentrate on something","status":"maintenance"},{"en":"immediately","zh":"立即；马上","note":"answer immediately","status":"active"},{"en":"discover","zh":"发现；发觉","note":"discover a better way","status":"active"},{"en":"rather than","zh":"而不是；而非","note":"rather than giving up","status":"active"},{"en":"feedback","zh":"反馈；意见","note":"ask for feedback","status":"active"},{"en":"expect","zh":"预期；预计","note":"expect something to happen","status":"active"},{"en":"prefer","zh":"更喜欢","note":"prefer A to B","status":"active"},{"en":"approach","zh":"方法；处理方式","note":"try a different approach","status":"active"},{"en":"attempt","zh":"尝试；试图","note":"the first attempt","status":"active"},{"en":"ordinary","zh":"普通的；平常的","note":"an ordinary subject","status":"active"},{"en":"instead","zh":"反而；改为；代替","note":"Instead, ... / instead of doing","status":"active"},{"en":"exhibition","zh":"展览；展览会","note":"visit an exhibition","status":"maintenance"},{"en":"competition","zh":"比赛；竞争","note":"enter a competition","status":"maintenance"},{"en":"countryside","zh":"乡村；农村地区","note":"in the countryside","status":"maintenance"},{"en":"waterfall","zh":"瀑布","note":"","status":"maintenance"},{"en":"shark","zh":"鲨鱼","note":"","status":"maintenance"}],"structures":[{"title":"instead of ...","zh":"而不是做……","example":"Instead of staying at home, we went for a walk."},{"title":"as many ... as","zh":"和……一样多","example":"There were as many girls as boys."},{"title":"written by / made by / designed by","zh":"由……写/制作/设计","example":"The story was written by a teenager."},{"title":"hear of / hear about","zh":"听说过 / 听到关于……的消息","example":"Have you ever heard of this writer?"},{"title":"because ...","zh":"因为 + 句子","example":"I stayed home because I was ill."},{"title":"because of ...","zh":"因为 + 名词","example":"The match stopped because of the rain."},{"title":"so ... that","zh":"如此……以至于……","example":"It was so interesting that I read it twice."},{"title":"should ...","zh":"should 后用动词原形","example":"What should I do?"},{"title":"such as ...","zh":"例如做……","example":"We tried activities such as playing football."},{"title":"make sure not to ...","zh":"确保不要做……","example":"Make sure not to forget your ticket."}]};
 
 const CURATED_LINKED_STRUCTURES=[
@@ -576,7 +576,7 @@ function renderStats(){let dirs=['e2z','z2e'],labels={e2z:'英→中',z2e:'中�
 function testVoice(){let u=new SpeechSynthesisUtterance('persuade');u.lang=state.settings.voiceLang;u.rate=state.settings.voiceRate;speechSynthesis.cancel();speechSynthesis.speak(u)}
 voiceLang.onchange=e=>{state.settings.voiceLang=e.target.value;save()};voiceRate.oninput=e=>{rateText.textContent=e.target.value;state.settings.voiceRate=+e.target.value;localStorage.setItem(KEY,JSON.stringify(state));scheduleCloudSync()};
 function downloadJson(obj,name){let blob=new Blob([JSON.stringify(obj,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),300)}
-function exportData(){downloadJson(state,'PET打卡数据_v0.5.6_'+new Date().toISOString().slice(0,10)+'.json')}
+function exportData(){downloadJson(state,'PET打卡数据_v0.5.7_'+new Date().toISOString().slice(0,10)+'.json')}
 function exportPreUpgradeBackup(){let x=localStorage.getItem(PRE_V053_KEY)||localStorage.getItem(PRE_V050_KEY)||localStorage.getItem(PRE_V030_KEY)||localStorage.getItem(PRE_KEY);if(!x)return alert('当前浏览器里没有升级前快照。');try{let name=localStorage.getItem(PRE_V053_KEY)?'PET打卡_v0.5.3升级前快照.json':localStorage.getItem(PRE_V050_KEY)?'PET打卡_v0.5升级前快照.json':localStorage.getItem(PRE_V030_KEY)?'PET打卡_v0.3升级前快照.json':'PET打卡_v0.2升级前快照.json';downloadJson(JSON.parse(x),name)}catch(e){alert('升级前快照损坏，无法导出')}}
 function importData(e){let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{let incoming=JSON.parse(r.result);requireLocalSafetyBackup('pet_checkin_v1_backup_pre_import_',state);state=migrateState(incoming);save();alert('导入并迁移成功：原有词汇、历史、每日计划已保留。')}catch(x){alert('导入失败：'+x.message)}finally{e.target.value=''}};r.readAsText(f)}
 function resetAll(){if(confirm('确定清空所有训练记录吗？这会保留升级前快照，但会重置当前数据。')){state=init();save()}}
@@ -612,28 +612,56 @@ function drawTrend(){
 }
 function renderAll(){state=migrateState(state);voiceLang.value=state.settings.voiceLang;voiceRate.value=state.settings.voiceRate;rateText.textContent=Number(state.settings.voiceRate).toFixed(2);renderHome();renderReview();renderWords();renderStructures();renderStats();renderHistory();renderBackupInfo();renderCloudUI();updateFamilyHint();syncTestSourceUI();updateTaskNavDots();setTimeout(drawTrend,30)}
 
-/* ===== v0.5.6 首次学习队列：开始 ===== */
-const migrateState_v055 = migrateState;
-migrateState = function(s){
-  s = migrateState_v055(s);
-  s.meta = s.meta || {};
+/* ===== v0.5.7 动态 Test 预算 + 限量 Review：开始 ===== */
+const V057_TEST_DAILY_LIMIT=20;
+const V057_FIRST_LEARNING_LIMIT=12;
+const V057_REVIEW_BASE_LIMIT=12;
+const V057_REVIEW_EXTRA_STEP=5;
+
+const migrateState_v055=migrateState;
+migrateState=function(s){
+  s=migrateState_v055(s);
+  s.meta=s.meta||{};
   if(!s.meta.firstLearningQueue_v056){
-    // 智能计划只是自动生成缓存；升级时重建，不碰词汇、测试历史、掌握状态和真实 due。
-    s.smartPlans = {};
-    s.meta.firstLearningQueue_v056 = Date.now();
+    s.smartPlans={};
+    s.meta.firstLearningQueue_v056=Date.now();
   }
-  s.version = APP_VERSION;
-  return s;
+  if(!s.meta.dynamicBudgetReviewCap_v057){
+    s.smartPlans={};
+    s.meta.dynamicBudgetReviewCap_v057=Date.now();
+  }
+  if(!s.meta.reviewExtraByDate||typeof s.meta.reviewExtraByDate!=='object')s.meta.reviewExtraByDate={};
+  s.version=APP_VERSION;
+  return s
 };
 
 function hasBeenTested(w,dir){return (+w.review?.[dir]?.lastTs||0)>0}
+function formalTestsOnDate(dateKey=localDateKey()){
+  return state.tests.filter(t=>Number.isFinite(+t.ts)&&localDateKey(new Date(+t.ts))===dateKey).length
+}
+function testRemainingBudget(dateKey=localDateKey()){
+  return Math.max(0,V057_TEST_DAILY_LIMIT-formalTestsOnDate(dateKey))
+}
+function firstLearningCompletedOnDate(dateKey=localDateKey()){
+  let first=new Map();
+  [...state.tests].filter(t=>t.itemType!=='structure'&&(t.mode==='e2z'||t.mode==='z2e')&&t.wordId)
+    .sort((a,b)=>(+a.ts||0)-(+b.ts||0)).forEach(t=>{
+      let k=t.mode+':'+t.wordId;
+      if(!first.has(k))first.set(k,+t.ts||0)
+    });
+  let n=0;for(const ts of first.values())if(ts&&localDateKey(new Date(ts))===dateKey)n++;
+  return n
+}
 
-// “真正到期”只属于已经做过正式 Test 的方向。
-dueWords = function(dir,now=Date.now()){
+// 真正“到期”只属于已经正式测过的方向。
+dueWords=function(dir,now=Date.now()){
   let cutoff=dayEnd(now);
-  return state.words
-    .filter(w=>hasBeenTested(w,dir)&&(+w.review?.[dir]?.due||0)<=cutoff)
-    .sort((a,b)=>(a.review?.[dir]?.due||0)-(b.review?.[dir]?.due||0))
+  return state.words.filter(w=>hasBeenTested(w,dir)&&(+w.review?.[dir]?.due||0)<=cutoff)
+    .sort((a,b)=>(+a.review?.[dir]?.due||0)-(+b.review?.[dir]?.due||0))
+};
+dueReviewDirs=function(w,now=Date.now()){
+  let cutoff=dayEnd(now);
+  return ['e2z','z2e'].filter(dir=>hasBeenTested(w,dir)&&(+w.review?.[dir]?.due||0)<=cutoff)
 };
 
 function firstLearningReady(w,dir,dateKey=localDateKey()){
@@ -643,8 +671,7 @@ function firstLearningReady(w,dir,dateKey=localDateKey()){
   if(dir==='z2e'){
     let eTs=+w.review?.e2z?.lastTs||0;
     if(!eTs)return false;
-    // 英→中首次正式测试当天，不立刻开放中→英。
-    if(localDateKey(new Date(eTs))>=dateKey)return false;
+    if(localDateKey(new Date(eTs))>=dateKey)return false
   }
   return true
 }
@@ -661,66 +688,56 @@ function pendingFirstLearningWordCount(){
 function wordScheduleText(w,dir){
   if(hasBeenTested(w,dir))return dueText(w.review[dir].due);
   if(dir==='z2e'&&!hasBeenTested(w,'e2z'))return '<span class="dueSoon">待英→中后开放</span>';
-  let target=dayStart(+w.review?.[dir]?.due||Date.now()),today0=dayStart(),
-      d=Math.round((target-today0)/DAY);
+  let target=dayStart(+w.review?.[dir]?.due||Date.now()),today0=dayStart(),d=Math.round((target-today0)/DAY);
   if(d>0)return `<span class="dueSoon">${d}天后首次学习</span>`;
   return '<span class="dueSoon">待首次学习</span>'
 }
 
-// Review 只看“已经正式测过”的到期方向。
-dueReviewDirs = function(w,now=Date.now()){
-  let cutoff=dayEnd(now);
-  return ['e2z','z2e'].filter(dir=>hasBeenTested(w,dir)&&(+w.review?.[dir]?.due||0)<=cutoff)
-};
-
-// 智能测试里的“到期候选”也只包含已经测试过的方向。
-smartRank = function(w,dir){
+smartRank=function(w,dir){
   if(w.mastery?.[dir]==='unmastered')return 0;
   if(w.mastery?.[dir]==='unstable')return 1;
   return 2
 };
-smartCandidates = function(dateKey,dir){
+smartCandidates=function(dateKey,dir){
   let cutoff=tsForDateKey(dateKey,true),tested=testedIdsOnDate(dateKey,dir);
-  return state.words
-    .filter(w=>hasBeenTested(w,dir)&&!tested.has(w.id)&&(+w.review?.[dir]?.due||0)<=cutoff)
+  return state.words.filter(w=>hasBeenTested(w,dir)&&!tested.has(w.id)&&(+w.review?.[dir]?.due||0)<=cutoff)
     .sort((a,b)=>{
-      let ra=smartRank(a,dir),rb=smartRank(b,dir);
-      if(ra!==rb)return ra-rb;
-      let da=+a.review?.[dir]?.due||0,db=+b.review?.[dir]?.due||0;
-      if(da!==db)return da-db;
+      let ra=smartRank(a,dir),rb=smartRank(b,dir);if(ra!==rb)return ra-rb;
+      let da=+a.review?.[dir]?.due||0,db=+b.review?.[dir]?.due||0;if(da!==db)return da-db;
       return String(a.en).localeCompare(String(b.en))
     })
 };
 
-// 与单词绑定的固定搭配，至少等主词英→中正式测过且跨过一天再参与自动计划。
-const structureCandidates_v055 = structureCandidates;
-structureCandidates = function(dateKey){
+const structureCandidates_v055=structureCandidates;
+structureCandidates=function(dateKey){
   return structureCandidates_v055(dateKey).filter(s=>{
     if(!s.linkedWordId)return true;
     let w=wordById(s.linkedWordId),ts=+w?.review?.e2z?.lastTs||0;
-    return !!ts && localDateKey(new Date(ts))<dateKey
+    return !!ts&&localDateKey(new Date(ts))<dateKey
   })
 };
-
-ensureSmartPlan = function(dateKey){
-  let p=state.smartPlans[dateKey];
-  if(!p||typeof p!=='object')p=state.smartPlans[dateKey]={e2z:[],z2e:[],structures:[],firstLearning:[],generatedAt:0};
-  for(const d of ['e2z','z2e'])p[d]=[...new Set(Array.isArray(p[d])?p[d]:[])].filter(id=>!!wordById(id));
-  p.structures=[...new Set(Array.isArray(p.structures)?p.structures:[])].filter(id=>!!structureById(id));
-  p.firstLearning=[...new Set(Array.isArray(p.firstLearning)?p.firstLearning:[])];
-  if(!Number.isFinite(+p.generatedAt))p.generatedAt=0;
-  return p
+const replacementStructureForWord_v055=replacementStructureForWord;
+replacementStructureForWord=function(w,dateKey,blocked=new Set()){
+  let ts=+w?.review?.e2z?.lastTs||0;
+  if(!ts||localDateKey(new Date(ts))>=dateKey)return null;
+  return replacementStructureForWord_v055(w,dateKey,blocked)
 };
 
-refreshSmartPlan = function(dateKey=localDateKey()){
-  const FIRST_LIMIT=5;
-  let p=ensureSmartPlan(dateKey),
-      slots=Math.max(0,SMART_TOTAL-p.e2z.length-p.z2e.length-p.structures.length),
-      blockedStruct=new Set(p.structures),
-      covered=structureCoveredWordIds(p),
-      firstUsed=p.firstLearning.length;
+ensureSmartPlan=function(dateKey){
+  let p=state.smartPlans[dateKey];
+  if(!p||typeof p!=='object')p={e2z:[],z2e:[],structures:[],firstLearning:[],generatedAt:0};
+  p.e2z=Array.isArray(p.e2z)?p.e2z:[];p.z2e=Array.isArray(p.z2e)?p.z2e:[];
+  p.structures=Array.isArray(p.structures)?p.structures:[];p.firstLearning=Array.isArray(p.firstLearning)?p.firstLearning:[];
+  return p
+};
+refreshSmartPlan=function(dateKey=localDateKey()){
+  let slots=testRemainingBudget(dateKey),firstSlots=Math.max(0,V057_FIRST_LEARNING_LIMIT-firstLearningCompletedOnDate(dateKey));
+  let p={e2z:[],z2e:[],structures:[],firstLearning:[],generatedAt:Date.now()};
+  state.smartPlans[dateKey]=p;
+  if(slots<=0)return p;
 
-  function addDueTask(w,dir){
+  let blockedStruct=new Set(),covered=new Set();
+  function addWordTask(w,dir){
     if(slots<=0)return false;
     if(dir==='e2z'){
       if(covered.has(w.id)||p.e2z.includes(w.id))return false;
@@ -739,171 +756,197 @@ refreshSmartPlan = function(dateKey=localDateKey()){
     ...smartCandidates(dateKey,'z2e').map(w=>({w,dir:'z2e'}))
   ];
   dueTasks.sort((a,b)=>{
-    let ra=smartRank(a.w,a.dir),rb=smartRank(b.w,b.dir);
-    if(ra!==rb)return ra-rb;
-    let da=+a.w.review?.[a.dir]?.due||0,db=+b.w.review?.[b.dir]?.due||0;
-    if(da!==db)return da-db;
+    let ra=smartRank(a.w,a.dir),rb=smartRank(b.w,b.dir);if(ra!==rb)return ra-rb;
+    let da=+a.w.review?.[a.dir]?.due||0,db=+b.w.review?.[b.dir]?.due||0;if(da!==db)return da-db;
     return String(a.w.en).localeCompare(String(b.w.en))
   });
 
-  // 1. 真实到期中的未掌握 / 不稳定
+  // 1) 真正到期的未掌握 / 不稳定方向优先。
   for(const t of dueTasks.filter(t=>t.w.mastery?.[t.dir]!=='mastered')){
-    if(!slots)break;addDueTask(t.w,t.dir)
+    if(!slots)break;addWordTask(t.w,t.dir)
   }
 
-  // 保留原有“每天最多主动引入1个重点搭配”的机制。
+  // 保留一个重点固定搭配入口，避免搭配长期饿死。
   if(slots>0){
-    let extra=extraStructureCandidates(dateKey,new Set([...p.e2z,...covered])).find(s=>s.priority==='key');
-    if(extra){
-      p.structures.push(extra.id);blockedStruct.add(extra.id);
-      if(extra.replaceE2Z&&extra.linkedWordId)covered.add(extra.linkedWordId);
-      slots--
-    }
+    let extra=extraStructureCandidates(dateKey,new Set([...p.e2z,...covered])).find(s=>s.priority==='key'&&s.mastery!=='mastered');
+    if(extra){p.structures.push(extra.id);blockedStruct.add(extra.id);if(extra.replaceE2Z&&extra.linkedWordId)covered.add(extra.linkedWordId);slots--}
   }
 
-  // 2. 首次学习：每天总共最多5项。优先补已经做过 e2z、等待开放的 z2e。
+  // 2) 首次学习最多12项；已完成 e2z、等待 z2e 的项目先清，再放新的 e2z。
   let firstTasks=[
-    ...firstLearningCandidates(dateKey,'z2e').map(w=>({w,dir:'z2e',k:'z2e:'+w.id})),
-    ...firstLearningCandidates(dateKey,'e2z').map(w=>({w,dir:'e2z',k:'e2z:'+w.id}))
-  ].filter(t=>!p.firstLearning.includes(t.k));
+    ...firstLearningCandidates(dateKey,'z2e').map(w=>({w,dir:'z2e'})),
+    ...firstLearningCandidates(dateKey,'e2z').map(w=>({w,dir:'e2z'}))
+  ];
   firstTasks.sort((a,b)=>{
     if(a.dir!==b.dir)return a.dir==='z2e'?-1:1;
-    let da=+a.w.review?.[a.dir]?.due||0,db=+b.w.review?.[b.dir]?.due||0;
-    if(da!==db)return da-db;
+    let da=+a.w.review?.[a.dir]?.due||0,db=+b.w.review?.[b.dir]?.due||0;if(da!==db)return da-db;
     return String(a.w.en).localeCompare(String(b.w.en))
   });
-  while(slots>0&&firstUsed<FIRST_LIMIT&&firstTasks.length){
+  while(slots>0&&firstSlots>0&&firstTasks.length){
     let t=firstTasks.shift();
     if((t.dir==='e2z'&&p.e2z.includes(t.w.id))||(t.dir==='z2e'&&p.z2e.includes(t.w.id)))continue;
-    p[t.dir].push(t.w.id);
-    p.firstLearning.push(t.k);
-    firstUsed++;slots--
+    p[t.dir].push(t.w.id);p.firstLearning.push(t.dir+':'+t.w.id);slots--;firstSlots--
   }
 
-  // 3. 已掌握的维护复查最后补位
+  // 3) 已掌握维护项最后补位。
   for(const t of dueTasks.filter(t=>t.w.mastery?.[t.dir]==='mastered')){
-    if(!slots)break;addDueTask(t.w,t.dir)
+    if(!slots)break;addWordTask(t.w,t.dir)
   }
 
-  // 4. 其它到期搭配最后补位
+  // 4) 仍有预算时，再补其它真正到期的搭配。
   if(slots>0){
     let extras=extraStructureCandidates(dateKey,new Set([...p.e2z,...covered])).filter(s=>!blockedStruct.has(s.id));
     while(slots>0&&extras.length){
-      let st=extras.shift();p.structures.push(st.id);blockedStruct.add(st.id);
-      if(st.replaceE2Z&&st.linkedWordId)covered.add(st.linkedWordId);
-      slots--
+      let s=extras.shift();p.structures.push(s.id);blockedStruct.add(s.id);
+      if(s.replaceE2Z&&s.linkedWordId)covered.add(s.linkedWordId);slots--
     }
   }
-  if(!p.generatedAt)p.generatedAt=Date.now();
   return p
 };
 
-smartPlanSummary = function(dateKey=localDateKey()){
-  let e=smartPlanWords(dateKey,'e2z'),z=smartPlanWords(dateKey,'z2e'),st=smartPlanStructures(dateKey),
-      p=refreshSmartPlan(dateKey),te=testedIdsOnDate(dateKey,'e2z'),tz=testedIdsOnDate(dateKey,'z2e');
-  let newPending=p.firstLearning.filter(k=>{
-    let i=k.indexOf(':'),d=k.slice(0,i),id=k.slice(i+1);
-    return d==='e2z'?!te.has(id):!tz.has(id)
+smartPlanSummary=function(dateKey=localDateKey()){
+  let p=refreshSmartPlan(dateKey),testedE=testedIdsOnDate(dateKey,'e2z'),testedZ=testedIdsOnDate(dateKey,'z2e'),testedS=testedStructureIdsOnDate(dateKey);
+  let e=p.e2z.map(wordById).filter(Boolean).filter(w=>!testedE.has(w.id));
+  let z=p.z2e.map(wordById).filter(Boolean).filter(w=>!testedZ.has(w.id));
+  let s=p.structures.map(structureById).filter(Boolean).filter(x=>!testedS.has(x.id));
+  let firstPending=p.firstLearning.filter(k=>{
+    let i=k.indexOf(':'),d=k.slice(0,i),id=k.slice(i+1);return d==='e2z'?!testedE.has(id):!testedZ.has(id)
   }).length;
-  return{
-    e,z,s:st,eTotal:p.e2z.length,zTotal:p.z2e.length,sTotal:p.structures.length,
-    eBack:smartBacklogCount(dateKey,'e2z'),
-    zBack:smartBacklogCount(dateKey,'z2e'),
-    sBack:structureBacklogCount(dateKey),
-    newTotal:p.firstLearning.length,newPending,newPool:pendingFirstLearningWordCount()
-  }
+  let eSelected=new Set(p.e2z),zSelected=new Set(p.z2e),covered=structureCoveredWordIds(p),sSelected=new Set(p.structures);
+  let eBack=smartCandidates(dateKey,'e2z').filter(w=>!eSelected.has(w.id)&&!covered.has(w.id)).length;
+  let zBack=smartCandidates(dateKey,'z2e').filter(w=>!zSelected.has(w.id)).length;
+  let sBack=structureCandidates(dateKey).filter(x=>!sSelected.has(x.id)&&!testedS.has(x.id)).length;
+  return {e,z,s,eTotal:e.length,zTotal:z.length,sTotal:s.length,eBack,zBack,sBack,
+    doneToday:formalTestsOnDate(dateKey),dailyLimit:V057_TEST_DAILY_LIMIT,budgetRemaining:testRemainingBudget(dateKey),
+    firstDone:firstLearningCompletedOnDate(dateKey),firstPending,newPool:pendingFirstLearningWordCount()}
 };
 
-const renderHome_v055 = renderHome;
-renderHome = function(){
-  renderHome_v055();
-  let sp=smartPlanSummary(),reviewWords=pendingReviewWordsUnified(),
-      pending=sp.e.length+sp.z.length+sp.s.length,reviewPending=reviewWords.length,
-      back=sp.eBack+sp.zBack+sp.sBack;
-  if(!pending&&!reviewPending){
-    today.innerHTML=`✅ <b>今日软件任务全部完成。</b><br><span class="small">正式测试与复习两个红点都已清零。待首次学习池还有 ${sp.newPool} 个词，会按每日上限逐步放行。${back?`另有 ${back} 个真正到期任务按每日上限顺延。`:''}</span>`
-  }else{
-    today.innerHTML=`今日待办：正式测试 <b>${pending}</b> 项｜复习 <b>${reviewPending}</b> 个词｜今日首次学习剩余 <b>${sp.newPending}</b> 项。<br><span class="small">待首次学习池共 ${sp.newPool} 个词；只有正式测过的方向才会进入“到期复习”。${back?`另有 ${back} 个真正到期任务自动顺延。`:''}</span>`
+// Review：排除“今天已测”以及“今天已进入智能 Test 计划”的词，避免先复习后泄题。
+function testedWordIdsOnDate(dateKey=localDateKey()){
+  let set=new Set();
+  state.tests.forEach(t=>{
+    if(!Number.isFinite(+t.ts)||localDateKey(new Date(+t.ts))!==dateKey)return;
+    if(t.itemType==='structure'){
+      let s=structureById(t.structureId);if(s?.linkedWordId)set.add(s.linkedWordId)
+    }else if(t.wordId)set.add(t.wordId)
+  });
+  return set
+}
+function plannedWordIdsOnDate(dateKey=localDateKey()){
+  let p=refreshSmartPlan(dateKey),set=new Set([...p.e2z,...p.z2e]);
+  p.structures.map(structureById).filter(Boolean).forEach(s=>{if(s.linkedWordId)set.add(s.linkedWordId)});
+  return set
+}
+function reviewExtraToday(dateKey=localDateKey()){
+  return Math.max(0,+state.meta?.reviewExtraByDate?.[dateKey]||0)
+}
+function reviewDailyLimit(dateKey=localDateKey()){return V057_REVIEW_BASE_LIMIT+reviewExtraToday(dateKey)}
+function reviewedWordIdsOnDate(dateKey=localDateKey()){
+  let set=new Set();state.words.forEach(w=>{
+    if(w.review?.e2z?.seenDate===dateKey||w.review?.z2e?.seenDate===dateKey)set.add(w.id)
+  });return set
+}
+function reviewSlotsLeft(dateKey=localDateKey()){
+  return Math.max(0,reviewDailyLimit(dateKey)-reviewedWordIdsOnDate(dateKey).size)
+}
+function reviewWeakRank(w){
+  let dirs=pendingReviewDirs(w);if(!dirs.length)return 9;
+  return Math.min(...dirs.map(d=>w.mastery?.[d]==='unmastered'?0:w.mastery?.[d]==='unstable'?1:2))
+}
+function allPendingReviewWordsUnified(now=Date.now()){
+  let dateKey=localDateKey(new Date(now)),excluded=testedWordIdsOnDate(dateKey),planned=plannedWordIdsOnDate(dateKey);
+  return state.words.filter(w=>pendingReviewDirs(w,now).length&&!excluded.has(w.id)&&!planned.has(w.id)).sort((a,b)=>{
+    let ra=reviewWeakRank(a),rb=reviewWeakRank(b);if(ra!==rb)return ra-rb;
+    let da=Math.min(...pendingReviewDirs(a,now).map(d=>+a.review[d].due||0));
+    let db=Math.min(...pendingReviewDirs(b,now).map(d=>+b.review[d].due||0));
+    if(da!==db)return da-db;
+    return String(a.en).localeCompare(String(b.en))
+  })
+}
+pendingReviewWordsUnified=function(now=Date.now()){
+  return allPendingReviewWordsUnified(now).slice(0,reviewSlotsLeft(localDateKey(new Date(now))))
+};
+pendingReviewCount=function(){return pendingReviewWordsUnified().length};
+function reviewBacklogCount(now=Date.now()){
+  let all=allPendingReviewWordsUnified(now),slots=reviewSlotsLeft(localDateKey(new Date(now)));
+  return Math.max(0,all.length-slots)
+}
+function addReviewExtraFive(){
+  let d=localDateKey();state.meta=state.meta||{};state.meta.reviewExtraByDate=state.meta.reviewExtraByDate||{};
+  state.meta.reviewExtraByDate[d]=reviewExtraToday(d)+V057_REVIEW_EXTRA_STEP;
+  resetReviewSession(true);save(false);renderReview();renderHome();updateReviewNavDot()
+}
+
+const renderReview_v055=renderReview;
+renderReview=function(){
+  renderReview_v055();
+  let queue=pendingReviewWordsUnified(),back=reviewBacklogCount(),limit=reviewDailyLimit(),done=reviewedWordIdsOnDate().size,extra=reviewExtraToday();
+  let summary=document.getElementById('reviewClearSummary'),el=document.getElementById('reviewUnified');
+  if(summary){
+    summary.innerHTML=queue.length
+      ?`今日 Review 还剩 <b>${queue.length}</b> 个｜今日已完成 <b>${done}</b> 个｜今日上限 <b>${limit}</b> 个${back?`｜候补 <b>${back}</b> 个`:''}。<br><span class="small">排序：未掌握 → 不稳定 → 已掌握；同级里逾期更久优先。今天正式 Test 已安排/已测试的词不会提前出现在 Review。</span>${back?`<div class="gap"></div><button class="soft" onclick="addReviewExtraFive()">今天状态好，再复习 5 个</button>`:''}`
+      : back
+        ?`✅ 今日 Review 已达到 <b>${limit}</b> 个上限；还有 <b>${back}</b> 个候补，明天继续优先。${extra?`今天已额外增加 ${extra} 个名额。`:''}<div class="gap"></div><button class="soft" onclick="addReviewExtraFive()">今天状态好，再复习 5 个</button>`
+        :`✅ <b>今天的 Review 已完成。</b><br><span class="small">没有需要继续处理的真正到期词。</span>`
   }
+  if(!queue.length&&back&&el)el.innerHTML='<div class="sub">今天默认复习量已经完成。剩余候补会顺延；如果状态好，可以在上方再加 5 个。</div>'
+};
+
+const renderHome_v055=renderHome;
+renderHome=function(){
+  renderHome_v055();
+  let sp=smartPlanSummary(),reviewWords=pendingReviewWordsUnified(),reviewPending=reviewWords.length,reviewBack=reviewBacklogCount(),pending=sp.e.length+sp.z.length+sp.s.length;
+  today.innerHTML=`今日 Test：已完成 <b>${sp.doneToday}</b> / ${sp.dailyLimit}，还可自动安排 <b>${pending}</b> 项；其中首次学习 <b>${sp.firstPending}</b> 项。<br><span class="small">方向动态分配，不再固定 8/4。待首次学习池共 ${sp.newPool} 个词；真正到期弱项优先。</span>`;
   let rc=reviewModeCounts(reviewWords);
   reviewPreview.innerHTML=reviewPending
-    ?`<div class="sub">今天还有 <b>${reviewPending}</b> 个已正式测过的词待复习。<br><span class="small">英→中形式 ${rc.e2z} 个｜中→英形式 ${rc.z2e} 个。首次学习词不会进入这里。</span></div>`
-    :'<div class="sub">✅ 今天的正式复习提醒已清空。待首次学习词会在测试计划里分批出现。</div>';
+    ?`<div class="sub">今日 Review <b>${reviewPending}</b> 个${reviewBack?`｜候补 <b>${reviewBack}</b> 个`:''}。<br><span class="small">当前队列：英→中形式 ${rc.e2z} 个｜中→英形式 ${rc.z2e} 个；当天 Test 词已排除。</span></div>`
+    :reviewBack
+      ?`<div class="sub">✅ 今日默认 Review 已完成；候补 <b>${reviewBack}</b> 个，明天继续优先，也可手动再加 5 个。</div>`
+      :'<div class="sub">✅ 今天没有待处理的 Review。</div>';
   updateTaskNavDots()
 };
 
-const renderWords_v055 = renderWords;
-renderWords = function(){
+const renderWords_v055=renderWords;
+renderWords=function(){
   renderWords_v055();
   let sp=smartPlanSummary();
-  if(typeof smartPlanInfo!=='undefined'&&smartPlanInfo){
-    smartPlanInfo.innerHTML=`今日正式测试待做：英→中单词 <b>${sp.e.length}</b> 个，固定搭配 <b>${sp.s.length}</b> 个，中→英单词 <b>${sp.z.length}</b> 个；其中首次学习还剩 <b>${sp.newPending}</b> 项。待首次学习池共 <b>${sp.newPool}</b> 个词。${sp.eBack+sp.sBack+sp.zBack?`另有 ${sp.eBack+sp.sBack+sp.zBack} 个真正到期任务自动顺延。`:''}`
-  }
-  // 旧 renderWords 已经画好列表；只把未测试方向的“今天到期”替换成准确状态。
-  let rows=[...document.querySelectorAll('#wordList .listItem')];
-  let shown=state.words.filter(w=>{
-    let q=(search.value||'').toLowerCase();
-    return !q||w.en.toLowerCase().includes(q)||w.zh.includes(q)||(w.family||'').includes(q)
-  });
-  rows.forEach((row,i)=>{
-    let w=shown[i];if(!w)return;
-    let boxes=row.querySelectorAll('.masteryGrid .small');
-    if(boxes[0])boxes[0].innerHTML='排期：'+wordScheduleText(w,'e2z');
-    if(boxes[1])boxes[1].innerHTML='排期：'+wordScheduleText(w,'z2e')
-  })
+  if(typeof smartPlanInfo!=='undefined'&&smartPlanInfo)smartPlanInfo.innerHTML=`今日 Test 已完成 <b>${sp.doneToday}</b> / ${sp.dailyLimit}；当前待测：英→中单词 <b>${sp.e.length}</b>、固定搭配 <b>${sp.s.length}</b>、中→英单词 <b>${sp.z.length}</b>。首次学习待测 <b>${sp.firstPending}</b> 项，待首次学习池共 <b>${sp.newPool}</b> 个词。${sp.eBack+sp.zBack+sp.sBack?`另有 ${sp.eBack+sp.zBack+sp.sBack} 个真正到期任务在后续队列中。`:''}`;
+  let rows=[...document.querySelectorAll('#wordList .listItem')],q=(search.value||'').toLowerCase();
+  let shown=state.words.filter(w=>!q||w.en.toLowerCase().includes(q)||w.zh.includes(q)||(w.family||'').includes(q));
+  rows.forEach((row,i)=>{let w=shown[i];if(!w)return;let boxes=row.querySelectorAll('.masteryGrid .small');if(boxes[0])boxes[0].innerHTML='排期：'+wordScheduleText(w,'e2z');if(boxes[1])boxes[1].innerHTML='排期：'+wordScheduleText(w,'z2e')})
 };
 
-// 新增词：不是立即“到期”；最早次日 e2z，z2e 再后一日且受 e2z 完成门控。
-addWord = function(){
-  let en=newEn.value.trim(),zh=newZh.value.trim(),
-      collEn=(newLinkedStructureEn?.value||'').trim(),
-      collZh=(newLinkedStructureZh?.value||'').trim();
+const syncTestSourceUI_v055=syncTestSourceUI;
+syncTestSourceUI=function(){
+  syncTestSourceUI_v055();
+  if(testSource?.value==='smart'){
+    let sp=smartPlanSummary(),total=sp.e.length+sp.z.length+sp.s.length;
+    dailyInfo.innerHTML=`今日正式 Test 已完成 <b>${sp.doneToday}</b> / ${sp.dailyLimit}，当前还自动安排 <b>${total}</b> 项。<br>英→中单词 ${sp.e.length}｜固定搭配 ${sp.s.length}｜中→英单词 ${sp.z.length}｜其中首次学习 ${sp.firstPending}。<br><span class="small">20 是全天总预算，不是每次重建计划再给 20 个；方向按当天真实需要动态分配。</span>`
+  }
+};
+
+// 新增词：不再“刚录入就今日到期”。
+addWord=function(){
+  let en=newEn.value.trim(),zh=newZh.value.trim(),collEn=(newLinkedStructureEn?.value||'').trim(),collZh=(newLinkedStructureZh?.value||'').trim();
   if(!en||!zh)return alert('请填写英文和中文意思');
   if((collEn&&!collZh)||(!collEn&&collZh))return alert('固定搭配如果要录入，请把英文搭配和中文意思都填写完整。');
   if(state.words.some(w=>normWord(w.en)===normWord(en)))return alert('词汇池里已经有 “'+en+'” 了，可以直接编辑原词条。');
-  if(collEn&&state.structures.some(st=>normWord(st.title)===normWord(collEn)))return alert('搭配库里已经有 “'+collEn+'” 了，请到“搭配”页关联现有条目。');
-
+  if(collEn&&state.structures.some(s=>normWord(s.title)===normWord(collEn)))return alert('搭配库里已经有 “'+collEn+'” 了，请到“搭配”页关联现有条目。');
   let manual=normWord(newFamily.value),family=manual,g=manual?null:suggestFamily(en);
-  if(!manual&&g){
-    let msg=g.existing?`检测到 “${en}” 可能属于已有词族 “${g.root}”。\n\n是否加入这个词族？`:`检测到 “${en}” 可能属于新的 “${g.root}” 词族。\n\n是否建立这个词族并加入？`;
-    if(confirm(msg))family=g.root
-  }
-
+  if(!manual&&g){let msg=g.existing?`检测到 “${en}” 可能属于已有词族 “${g.root}”。\n\n是否加入这个词族？`:`检测到 “${en}” 可能属于新的 “${g.root}” 词族。\n\n是否建立这个词族并加入？`;if(confirm(msg))family=g.root}
   let now=Date.now(),eDue=scheduleDays(1,now),zDue=scheduleDays(2,now);
-  let w=migrateWord({
-    id:'w'+now,en,zh,note:newNote.value.trim(),family:family||'',status:'active',due:eDue,history:[],
-    mastery:{e2z:'unstable',z2e:'unstable'},
-    review:{
-      e2z:{due:eDue,level:0,fastStreak:0,lastTs:0},
-      z2e:{due:zDue,level:0,fastStreak:0,lastTs:0}
-    }
-  });
-  state.words.push(w);
-  if(family)attachExactRoot(family);
-
-  if(collEn&&collZh){
-    let st=migrateStructure({
-      id:'s'+now+'_'+Math.random().toString(36).slice(2,5),
-      title:collEn,zh:collZh,example:'',
-      linkedWordId:w.id,linkedWordEn:w.en,
-      priority:newLinkedStructureKey?.checked?'key':'normal',
-      replaceE2Z:!!newLinkedStructureReplace?.checked,
-      source:'word_entry',mastery:'unstable',
-      review:{due:eDue,level:0,fastStreak:0,lastTs:0},history:[]
-    },state.structures.length,now);
-    state.structures.push(st)
-  }
-
-  newEn.value=newZh.value=newNote.value=newFamily.value='';
-  newLinkedStructureEn.value='';newLinkedStructureZh.value='';
-  newLinkedStructureKey.checked=true;newLinkedStructureReplace.checked=true;
-  updateFamilyHint();save()
+  let w=migrateWord({id:'w'+now,en,zh,note:newNote.value.trim(),family:family||'',status:'active',due:eDue,history:[],mastery:{e2z:'unstable',z2e:'unstable'},review:{e2z:{due:eDue,level:0,fastStreak:0,lastTs:0},z2e:{due:zDue,level:0,fastStreak:0,lastTs:0}}});
+  state.words.push(w);if(family)attachExactRoot(family);
+  if(collEn&&collZh){let s=migrateStructure({id:'s'+now+'_'+Math.random().toString(36).slice(2,5),title:collEn,zh:collZh,example:'',linkedWordId:w.id,linkedWordEn:w.en,priority:newLinkedStructureKey?.checked?'key':'normal',replaceE2Z:!!newLinkedStructureReplace?.checked,source:'word_entry',mastery:'unstable',review:{due:eDue,level:0,fastStreak:0,lastTs:0},history:[]},state.structures.length,now);state.structures.push(s)}
+  newEn.value=newZh.value=newNote.value=newFamily.value='';newLinkedStructureEn.value='';newLinkedStructureZh.value='';newLinkedStructureKey.checked=true;newLinkedStructureReplace.checked=true;updateFamilyHint();save()
 };
 
-// 当前本机状态立即经过一次新迁移；云同步时 migrateState 也会对云端旧状态做同样的无损归一化。
+// 升级时先留一份本机快照，再清自动计划缓存；学习记录本身不动。
+if(!state?.meta?.dynamicBudgetReviewCap_v057)safeLocalBackup('pet_checkin_v1_backup_pre_v057_',state);
 state=migrateState(state);
 localStorage.setItem(KEY,JSON.stringify(state));
-/* ===== v0.5.6 首次学习队列：结束 ===== */
+scheduleCloudSync();
+/* ===== v0.5.7 动态 Test 预算 + 限量 Review：结束 ===== */
 
 renderAll();
 document.querySelectorAll('.app>.section').forEach(x=>{let on=x.id==='home';x.hidden=!on;x.classList.toggle('active',on)});
