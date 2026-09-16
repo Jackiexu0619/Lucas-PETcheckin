@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#2563eb">
-<title>Lucas PET 词汇打卡 v0.5.7</title>
+<title>Lucas PET 词汇打卡 v0.5.8</title>
 <link rel="manifest" href="manifest.webmanifest">
 <style>
 :root{--bg:#f5f7fb;--card:#fff;--ink:#172033;--muted:#6b7280;--line:#e5e9f2;--blue:#2563eb;--soft:#eaf2ff;--good:#198754;--warn:#b97900;--bad:#c0392b;--purple:#7c3aed}
@@ -20,7 +20,7 @@
 <body>
 <div class="app">
 <section id="home" class="section active">
-  <h1>PET 打卡</h1><div class="sub">智能每日测试 · 间隔记忆 · 听觉词汇 · 词族 · 固定搭配 <span class="tag">v0.5.7</span></div>
+  <h1>PET 打卡</h1><div class="sub">智能每日测试 · 间隔记忆 · 听觉词汇 · 词族 · 固定搭配 <span class="tag">v0.5.8</span></div>
   <div class="gap"></div>
   <div class="checkinHero">
     <div id="checkinLead" class="checkinLead">Lucas，你已经坚持打卡 <span class="checkinNum" id="checkinDays">—</span> 天了</div>
@@ -41,7 +41,7 @@
 <div id="reasonPanel" class="hidden" style="width:100%;margin-top:14px"><div class="small">给这次慢/错标一个原因（可跳过）：</div><div class="reasonBtns" id="reasonBtns"></div><button class="gray wide" style="margin-top:8px" onclick="finishPendingRecord('')">暂不标记</button></div>
 </div><div id="result" class="card hidden"></div></section>
 
-<section id="review" class="section" hidden><h1>今日复习</h1><div class="sub">Review 是慢复习：每天默认最多 12 个词，只处理已经正式测过、真正到复查日的词；当天安排进正式 Test 的词不提前在 Review 里泄题。同一个词两个方向同时到期仍只出现一次。</div><div id="reviewClearSummary" class="notice" style="margin-top:10px"></div><div class="gap"></div><div class="card"><div class="reviewStudyToolbar"><div><h2 style="margin-bottom:2px">逐词复习</h2><div class="small">每张卡至少停留 5 秒，并且必须先揭晓答案，才能完成并进入下一词。揭晓答案不会自动算作完成复习。</div></div></div><div id="reviewUnified"></div></div></section>
+<section id="review" class="section" hidden><h1>今日复习</h1><div class="sub">Review 是慢复习：每天默认最多 12 个词，只处理已经正式测过、真正到复查日且尚未完成本轮慢复习的词。v0.5.8 会先保留 Review 当日队列，再生成 Test；Test 自动避开这些词及其关联替代搭配。同一个词两个方向同时到期仍只出现一次。</div><div id="reviewClearSummary" class="notice" style="margin-top:10px"></div><div class="gap"></div><div class="card"><div class="reviewStudyToolbar"><div><h2 style="margin-bottom:2px">逐词复习</h2><div class="small">每张卡至少停留 5 秒，并且必须先揭晓答案，才能完成并进入下一词。揭晓答案不会自动算作完成复习。</div></div></div><div id="reviewUnified"></div></div></section>
 
 <section id="words" class="section" hidden><h1>词汇池</h1><div class="sub">家长主要负责录入陌生词；软件负责每日测试内容和间隔复习。两个方向的掌握状态、排期相互独立。</div><div class="gap"></div>
 <div class="card"><h2>今日智能计划</h2><div id="smartPlanInfo" class="sub"></div><div class="gap"></div><div class="small">每天自动 Test 总预算 20 项，英→中 / 中→英不再固定配额。优先：真实到期的未掌握/不稳定 → 首次学习（每天最多 12 项）→ 已掌握维护；当天已经完成的正式测试会从 20 项预算中扣除。</div></div>
@@ -60,7 +60,7 @@
 <section id="history" class="section" hidden><h1>测试记录</h1><div class="sub">保留原始反应时间；人工修正只新增“修正值 / 剔除标记 / 备注”，不会覆盖原始记录。</div><div class="gap"></div><div class="card"><div class="historyFilters"><div><label>搜索项目</label><input id="histSearch" placeholder="单词/搭配英文或中文…" oninput="renderHistory()"></div><div><label>方向</label><select id="histMode" onchange="renderHistory()"><option value="all">全部</option><option value="e2z">英→中</option><option value="z2e">中→英</option><option value="structure_e2z">固定搭配</option></select></div><div><label>结果</label><select id="histResult" onchange="renderHistory()"><option value="all">全部</option><option value="correct">正确</option><option value="slow">慢</option><option value="wrong">错误</option></select></div><div><label>显示</label><select id="histLimit" onchange="renderHistory()"><option value="30">最近30次</option><option value="100">最近100次</option><option value="9999">全部记录</option></select></div></div><div class="gap"></div><div id="historySummary" class="small"></div><div id="historyList"></div></div></section>
 
 <section id="data" class="section" hidden><h1>数据与设置</h1>
-<div class="notice"><b>v0.5.7：快 Test + 限量 Review。</b> 自动 Test 每天总预算 20 项，英→中/中→英动态分配；当天已经完成的正式测试会占用预算，重建计划不会再额外灌满。首次学习每天最多 12 项，新词先英→中、再开放中→英。Review 每天默认最多 12 个词，优先未掌握/不稳定和逾期更久的词；当天正式 Test 已安排/已测试的词不会先在 Review 中出现。若当天状态好，可手动“再复习 5 个”。</div><div class="gap"></div>
+<div class="notice"><b>v0.5.8：Review / Test 分流。</b> 自动 Test 每天总预算仍为 20 项，Review 每天默认最多 12 个词。真正到期且需要慢复习的词会先进入 Review 当日队列，Test 自动避开这些词及其关联替代搭配；当天已经完成 Review 的词也不会再进入当天 Test。Review 不推进正式间隔周期，完成慢复习后会等待下一次正式 Test 重新判定掌握度。</div><div class="gap"></div>
 <div class="card"><h2>v0.3 记忆周期</h2><div class="small">错词：1天后；慢 / 重听 / 发音需练习：2天后；连续快速正确（≤3秒且不重听）：1天 → 3天 → 7天 → 14天 → 30天。任何阶段再错，重新回到1天。英→中与中→英分别计算。</div></div><div class="gap"></div>
 <div class="card"><h2>语音设置</h2><label>英语地区</label><select id="voiceLang"><option value="en-GB">英式英语 en-GB</option><option value="en-US">美式英语 en-US</option></select><div class="gap"></div><label>语速：<span id="rateText">0.90</span></label><input id="voiceRate" type="range" min="0.72" max="1.05" step="0.01" value="0.90"><div class="gap"></div><button class="soft" onclick="testVoice()">试听 persuade</button></div>
 <div class="gap"></div><div class="card"><h2>新增词汇</h2><div class="sub">家长只需录入 Lucas 真正遇到的陌生词。新增后进入“待首次学习”：最早次日开始英→中；中→英必须等英→中至少正式测过一次，并且最早跨一天后开放。</div><div class="gap"></div><div class="row"><input id="newEn" placeholder="English" oninput="updateFamilyHint()"><input id="newZh" placeholder="中文意思"></div><div class="gap"></div><div id="familyHint" class="familyHint neutral">输入英文后，这里会显示词族判断。</div><div class="gap"></div><input id="newNote" placeholder="例句/备注（可选）"><div class="gap"></div><div class="notice"><b>固定搭配（可选）</b><div class="small">只填真正有价值的搭配，不需要每个单词都加。</div><div class="gap"></div><div class="row"><input id="newLinkedStructureEn" placeholder="例如 recommend doing something"><input id="newLinkedStructureZh" placeholder="例如 建议做某事"></div><div class="gap"></div><label class="checkline"><input id="newLinkedStructureKey" type="checkbox" checked>重点 / 易考搭配</label><label class="checkline"><input id="newLinkedStructureReplace" type="checkbox" checked>英→中时优先用这个搭配替代独立单词</label></div><div class="gap"></div><details class="advanced"><summary>高级：手动指定词族（通常不用）</summary><div class="gap"></div><input id="newFamily" placeholder="例如 decorate；留空则由软件判断"></details><div class="gap"></div><button class="primary" onclick="addWord()">加入词汇池</button></div>
@@ -91,7 +91,7 @@ const CLOUD_ENDPOINT='https://gemzboxhkkrfjqresxjt.supabase.co/functions/v1/pet-
 const CLOUD_KEY_STORAGE='pet_checkin_cloud_recovery_key';
 const CLOUD_ENABLED_STORAGE='pet_checkin_cloud_enabled';
 const CLOUD_META_STORAGE='pet_checkin_cloud_meta';
-const APP_VERSION='0.5.7';
+const APP_VERSION='0.5.8';
 let cloudTimer=null,cloudBusy=false,cloudQueued=false,cloudSuppressPush=false,cloudConflictState=null;
 const ROLLING_BACKUP_PREFIXES=[
   'pet_checkin_v1_backup_pre_cloud_autopull_',
@@ -576,7 +576,7 @@ function renderStats(){let dirs=['e2z','z2e'],labels={e2z:'英→中',z2e:'中�
 function testVoice(){let u=new SpeechSynthesisUtterance('persuade');u.lang=state.settings.voiceLang;u.rate=state.settings.voiceRate;speechSynthesis.cancel();speechSynthesis.speak(u)}
 voiceLang.onchange=e=>{state.settings.voiceLang=e.target.value;save()};voiceRate.oninput=e=>{rateText.textContent=e.target.value;state.settings.voiceRate=+e.target.value;localStorage.setItem(KEY,JSON.stringify(state));scheduleCloudSync()};
 function downloadJson(obj,name){let blob=new Blob([JSON.stringify(obj,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),300)}
-function exportData(){downloadJson(state,'PET打卡数据_v0.5.7_'+new Date().toISOString().slice(0,10)+'.json')}
+function exportData(){downloadJson(state,'PET打卡数据_v0.5.8_'+new Date().toISOString().slice(0,10)+'.json')}
 function exportPreUpgradeBackup(){let x=localStorage.getItem(PRE_V053_KEY)||localStorage.getItem(PRE_V050_KEY)||localStorage.getItem(PRE_V030_KEY)||localStorage.getItem(PRE_KEY);if(!x)return alert('当前浏览器里没有升级前快照。');try{let name=localStorage.getItem(PRE_V053_KEY)?'PET打卡_v0.5.3升级前快照.json':localStorage.getItem(PRE_V050_KEY)?'PET打卡_v0.5升级前快照.json':localStorage.getItem(PRE_V030_KEY)?'PET打卡_v0.3升级前快照.json':'PET打卡_v0.2升级前快照.json';downloadJson(JSON.parse(x),name)}catch(e){alert('升级前快照损坏，无法导出')}}
 function importData(e){let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{let incoming=JSON.parse(r.result);requireLocalSafetyBackup('pet_checkin_v1_backup_pre_import_',state);state=migrateState(incoming);save();alert('导入并迁移成功：原有词汇、历史、每日计划已保留。')}catch(x){alert('导入失败：'+x.message)}finally{e.target.value=''}};r.readAsText(f)}
 function resetAll(){if(confirm('确定清空所有训练记录吗？这会保留升级前快照，但会重置当前数据。')){state=init();save()}}
@@ -947,6 +947,138 @@ state=migrateState(state);
 localStorage.setItem(KEY,JSON.stringify(state));
 scheduleCloudSync();
 /* ===== v0.5.7 动态 Test 预算 + 限量 Review：结束 ===== */
+
+
+/* ===== v0.5.8 Review/Test 分流修复：开始 ===== */
+// 原则：Review 是“慢复习”，Test 是“正式检测”。
+// 先为 Review 留出当天名额，再让 Test 从剩余项目中选；Review 本身不推进正式间隔周期。
+const migrateState_v058_base=migrateState;
+migrateState=function(s){
+  s=migrateState_v058_base(s);
+  s.meta=s.meta||{};
+  if(!s.meta.reviewTestSplit_v058){
+    // smartPlans 是派生缓存，升级时清一次即可；词汇、历史、掌握度和复习排期不动。
+    s.smartPlans={};
+    s.meta.reviewTestSplit_v058=Date.now();
+  }
+  s.version=APP_VERSION;
+  return s
+};
+
+function reviewDirSeenAfterLastFormalTest(w,dir){
+  let seen=String(w.review?.[dir]?.seenDate||'');
+  let lastTs=+w.review?.[dir]?.lastTs||0;
+  if(!seen||!lastTs)return false;
+  return seen>localDateKey(new Date(lastTs))
+}
+function wordStillNeedsSlowReview(w,now=Date.now()){
+  let dirs=dueReviewDirs(w,now);
+  if(!dirs.length)return false;
+  // 只要有一个当前到期方向，自上次正式 Test 后还没做过慢复习，就仍属于 Review 候选。
+  return dirs.some(dir=>!reviewDirSeenAfterLastFormalTest(w,dir))
+}
+function reviewReservationWeakRank(w,now=Date.now()){
+  let dirs=dueReviewDirs(w,now);
+  if(!dirs.length)return 9;
+  return Math.min(...dirs.map(d=>w.mastery?.[d]==='unmastered'?0:w.mastery?.[d]==='unstable'?1:2))
+}
+function reviewReservationDueTs(w,now=Date.now()){
+  let dirs=dueReviewDirs(w,now);
+  return dirs.length?Math.min(...dirs.map(d=>+w.review?.[d]?.due||0)):Number.MAX_SAFE_INTEGER
+}
+function reviewReservationCandidates(dateKey=localDateKey(),now=Date.now()){
+  let tested=testedWordIdsOnDate(dateKey);
+  return state.words.filter(w=>
+    !tested.has(w.id)&&wordStillNeedsSlowReview(w,now)
+  ).sort((a,b)=>{
+    let ra=reviewReservationWeakRank(a,now),rb=reviewReservationWeakRank(b,now);
+    if(ra!==rb)return ra-rb;
+    let da=reviewReservationDueTs(a,now),db=reviewReservationDueTs(b,now);
+    if(da!==db)return da-db;
+    return String(a.en).localeCompare(String(b.en))
+  })
+}
+function reviewQueueWordsForDay(dateKey=localDateKey(),now=Date.now()){
+  let slots=reviewSlotsLeft(dateKey);
+  return reviewReservationCandidates(dateKey,now).slice(0,slots)
+}
+function reviewBlockedWordIdsForTest(dateKey=localDateKey(),now=Date.now()){
+  // 当前还没做完的 Review 队列 + 今天已经完成 Review 的词，都不能再进今天 Test。
+  let set=new Set(reviewQueueWordsForDay(dateKey,now).map(w=>w.id));
+  reviewedWordIdsOnDate(dateKey).forEach(id=>set.add(id));
+  return set
+}
+
+// Test 的“真正到期词”候选先剔除 Review 当日保留词。
+const smartCandidates_v058_base=smartCandidates;
+smartCandidates=function(dateKey,dir){
+  let blocked=reviewBlockedWordIdsForTest(dateKey,tsForDateKey(dateKey,false));
+  return smartCandidates_v058_base(dateKey,dir).filter(w=>!blocked.has(w.id))
+};
+
+// 关联到 Review 保留词的替代固定搭配也不能变相进入 Test。
+const structureCandidates_v058_base=structureCandidates;
+structureCandidates=function(dateKey){
+  let blocked=reviewBlockedWordIdsForTest(dateKey,tsForDateKey(dateKey,false));
+  return structureCandidates_v058_base(dateKey).filter(s=>!s.linkedWordId||!blocked.has(s.linkedWordId))
+};
+
+// Review 不再依据“Test 已计划”反向清空；它直接使用自己先保留的当日队列。
+allPendingReviewWordsUnified=function(now=Date.now()){
+  let dateKey=localDateKey(new Date(now));
+  return reviewQueueWordsForDay(dateKey,now)
+};
+pendingReviewWordsUnified=function(now=Date.now()){
+  return allPendingReviewWordsUnified(now)
+};
+pendingReviewCount=function(){return pendingReviewWordsUnified().length};
+reviewBacklogCount=function(now=Date.now()){
+  let dateKey=localDateKey(new Date(now)),slots=reviewSlotsLeft(dateKey);
+  return Math.max(0,reviewReservationCandidates(dateKey,now).length-slots)
+};
+
+const renderReview_v058_base=renderReview;
+renderReview=function(){
+  renderReview_v058_base();
+  let queue=pendingReviewWordsUnified(),back=reviewBacklogCount(),limit=reviewDailyLimit(),done=reviewedWordIdsOnDate().size;
+  let summary=document.getElementById('reviewClearSummary');
+  if(summary){
+    summary.innerHTML=queue.length
+      ?`今日 Review 还剩 <b>${queue.length}</b> 个｜今日已完成 <b>${done}</b> 个｜今日上限 <b>${limit}</b> 个${back?`｜候补 <b>${back}</b> 个`:''}。<br><span class="small">v0.5.8：Review 先保留当日慢复习词，Test 自动避开；完成 Review 不改变正式间隔排期，后续仍要通过正式 Test 重新判定。</span>${back?`<div class="gap"></div><button class="soft" onclick="addReviewExtraFive()">今天状态好，再复习 5 个</button>`:''}`
+      :back
+        ?`✅ 今日 Review 已达到 <b>${limit}</b> 个上限；还有 <b>${back}</b> 个候补。<div class="gap"></div><button class="soft" onclick="addReviewExtraFive()">今天状态好，再复习 5 个</button>`
+        :`✅ <b>今天没有待处理的 Review。</b><br><span class="small">若某词已经完成慢复习但正式复查仍到期，它会回到后续正式 Test，而不会每天重复只做 Review。</span>`
+  }
+};
+
+const renderHome_v058_base=renderHome;
+renderHome=function(){
+  renderHome_v058_base();
+  let reviewWords=pendingReviewWordsUnified(),reviewPending=reviewWords.length,reviewBack=reviewBacklogCount();
+  let rc=reviewModeCounts(reviewWords);
+  reviewPreview.innerHTML=reviewPending
+    ?`<div class="sub">今日 Review <b>${reviewPending}</b> 个${reviewBack?`｜候补 <b>${reviewBack}</b> 个`:''}。<br><span class="small">当前队列：英→中形式 ${rc.e2z} 个｜中→英形式 ${rc.z2e} 个；这些词已从今日 Test 自动分流出去。</span></div>`
+    :reviewBack
+      ?`<div class="sub">✅ 今日默认 Review 名额已完成；候补 <b>${reviewBack}</b> 个，也可手动再加 5 个。</div>`
+      :'<div class="sub">✅ 今天没有待处理的 Review。</div>';
+  updateTaskNavDots()
+};
+
+const syncTestSourceUI_v058_base=syncTestSourceUI;
+syncTestSourceUI=function(){
+  syncTestSourceUI_v058_base();
+  if(testSource?.value==='smart'){
+    let n=reviewQueueWordsForDay(localDateKey()).length;
+    if(n)dailyInfo.innerHTML+=`<br><span class="small">另有 ${n} 个词已保留给今日 Review，本轮 Test 不会重复抽到。</span>`
+  }
+};
+
+// 让所有后续云端拉取/恢复也经过 v0.5.8 迁移；当前本机立即迁移一次。
+state=migrateState(state);
+localStorage.setItem(KEY,JSON.stringify(state));
+scheduleCloudSync();
+/* ===== v0.5.8 Review/Test 分流修复：结束 ===== */
+
 
 renderAll();
 document.querySelectorAll('.app>.section').forEach(x=>{let on=x.id==='home';x.hidden=!on;x.classList.toggle('active',on)});
