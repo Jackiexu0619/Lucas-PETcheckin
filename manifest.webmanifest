@@ -5,5 +5,5 @@
   "display": "standalone",
   "background_color": "#f5f7fb",
   "theme_color": "#2563eb",
-  "description": "Lucas PET Review→Test学习闭环、词汇按加入时间/掌握程度排序、加入时间显示、人工状态同步调整复习测试排期、真正新词优先、双方向完整掌握毕业、词性/词族/固定搭配、云同步安全备份与反应速度统计"
+  "description": "Lucas PET Review→Test学习闭环、Test单轮硬去重、错题非正式纠正复测、词汇按加入时间/掌握程度排序、人工状态同步调整排期、真正新词优先、双方向完整掌握毕业、词性/词族/固定搭配、云同步安全备份"
 }

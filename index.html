@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#2563eb">
-<title>Lucas PET 词汇打卡 v0.5.10</title>
+<title>Lucas PET 词汇打卡 v0.5.10.1</title>
 <link rel="manifest" href="manifest.webmanifest">
 <style>
 :root{--bg:#f5f7fb;--card:#fff;--ink:#172033;--muted:#6b7280;--line:#e5e9f2;--blue:#2563eb;--soft:#eaf2ff;--good:#198754;--warn:#b97900;--bad:#c0392b;--purple:#7c3aed}
@@ -20,7 +20,7 @@
 <body>
 <div class="app">
 <section id="home" class="section active">
-  <h1>PET 打卡</h1><div class="sub">智能每日测试 · 间隔记忆 · 听觉词汇 · 词族 · 固定搭配 <span class="tag">v0.5.10</span></div>
+  <h1>PET 打卡</h1><div class="sub">智能每日测试 · 间隔记忆 · 听觉词汇 · 词族 · 固定搭配 <span class="tag">v0.5.10.1</span></div>
   <div class="gap"></div>
   <div class="checkinHero">
     <div id="checkinLead" class="checkinLead">Lucas，你已经坚持打卡 <span class="checkinNum" id="checkinDays">—</span> 天了</div>
@@ -60,7 +60,7 @@
 <section id="history" class="section" hidden><h1>测试记录</h1><div class="sub">保留原始反应时间；人工修正只新增“修正值 / 剔除标记 / 备注”，不会覆盖原始记录。</div><div class="gap"></div><div class="card"><div class="historyFilters"><div><label>搜索项目</label><input id="histSearch" placeholder="单词/搭配英文或中文…" oninput="renderHistory()"></div><div><label>方向</label><select id="histMode" onchange="renderHistory()"><option value="all">全部</option><option value="e2z">英→中</option><option value="z2e">中→英</option><option value="structure_e2z">固定搭配</option></select></div><div><label>结果</label><select id="histResult" onchange="renderHistory()"><option value="all">全部</option><option value="correct">正确</option><option value="slow">慢</option><option value="wrong">错误</option></select></div><div><label>显示</label><select id="histLimit" onchange="renderHistory()"><option value="30">最近30次</option><option value="100">最近100次</option><option value="9999">全部记录</option></select></div></div><div class="gap"></div><div id="historySummary" class="small"></div><div id="historyList"></div></div></section>
 
 <section id="data" class="section" hidden><h1>数据与设置</h1>
-<div class="notice"><b>v0.5.10：词汇管理与人工状态排期优化。</b> 词汇页默认最新加入优先，可按加入时间 / 掌握程度排序，并显示每个词的加入时间。手动修改英→中 / 中→英状态会立即调整对应方向排期：未掌握立即回到重点；认识但不稳定最迟 2 天内复查；已掌握至少 7 天后进入低频维护，但不等于完整毕业。Review/Test 主闭环和双向毕业规则保持不变。</div><div class="gap"></div>
+<div class="notice"><b>v0.5.10.1：Test 硬去重 + 错题纠正复测。</b> 每轮正式 Test 开始前按 wordId / structureId 再做一次最终去重，同一项目一轮只出现一次；正式答错的项目在整轮结束后提供一次“纠错复测”，纠错结果不写入正式 Test、不占每日 20 题、不推进复习周期，原错题仍按既定下一复查日正式再测。v0.5.10 的词汇排序、加入时间与人工状态排期逻辑保持不变。</div><div class="gap"></div>
 <div class="card"><h2>v0.3 记忆周期</h2><div class="small">错词：1天后；慢 / 重听 / 发音需练习：2天后；连续快速正确（≤3秒且不重听）：1天 → 3天 → 7天 → 14天 → 30天。任何阶段再错，重新回到1天。英→中与中→英分别计算。</div></div><div class="gap"></div>
 <div class="card"><h2>语音设置</h2><label>英语地区</label><select id="voiceLang"><option value="en-GB">英式英语 en-GB</option><option value="en-US">美式英语 en-US</option></select><div class="gap"></div><label>语速：<span id="rateText">0.90</span></label><input id="voiceRate" type="range" min="0.72" max="1.05" step="0.01" value="0.90"><div class="gap"></div><button class="soft" onclick="testVoice()">试听 persuade</button></div>
 <div class="gap"></div><div class="card"><h2>新增词汇</h2><div class="sub">家长只录入 Lucas 真正遇到的陌生词，并按本次实际语境标注词性。新增词最早次日先进入 Review 学习；Review 完成后的下一学习日才进入正式 Test。</div><div class="gap"></div><div class="row"><input id="newEn" placeholder="English" oninput="updateFamilyHint()"><input id="newZh" placeholder="中文意思"></div><div class="gap"></div><label>词性（按本次实际语境）</label><select id="newPos"><option value="">请选择词性</option><option value="n.">n. 名词</option><option value="v.">v. 动词</option><option value="adj.">adj. 形容词</option><option value="adv.">adv. 副词</option><option value="prep.">prep. 介词</option><option value="conj.">conj. 连词</option><option value="pron.">pron. 代词</option><option value="det.">det. 限定词</option><option value="phr.">phr. 短语</option><option value="prop. n.">prop. n. 专有名词</option><option value="n./v.">n./v. 名词/动词</option></select><div class="gap"></div><div id="familyHint" class="familyHint neutral">输入英文后，这里会显示词族判断。</div><div class="gap"></div><input id="newNote" placeholder="例句/备注（可选）"><div class="gap"></div><div class="notice"><b>固定搭配（可选）</b><div class="small">只填真正有价值的搭配，不需要每个单词都加。</div><div class="gap"></div><div class="row"><input id="newLinkedStructureEn" placeholder="例如 recommend doing something"><input id="newLinkedStructureZh" placeholder="例如 建议做某事"></div><div class="gap"></div><label class="checkline"><input id="newLinkedStructureKey" type="checkbox" checked>重点 / 易考搭配</label><label class="checkline"><input id="newLinkedStructureReplace" type="checkbox" checked>英→中时优先用这个搭配替代独立单词</label></div><div class="gap"></div><details class="advanced"><summary>高级：手动指定词族（通常不用）</summary><div class="gap"></div><input id="newFamily" placeholder="例如 decorate；留空则由软件判断"></details><div class="gap"></div><button class="primary" onclick="addWord()">加入词汇池</button></div>
@@ -91,7 +91,7 @@ const CLOUD_ENDPOINT='https://gemzboxhkkrfjqresxjt.supabase.co/functions/v1/pet-
 const CLOUD_KEY_STORAGE='pet_checkin_cloud_recovery_key';
 const CLOUD_ENABLED_STORAGE='pet_checkin_cloud_enabled';
 const CLOUD_META_STORAGE='pet_checkin_cloud_meta';
-const APP_VERSION='0.5.10';
+const APP_VERSION='0.5.10.1';
 let cloudTimer=null,cloudBusy=false,cloudQueued=false,cloudSuppressPush=false,cloudConflictState=null;
 const ROLLING_BACKUP_PREFIXES=[
   'pet_checkin_v1_backup_pre_cloud_autopull_',
@@ -576,7 +576,7 @@ function renderStats(){let dirs=['e2z','z2e'],labels={e2z:'英→中',z2e:'中�
 function testVoice(){let u=new SpeechSynthesisUtterance('persuade');u.lang=state.settings.voiceLang;u.rate=state.settings.voiceRate;speechSynthesis.cancel();speechSynthesis.speak(u)}
 voiceLang.onchange=e=>{state.settings.voiceLang=e.target.value;save()};voiceRate.oninput=e=>{rateText.textContent=e.target.value;state.settings.voiceRate=+e.target.value;localStorage.setItem(KEY,JSON.stringify(state));scheduleCloudSync()};
 function downloadJson(obj,name){let blob=new Blob([JSON.stringify(obj,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),300)}
-function exportData(){downloadJson(state,'PET打卡数据_v0.5.10_'+new Date().toISOString().slice(0,10)+'.json')}
+function exportData(){downloadJson(state,'PET打卡数据_v0.5.10.1_'+new Date().toISOString().slice(0,10)+'.json')}
 function exportPreUpgradeBackup(){let x=localStorage.getItem(PRE_V053_KEY)||localStorage.getItem(PRE_V050_KEY)||localStorage.getItem(PRE_V030_KEY)||localStorage.getItem(PRE_KEY);if(!x)return alert('当前浏览器里没有升级前快照。');try{let name=localStorage.getItem(PRE_V053_KEY)?'PET打卡_v0.5.3升级前快照.json':localStorage.getItem(PRE_V050_KEY)?'PET打卡_v0.5升级前快照.json':localStorage.getItem(PRE_V030_KEY)?'PET打卡_v0.3升级前快照.json':'PET打卡_v0.2升级前快照.json';downloadJson(JSON.parse(x),name)}catch(e){alert('升级前快照损坏，无法导出')}}
 function importData(e){let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{let incoming=JSON.parse(r.result);requireLocalSafetyBackup('pet_checkin_v1_backup_pre_import_',state);state=migrateState(incoming);save();alert('导入并迁移成功：原有词汇、历史、每日计划已保留。')}catch(x){alert('导入失败：'+x.message)}finally{e.target.value=''}};r.readAsText(f)}
 function resetAll(){if(confirm('确定清空所有训练记录吗？这会保留升级前快照，但会重置当前数据。')){state=init();save()}}
@@ -1536,6 +1536,118 @@ renderWords=function(){
 };
 state=migrateState(state);state.version=APP_VERSION;localStorage.setItem(KEY,JSON.stringify(state));
 /* ===== v0.5.10 词汇排序 + 加入时间 + 人工状态排期：结束 ===== */
+
+
+/* ===== v0.5.10.1 Test 硬去重 + 错题纠正复测：开始 ===== */
+function v05101ItemKey(item){
+  if(!item)return '';
+  return item.itemType==='structure'
+    ?'s:'+(item.structureId||item.id||item.en||'')
+    :'w:'+(item.wordId||item.id||item.en||'')
+}
+function v05101DedupeItems(items){
+  let seen=new Set(),out=[];
+  for(const item of (Array.isArray(items)?items:[])){
+    let key=v05101ItemKey(item);
+    if(!key||seen.has(key))continue;
+    seen.add(key);out.push(item)
+  }
+  return out
+}
+// 最后一层保险：不管上游智能计划如何重算，同一轮正式 Test 里同一个项目只保留一次。
+const poolBySource_v05101_base=poolBySource;
+poolBySource=function(source,dir){
+  return v05101DedupeItems(poolBySource_v05101_base(source,dir))
+};
+
+let correctionMode_v05101=false;
+let correctionRecords_v05101=[];
+let correctionSourceWrong_v05101=[];
+
+const nextQ_v05101_base=nextQ;
+nextQ=function(){
+  nextQ_v05101_base();
+  if(correctionMode_v05101&&cur>=0&&cur<session.length){
+    let item=session[cur],isStruct=item?.itemType==='structure';
+    qIndex.textContent=`纠错复测 ${cur+1} / ${session.length}${isStruct?' · 固定搭配':''}`;
+  }
+};
+
+const mark_v05101_base=mark;
+mark=function(res){
+  if(!correctionMode_v05101)return mark_v05101_base(res);
+  if(frozenRt===null)freezeAnswer();
+  let item=session[cur],isStruct=item?.itemType==='structure';
+  correctionRecords_v05101.push({
+    itemType:isStruct?'structure':'word',
+    wordId:isStruct?null:item?.wordId,
+    structureId:isStruct?item?.structureId:null,
+    en:item?.en||'',
+    mode:isStruct?'structure_e2z':currentMode,
+    result:res,
+    rt:Number.isFinite(+frozenRt)?+frozenRt.toFixed(2):0
+  });
+  gradeBtns.classList.add('hidden');
+  reasonPanel.classList.add('hidden');
+  nextQ()
+};
+
+function startCorrectionRound_v05101(){
+  let wrong=(records||[]).filter(x=>effectiveResult(x)==='wrong');
+  correctionSourceWrong_v05101=[...wrong];
+  correctionRecords_v05101=[];
+  let items=wrong.map(x=>{
+    if(x.itemType==='structure'){
+      let s=structureById(x.structureId);
+      return s?structureTestItem(s):null
+    }
+    let w=wordById(x.wordId);
+    return w?wordTestItem(w):null
+  }).filter(Boolean);
+  items=v05101DedupeItems(items);
+  if(!items.length)return;
+  correctionMode_v05101=true;
+  currentMode=wrong.some(x=>x.itemType==='structure'||x.mode==='e2z')?'e2z':'z2e';
+  mode.value=currentMode;
+  session=[...items].sort(()=>Math.random()-.5);
+  cur=-1;
+  pendingRecord=null;
+  result.classList.add('hidden');
+  testCard.classList.remove('hidden');
+  nextQ()
+}
+
+function finishCorrection_v05101(){
+  correctionMode_v05101=false;
+  testCard.classList.add('hidden');
+  result.classList.remove('hidden');
+  let total=correctionRecords_v05101.length;
+  let pass=correctionRecords_v05101.filter(x=>x.result!=='wrong').length;
+  let stillWrong=correctionRecords_v05101.filter(x=>x.result==='wrong');
+  let rows=correctionRecords_v05101.map(x=>`<tr><td><b>${esc(x.en)}</b>${x.itemType==='structure'?'<div class="small">固定搭配</div>':''}</td><td class="res-${x.result}">${resultLabel(x.result)}</td><td>${Number(x.rt||0).toFixed(1)}s</td></tr>`).join('');
+  result.innerHTML=`<h2>错题纠正复测完成</h2>
+    <div class="notice"><b>这轮不是正式 Test。</b> 不占每日 20 题、不改掌握状态、不推进间隔周期；刚才正式答错的项目仍会按原计划在下一复查日再次正式测试。</div>
+    <div class="gap"></div>
+    <div class="grid"><div class="metric"><div class="k">本次纠正通过</div><div class="v">${pass}/${total}</div></div><div class="metric"><div class="k">仍答错</div><div class="v">${stillWrong.length}</div></div></div>
+    <div style="overflow-x:auto"><table class="resultTable"><thead><tr><th>项目</th><th>纠错结果</th><th>反应</th></tr></thead><tbody>${rows}</tbody></table></div>
+    ${stillWrong.length?`<div class="gap"></div><div class="warning">仍错：${stillWrong.map(x=>esc(x.en)).join('、')}。今天不再连续刷，避免短时记忆造成假掌握；下一复查日继续正式验证。</div>`:'<div class="gap"></div><div class="notice">✅ 本轮错项都已完成一次即时纠正；下一复查日仍会正式验证。</div>'}
+    <div class="gap"></div><button class="soft wide" onclick="openHistoryFromResult()">查看正式测试记录</button>`;
+}
+
+const finish_v05101_base=finish;
+finish=function(){
+  if(correctionMode_v05101)return finishCorrection_v05101();
+  finish_v05101_base();
+  let wrong=(records||[]).filter(x=>effectiveResult(x)==='wrong');
+  if(wrong.length){
+    result.insertAdjacentHTML('beforeend',
+      `<div class="gap"></div><div class="notice"><b>下一步：错题纠正复测 ${wrong.length} 题。</b><br><span class="small">只做一次即时纠正，不计入正式 Test；明天/下一复查日仍照常正式再测。</span></div><div class="gap"></div><button class="primary wide" onclick="startCorrectionRound_v05101()">开始错题纠正复测（${wrong.length}题）</button>`)
+  }
+};
+
+// 旧的“错题再测”入口统一改成非正式纠错，避免误写第二条正式记录。
+retestWrong=function(){startCorrectionRound_v05101()};
+/* ===== v0.5.10.1 Test 硬去重 + 错题纠正复测：结束 ===== */
 
 renderAll();
 document.querySelectorAll('.app>.section').forEach(x=>{let on=x.id==='home';x.hidden=!on;x.classList.toggle('active',on)});
