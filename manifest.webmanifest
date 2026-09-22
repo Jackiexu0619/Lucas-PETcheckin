@@ -5,5 +5,5 @@
   "display": "standalone",
   "background_color": "#f5f7fb",
   "theme_color": "#2563eb",
-  "description": "Lucas PET Review→Test学习闭环、智能Test单轮完成、跨轮硬去重、iPad云同步网络通道修复、同步竞态保护、错题非正式纠正复测、词汇排序与学习排期"
+  "description": "Lucas PET Review→Test学习闭环、智能Test单轮完成、跨轮硬去重、Supabase双通道云同步、同步竞态保护、错题非正式纠正复测、词汇排序与学习排期"
 }

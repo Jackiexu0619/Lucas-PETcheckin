@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#2563eb">
-<title>Lucas PET 词汇打卡 v0.5.10.3</title>
+<title>Lucas PET 词汇打卡 v0.5.10.4</title>
 <link rel="manifest" href="manifest.webmanifest">
 <style>
 :root{--bg:#f5f7fb;--card:#fff;--ink:#172033;--muted:#6b7280;--line:#e5e9f2;--blue:#2563eb;--soft:#eaf2ff;--good:#198754;--warn:#b97900;--bad:#c0392b;--purple:#7c3aed}
@@ -20,7 +20,7 @@
 <body>
 <div class="app">
 <section id="home" class="section active">
-  <h1>PET 打卡</h1><div class="sub">智能每日测试 · 间隔记忆 · 听觉词汇 · 词族 · 固定搭配 <span class="tag">v0.5.10.3</span></div>
+  <h1>PET 打卡</h1><div class="sub">智能每日测试 · 间隔记忆 · 听觉词汇 · 词族 · 固定搭配 <span class="tag">v0.5.10.4</span></div>
   <div class="gap"></div>
   <div class="checkinHero">
     <div id="checkinLead" class="checkinLead">Lucas，你已经坚持打卡 <span class="checkinNum" id="checkinDays">—</span> 天了</div>
@@ -60,11 +60,11 @@
 <section id="history" class="section" hidden><h1>测试记录</h1><div class="sub">保留原始反应时间；人工修正只新增“修正值 / 剔除标记 / 备注”，不会覆盖原始记录。</div><div class="gap"></div><div class="card"><div class="historyFilters"><div><label>搜索项目</label><input id="histSearch" placeholder="单词/搭配英文或中文…" oninput="renderHistory()"></div><div><label>方向</label><select id="histMode" onchange="renderHistory()"><option value="all">全部</option><option value="e2z">英→中</option><option value="z2e">中→英</option><option value="structure_e2z">固定搭配</option></select></div><div><label>结果</label><select id="histResult" onchange="renderHistory()"><option value="all">全部</option><option value="correct">正确</option><option value="slow">慢</option><option value="wrong">错误</option></select></div><div><label>显示</label><select id="histLimit" onchange="renderHistory()"><option value="30">最近30次</option><option value="100">最近100次</option><option value="9999">全部记录</option></select></div></div><div class="gap"></div><div id="historySummary" class="small"></div><div id="historyList"></div></div></section>
 
 <section id="data" class="section" hidden><h1>数据与设置</h1>
-<div class="notice"><b>v0.5.10.3：修复 iPad 云同步网络通道。</b> 保留 v0.5.10.2 的智能 Test 单轮闭环、跨轮硬去重和同步竞态保护；本版让 Service Worker 只处理本站 GET/页面缓存，不再拦截 Supabase 云端 POST 请求，避免 iPad/Safari 出现 FetchEvent.respondWith / TypeError: Load failed。</div><div class="gap"></div>
+<div class="notice"><b>v0.5.10.4：云同步双通道容错。</b> 保留单轮 Test、跨轮硬去重、同步竞态保护和 Service Worker 修复；云同步现在会在 Supabase 两种官方 Edge Function 地址之间自动切换，主通道网络失败时自动改走备用通道，并记住可用通道。</div><div class="gap"></div>
 <div class="card"><h2>v0.3 记忆周期</h2><div class="small">错词：1天后；慢 / 重听 / 发音需练习：2天后；连续快速正确（≤3秒且不重听）：1天 → 3天 → 7天 → 14天 → 30天。任何阶段再错，重新回到1天。英→中与中→英分别计算。</div></div><div class="gap"></div>
 <div class="card"><h2>语音设置</h2><label>英语地区</label><select id="voiceLang"><option value="en-GB">英式英语 en-GB</option><option value="en-US">美式英语 en-US</option></select><div class="gap"></div><label>语速：<span id="rateText">0.90</span></label><input id="voiceRate" type="range" min="0.72" max="1.05" step="0.01" value="0.90"><div class="gap"></div><button class="soft" onclick="testVoice()">试听 persuade</button></div>
 <div class="gap"></div><div class="card"><h2>新增词汇</h2><div class="sub">家长只录入 Lucas 真正遇到的陌生词，并按本次实际语境标注词性。新增词最早次日先进入 Review 学习；Review 完成后的下一学习日才进入正式 Test。</div><div class="gap"></div><div class="row"><input id="newEn" placeholder="English" oninput="updateFamilyHint()"><input id="newZh" placeholder="中文意思"></div><div class="gap"></div><label>词性（按本次实际语境）</label><select id="newPos"><option value="">请选择词性</option><option value="n.">n. 名词</option><option value="v.">v. 动词</option><option value="adj.">adj. 形容词</option><option value="adv.">adv. 副词</option><option value="prep.">prep. 介词</option><option value="conj.">conj. 连词</option><option value="pron.">pron. 代词</option><option value="det.">det. 限定词</option><option value="phr.">phr. 短语</option><option value="prop. n.">prop. n. 专有名词</option><option value="n./v.">n./v. 名词/动词</option></select><div class="gap"></div><div id="familyHint" class="familyHint neutral">输入英文后，这里会显示词族判断。</div><div class="gap"></div><input id="newNote" placeholder="例句/备注（可选）"><div class="gap"></div><div class="notice"><b>固定搭配（可选）</b><div class="small">只填真正有价值的搭配，不需要每个单词都加。</div><div class="gap"></div><div class="row"><input id="newLinkedStructureEn" placeholder="例如 recommend doing something"><input id="newLinkedStructureZh" placeholder="例如 建议做某事"></div><div class="gap"></div><label class="checkline"><input id="newLinkedStructureKey" type="checkbox" checked>重点 / 易考搭配</label><label class="checkline"><input id="newLinkedStructureReplace" type="checkbox" checked>英→中时优先用这个搭配替代独立单词</label></div><div class="gap"></div><details class="advanced"><summary>高级：手动指定词族（通常不用）</summary><div class="gap"></div><input id="newFamily" placeholder="例如 decorate；留空则由软件判断"></details><div class="gap"></div><button class="primary" onclick="addWord()">加入词汇池</button></div>
-<div class="gap"></div><div class="card"><h2>云端自动备份 <span class="tag">v0.5</span></h2>
+<div class="gap"></div><div class="card"><h2>云端自动备份 <span class="tag">v0.6</span></h2>
 <div id="cloudStatus" class="cloudStatus small"><span id="cloudDot" class="cloudDot"></span><span id="cloudStatusText">尚未启用</span></div>
 <div class="gap"></div><div id="cloudRecoveryWrap" class="hidden"><div class="small">恢复码（请单独保存在 iCloud Drive / 文件 App / 密码管理器。只要保留这串码，即使 iPad 本地数据清空，也能从云端恢复。）</div><div class="gap"></div><div id="cloudRecoveryCode" class="cloudCode"></div><div class="gap"></div><div class="row"><button class="soft" onclick="copyRecoveryCode()">复制恢复码</button><button class="gray" onclick="downloadRecoveryCode()">下载恢复码.txt</button></div></div>
 <div class="gap"></div><div class="row"><button id="cloudEnableBtn" class="good" onclick="enableCloudSync()">启用云端备份</button><button id="cloudSyncBtn" class="soft hidden" onclick="cloudSmartSync(true)">立即同步</button></div>
@@ -87,11 +87,15 @@ const PRE_KEY='pet_checkin_v1_backup_pre_v020';
 const PRE_V030_KEY='pet_checkin_v1_backup_pre_v030';
 const PRE_V050_KEY='pet_checkin_v1_backup_pre_v050';
 const PRE_V053_KEY='pet_checkin_v1_backup_pre_v053';
-const CLOUD_ENDPOINT='https://gemzboxhkkrfjqresxjt.supabase.co/functions/v1/pet-sync';
+const CLOUD_ENDPOINTS=[
+  'https://gemzboxhkkrfjqresxjt.supabase.co/functions/v1/pet-sync',
+  'https://gemzboxhkkrfjqresxjt.functions.supabase.co/pet-sync'
+];
+const CLOUD_ENDPOINT_PREF_STORAGE='pet_checkin_cloud_endpoint_pref';
 const CLOUD_KEY_STORAGE='pet_checkin_cloud_recovery_key';
 const CLOUD_ENABLED_STORAGE='pet_checkin_cloud_enabled';
 const CLOUD_META_STORAGE='pet_checkin_cloud_meta';
-const APP_VERSION='0.5.10.3';
+const APP_VERSION='0.5.10.4';
 let cloudTimer=null,cloudBusy=false,cloudQueued=false,cloudSuppressPush=false,cloudConflictState=null;
 const ROLLING_BACKUP_PREFIXES=[
   'pet_checkin_v1_backup_pre_cloud_autopull_',
@@ -115,7 +119,59 @@ function setCloudStatus(kind,text){let d=document.getElementById('cloudDot'),t=d
 function saveCloudMeta(x){localStorage.setItem(CLOUD_META_STORAGE,JSON.stringify({...cloudMeta(),...x}))}
 function cloudMeta(){try{return JSON.parse(localStorage.getItem(CLOUD_META_STORAGE)||'{}')}catch(e){return{}}}
 async function hashPayload(payload){let bytes=new TextEncoder().encode(JSON.stringify(payload)),digest=await crypto.subtle.digest('SHA-256',bytes);return Array.from(new Uint8Array(digest)).map(b=>b.toString(16).padStart(2,'0')).join('')}
-async function cloudRequest(action,extra={},keyOverride=null){let key=keyOverride||cloudKey();if(!key)throw new Error('没有恢复码');let r=await fetch(CLOUD_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action,recovery_key:key,...extra})});let j=await r.json().catch(()=>({}));if(!r.ok||!j.ok){let e=new Error(j.error||('HTTP '+r.status));e.status=r.status;e.data=j;throw e}return j}
+async function cloudRequest(action,extra={},keyOverride=null){
+  let key=keyOverride||cloudKey();
+  if(!key)throw new Error('没有恢复码');
+
+  const body=JSON.stringify({action,recovery_key:key,...extra});
+  const preferred=localStorage.getItem(CLOUD_ENDPOINT_PREF_STORAGE)||'';
+  const endpoints=[preferred,...CLOUD_ENDPOINTS].filter((v,i,a)=>v&&a.indexOf(v)===i);
+  const transportErrors=[];
+
+  for(const endpoint of endpoints){
+    const controller=new AbortController();
+    const timer=setTimeout(()=>controller.abort(),12000);
+    try{
+      const r=await fetch(endpoint,{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body,
+        cache:'no-store',
+        signal:controller.signal
+      });
+      clearTimeout(timer);
+      const j=await r.json().catch(()=>({}));
+
+      if(!r.ok||!j.ok){
+        // Route/gateway failures may differ between Supabase's two supported
+        // Edge Function domains. Retry those on the alternate endpoint.
+        const retryableRouteError=
+          (r.status===404&&j.error!=='profile_not_found') ||
+          r.status===502 || r.status===503 || r.status===504;
+        if(retryableRouteError){
+          transportErrors.push(`${endpoint.includes('.functions.supabase.co')?'备用':'主'}通道 HTTP ${r.status}`);
+          continue;
+        }
+        const e=new Error(j.error||('HTTP '+r.status));
+        e.status=r.status;
+        e.data=j;
+        throw e;
+      }
+
+      localStorage.setItem(CLOUD_ENDPOINT_PREF_STORAGE,endpoint);
+      return j;
+    }catch(e){
+      clearTimeout(timer);
+      if(e?.status||e?.data)throw e;
+      const why=e?.name==='AbortError'?'连接超时':(e?.message||'Load failed');
+      transportErrors.push(`${endpoint.includes('.functions.supabase.co')?'备用':'主'}通道 ${why}`);
+    }
+  }
+
+  const e=new Error('云端网络不可达：'+transportErrors.join('；'));
+  e.transport=true;
+  throw e;
+}
 function markCloudDirty(){if(!cloudIsEnabled()||cloudSuppressPush)return;saveCloudMeta({local_dirty:true,local_changed_at:new Date().toISOString()})}
 function scheduleCloudSync(markDirty=true){if(cloudSuppressPush||!cloudIsEnabled())return;if(markDirty)markCloudDirty();clearTimeout(cloudTimer);setCloudStatus('pending','本地有新变化，等待安全同步…');cloudTimer=setTimeout(()=>cloudSmartSync(false),1200)}
 async function enableCloudSync(){if(cloudIsEnabled()){renderCloudUI();return cloudSmartSync(true)}let key=randomRecoveryKey();localStorage.setItem(CLOUD_KEY_STORAGE,key);localStorage.setItem(CLOUD_ENABLED_STORAGE,'1');renderCloudUI();setCloudStatus('pending','正在建立第一份云端备份…');try{let j=await cloudRequest('init',{schema_version:'1',app_version:APP_VERSION,payload:state,source_device:navigator.userAgent.slice(0,180)});saveCloudMeta({profile_id:j.profile_id,last_sync:j.synced_at,last_hash:j.payload_hash,local_dirty:false,local_changed_at:null});setCloudStatus('ok','云端备份已启用 · '+new Date(j.synced_at).toLocaleString());renderCloudUI();alert('云端备份已启用。请务必把“恢复码”复制或下载到 iCloud Drive / 文件 App。恢复码丢失后，云端档案无法在新设备上找回。')}catch(e){localStorage.removeItem(CLOUD_ENABLED_STORAGE);setCloudStatus('bad','启用失败：'+e.message);renderCloudUI();alert('云端备份启用失败：'+e.message)}}
@@ -576,7 +632,7 @@ function renderStats(){let dirs=['e2z','z2e'],labels={e2z:'英→中',z2e:'中�
 function testVoice(){let u=new SpeechSynthesisUtterance('persuade');u.lang=state.settings.voiceLang;u.rate=state.settings.voiceRate;speechSynthesis.cancel();speechSynthesis.speak(u)}
 voiceLang.onchange=e=>{state.settings.voiceLang=e.target.value;save()};voiceRate.oninput=e=>{rateText.textContent=e.target.value;state.settings.voiceRate=+e.target.value;localStorage.setItem(KEY,JSON.stringify(state));scheduleCloudSync()};
 function downloadJson(obj,name){let blob=new Blob([JSON.stringify(obj,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),300)}
-function exportData(){downloadJson(state,'PET打卡数据_v0.5.10.3_'+new Date().toISOString().slice(0,10)+'.json')}
+function exportData(){downloadJson(state,'PET打卡数据_v0.5.10.4_'+new Date().toISOString().slice(0,10)+'.json')}
 function exportPreUpgradeBackup(){let x=localStorage.getItem(PRE_V053_KEY)||localStorage.getItem(PRE_V050_KEY)||localStorage.getItem(PRE_V030_KEY)||localStorage.getItem(PRE_KEY);if(!x)return alert('当前浏览器里没有升级前快照。');try{let name=localStorage.getItem(PRE_V053_KEY)?'PET打卡_v0.5.3升级前快照.json':localStorage.getItem(PRE_V050_KEY)?'PET打卡_v0.5升级前快照.json':localStorage.getItem(PRE_V030_KEY)?'PET打卡_v0.3升级前快照.json':'PET打卡_v0.2升级前快照.json';downloadJson(JSON.parse(x),name)}catch(e){alert('升级前快照损坏，无法导出')}}
 function importData(e){let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{let incoming=JSON.parse(r.result);requireLocalSafetyBackup('pet_checkin_v1_backup_pre_import_',state);state=migrateState(incoming);save();alert('导入并迁移成功：原有词汇、历史、每日计划已保留。')}catch(x){alert('导入失败：'+x.message)}finally{e.target.value=''}};r.readAsText(f)}
 function resetAll(){if(confirm('确定清空所有训练记录吗？这会保留升级前快照，但会重置当前数据。')){state=init();save()}}
@@ -1650,7 +1706,7 @@ retestWrong=function(){startCorrectionRound_v05101()};
 /* ===== v0.5.10.1 Test 硬去重 + 错题纠正复测：结束 ===== */
 
 
-/* ===== v0.5.10.3 智能 Test 单轮闭环 + 云同步竞态修复：开始 ===== */
+/* ===== v0.5.10.4 智能 Test 单轮闭环 + 云同步竞态修复：开始 ===== */
 let testSessionActive_v05102=false;
 
 function v05102Shuffle(a){
@@ -1815,13 +1871,13 @@ syncTestSourceUI=function(){
   if(testSource?.value==='smart'){
     mode.disabled=true;
     let sp=smartPlanSummary(),total=sp.e.length+sp.s.length+sp.z.length;
-    dailyInfo.innerHTML=`今日正式 Test 已完成 <b>${sp.doneToday}</b> / ${sp.dailyLimit}，本轮待测 <b>${total}</b> 项：英→中单词 ${sp.e.length}｜固定搭配 ${sp.s.length}｜中→英单词 ${sp.z.length}。<br><span class="small">v0.5.10.3：智能计划一次开完，不再按方向拆成多轮；同一词当天最多正式测试一次。</span>`
+    dailyInfo.innerHTML=`今日正式 Test 已完成 <b>${sp.doneToday}</b> / ${sp.dailyLimit}，本轮待测 <b>${total}</b> 项：英→中单词 ${sp.e.length}｜固定搭配 ${sp.s.length}｜中→英单词 ${sp.z.length}。<br><span class="small">v0.5.10.4：智能计划一次开完，不再按方向拆成多轮；同一词当天最多正式测试一次。</span>`
   }else mode.disabled=false
 };
 
 state.meta=state.meta||{};state.meta.smartSingleSession_v05102=state.meta.smartSingleSession_v05102||Date.now();
 state.version=APP_VERSION;localStorage.setItem(KEY,JSON.stringify(state));
-/* ===== v0.5.10.3 智能 Test 单轮闭环 + 云同步竞态修复：结束 ===== */
+/* ===== v0.5.10.4 智能 Test 单轮闭环 + 云同步竞态修复：结束 ===== */
 
 renderAll();
 document.querySelectorAll('.app>.section').forEach(x=>{let on=x.id==='home';x.hidden=!on;x.classList.toggle('active',on)});
