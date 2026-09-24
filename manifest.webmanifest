@@ -5,5 +5,5 @@
   "display": "standalone",
   "background_color": "#f5f7fb",
   "theme_color": "#2563eb",
-  "description": "Lucas PET v0.5.10.7：含离线拼写检查、高风险易混词释义核对、智能 Review、双向 Test、词族、固定搭配和云同步"
+  "description": "Lucas PET v0.5.10.8：含英文自动匹配中文释义与词性、离线拼写检查、高风险易混词核对、智能 Review、双向 Test、词族、固定搭配和云同步"
 }
