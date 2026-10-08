@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#2563eb">
-<title>Lucas PET 词汇打卡 v0.5.10.9</title>
+<meta name="theme-color" content="#1477ef">
+<title>Lucas PET 词汇打卡 v0.5.11</title>
 <link rel="manifest" href="manifest.webmanifest">
 <style>
 :root{--bg:#f5f7fb;--card:#fff;--ink:#172033;--muted:#6b7280;--line:#e5e9f2;--blue:#2563eb;--soft:#eaf2ff;--good:#198754;--warn:#b97900;--bad:#c0392b;--purple:#7c3aed}
@@ -21,21 +21,255 @@
 .spellHint button{padding:5px 8px;font-size:11px;border-radius:9px;margin-left:5px}.spellIssue{border:1px solid #e5e7eb;border-radius:13px;padding:11px;margin:8px 0}.spellIssue .row{margin-top:8px}.spellIssue b{font-size:16px}.spellArrow{color:#64748b;padding:0 5px}
 
 </style>
+<style id="ui-v0512">
+:root{--bg:#f4f8ff;--card:#fff;--ink:#12315d;--muted:#71809a;--line:#e5edf8;--blue:#1477ef;--blue2:#0758c9;--teal:#12b99b;--yellow:#ffbf23;--violet:#7558e8;--soft:#edf5ff;--shadow:0 10px 30px rgba(31,84,143,.09)}
+body{background:linear-gradient(180deg,#f8fbff 0,#f4f8ff 42%,#eef6ff 100%);color:var(--ink)}
+.app{max-width:920px;padding:18px 14px calc(112px + env(safe-area-inset-bottom))}
+.card{border:1px solid rgba(215,228,245,.92);border-radius:22px;padding:16px;box-shadow:var(--shadow)}
+.app>.section>h1{font-size:27px;letter-spacing:-.3px;color:#0e3568}.app>.section>.sub{margin-top:3px}
+button{border-radius:14px;transition:transform .12s ease,box-shadow .12s ease}button:active{transform:scale(.985)}
+.primary{background:linear-gradient(135deg,#1687ff,#1168df);box-shadow:0 8px 18px rgba(20,119,239,.22)}
+.purple{background:linear-gradient(135deg,#7b64ef,#6544d8);color:#fff}.soft{background:#eef6ff;color:#155fb4}.gray{background:#f0f4f8;color:#53637b}
+input,select,textarea{border:1px solid #dce7f4;border-radius:14px;background:#fbfdff;box-shadow:inset 0 1px 0 rgba(255,255,255,.75)}
+.homeTopbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;padding:2px 2px 0}.brandBlock{display:flex;align-items:center;gap:10px}.brandMark{width:42px;height:42px;border-radius:14px;background:linear-gradient(145deg,#0d66d6,#1ba4ff);color:#fff;display:grid;place-items:center;font-size:24px;font-weight:950;box-shadow:0 7px 18px rgba(13,102,214,.24)}.brandName{font-size:23px;line-height:1;font-weight:950;letter-spacing:-.7px;color:#0e4f9f}.brandName span{color:#1686ef}.brandSub{font-size:11px;color:#8390a6;margin-top:5px}.versionPill{background:linear-gradient(135deg,#208cf5,#0c63d9);color:#fff;border-radius:999px;padding:7px 11px;font-size:11px;font-weight:900;box-shadow:0 6px 16px rgba(20,119,239,.2)}
+.homeHero{position:relative;overflow:hidden;border-radius:26px;padding:20px;background:linear-gradient(135deg,#eaf6ff 0%,#f2fbff 48%,#f5f0ff 100%);border:1px solid #d9ebff;box-shadow:0 12px 30px rgba(38,112,184,.10);display:flex;justify-content:space-between;gap:16px;align-items:center}.heroGlow{position:absolute;border-radius:50%;filter:blur(2px);opacity:.65}.heroGlowA{width:130px;height:130px;background:#bdeeff;right:-35px;top:-45px}.heroGlowB{width:90px;height:90px;background:#f7d7ff;left:48%;bottom:-48px}.heroContent{position:relative;z-index:1;min-width:0}.heroHello{font-size:15px;font-weight:900;color:#1a5fab;margin-bottom:5px}.sunIcon{display:inline-block;transform:translateY(-1px)}.homeHero .checkinLead{font-size:19px;color:#153963;line-height:1.45}.homeHero .checkinNum{font-size:31px;color:#0877e8}.homeHero .checkinMsg{color:#65758d;font-size:12px}.streakBadge{position:relative;z-index:1;width:92px;height:92px;flex:0 0 92px;border-radius:26px;background:rgba(255,255,255,.82);display:grid;place-items:center;align-content:center;box-shadow:0 8px 24px rgba(48,97,147,.10);border:1px solid rgba(255,255,255,.9)}.streakBadge span{font-size:21px;line-height:1}.streakBadge b{font-size:29px;line-height:1.05;color:#0b66d7}.streakBadge small{font-size:10px;color:#8290a4;margin-top:3px}.weekStrip{display:flex;gap:5px;margin-top:12px}.weekDay{width:27px;height:31px;border-radius:10px;background:rgba(255,255,255,.72);display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:9px;color:#8a97aa;border:1px solid rgba(212,227,244,.8)}.weekDay i{font-style:normal;font-size:11px;margin-top:1px}.weekDay.done{background:#e9fbf6;color:#12886f;border-color:#c7f0e5}.weekDay.today{box-shadow:0 0 0 2px rgba(20,119,239,.15);color:#0e67cc}
+.dashboardGrid{display:grid;grid-template-columns:1.25fr .75fr;gap:10px;margin-top:10px}.sectionEyebrow{font-size:11px;font-weight:850;color:#71809a;letter-spacing:.35px}.progressBody{display:flex;align-items:center;gap:14px;margin-top:9px}.progressRing{--p:0%;width:78px;height:78px;flex:0 0 78px;border-radius:50%;background:conic-gradient(#13b997 var(--p),#e6f1f7 0);display:grid;place-items:center;position:relative}.progressRing:before{content:"";position:absolute;inset:8px;background:#fff;border-radius:50%}.progressRing>div{position:relative;text-align:center;z-index:1}.progressRing b{display:block;font-size:18px;color:#0d6cbb}.progressRing small{font-size:9px;color:#8390a4}.progressMain{font-size:16px;font-weight:800;color:#143c6b}.progressMain b{font-size:24px;color:#0c75dc}.structureMiniCard{display:flex;flex-direction:column;justify-content:space-between}.structureCount{display:flex;align-items:center;gap:8px;margin:9px 0}.structureCount b{font-size:28px;color:#0d6ed5}.structureCount small{font-size:11px;color:#7a879b}.miniIcon{width:30px;height:30px;border-radius:10px;display:grid;place-items:center;font-weight:900}.miniIcon.link{background:#e8f3ff;color:#146cd3}.ghostAction{background:#f2f7fc;color:#175da9;padding:8px 10px;font-size:11px;width:100%}
+.homeSectionTitle{display:flex;align-items:flex-end;justify-content:space-between;gap:8px;margin:18px 3px 9px}.homeSectionTitle>div{display:flex;flex-direction:column}.homeSectionTitle span{font-size:16px;font-weight:900;color:#163b68}.homeSectionTitle small{font-size:10px;color:#8b96a7;margin-top:2px}.titleSpark{color:#ffb600!important}.textLink{background:transparent;color:#1774dd;padding:2px 0;font-size:11px}
+.taskGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.taskCard{position:relative;border-radius:22px;padding:15px;min-height:212px;border:1px solid #e0eaf7;box-shadow:var(--shadow);overflow:hidden}.reviewTask{background:linear-gradient(145deg,#f8f5ff,#fff)}.testTask{background:linear-gradient(145deg,#eef8ff,#fff)}.taskCard:after{content:"";position:absolute;width:90px;height:90px;border-radius:50%;right:-38px;top:-38px;opacity:.55}.reviewTask:after{background:#dfd6ff}.testTask:after{background:#cbe8ff}.taskIcon{width:42px;height:42px;border-radius:14px;background:#fff;display:grid;place-items:center;font-size:19px;box-shadow:0 7px 18px rgba(58,84,120,.09);margin-bottom:9px}.taskHead{display:flex;align-items:center;justify-content:space-between;position:relative;z-index:1}.taskHead small{font-size:9px;color:#8591a3;font-weight:900}.taskHead h2{font-size:17px;margin:2px 0 8px}.taskArrow{font-size:25px;color:#9ba7b8}.taskCard .sub,.taskCard .small{font-size:11px!important;line-height:1.5}.taskButton{position:absolute;left:15px;right:15px;bottom:14px;width:calc(100% - 30px);padding:10px 11px;font-size:12px;color:#fff}.taskButton.blue{background:linear-gradient(135deg,#1687ff,#1266dc)}.taskButton.purple{background:linear-gradient(135deg,#806af1,#6548d9)}
+.modernMetrics{grid-template-columns:repeat(2,1fr)}.modernMetrics .metric{display:flex;align-items:center;gap:10px;padding:13px}.metricIcon{width:35px;height:35px;border-radius:12px;display:grid;place-items:center;font-weight:900;font-size:12px;flex:0 0 35px}.metricIcon.blue{background:#e8f3ff;color:#1172dd}.metricIcon.teal{background:#e7fbf7;color:#0c9d83}.metricIcon.yellow{background:#fff7dc;color:#b67d00}.metricIcon.violet{background:#f1edff;color:#6950d6}.modernMetrics .metric .k{font-size:10px}.modernMetrics .metric .v{font-size:21px;margin-top:2px;color:#163b68}.trendCard{padding:15px 16px}.cardTitleRow{display:flex;align-items:flex-start;justify-content:space-between}.cardTitleRow h2{margin-top:2px}.trendMini{font-size:10px;color:#0f8d73;background:#e8faf5;border-radius:999px;padding:5px 8px}.trendCard .canvas{height:190px}
+.nav{justify-content:flex-start;padding:5px 6px max(env(safe-area-inset-bottom),7px);min-height:68px;background:rgba(255,255,255,.94);backdrop-filter:blur(18px);border-top:1px solid #e5edf7;box-shadow:0 -10px 30px rgba(54,88,132,.08)}.nav button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-width:62px;padding:7px 9px;color:#7b8799;font-size:10px;font-weight:750}.nav button.active{color:#0b73df}.navIcon{height:22px;min-width:24px;padding:0 4px;border-radius:8px;display:grid;place-items:center;font-size:15px;font-weight:900}.nav button.active .navIcon{background:#eaf4ff;color:#0b73df}.navDot{top:3px;right:7px}
+.notice{border-radius:16px}.listItem{border-bottom-color:#edf2f7}.testbox,.reviewCue{border-radius:22px}.reviewAnswerBox{border-radius:18px}.familyBox{border-radius:16px}.badge,.tag{border-radius:999px}
+@media(max-width:620px){.app{padding-left:11px;padding-right:11px}.brandName{font-size:20px}.brandSub{display:none}.homeHero{padding:16px}.homeHero .checkinLead{font-size:17px}.streakBadge{width:78px;height:78px;flex-basis:78px;border-radius:22px}.dashboardGrid{grid-template-columns:1fr}.structureMiniCard{display:grid;grid-template-columns:1fr auto;align-items:center;gap:8px}.structureMiniCard .sectionEyebrow{grid-column:1/-1}.structureMiniCard .ghostAction{width:auto}.taskGrid{grid-template-columns:1fr 1fr}.taskCard{min-height:224px;padding:13px}.taskButton{left:13px;right:13px;width:calc(100% - 26px)}.weekDay{width:25px}.nav button{min-width:58px}.modernMetrics{grid-template-columns:1fr 1fr}.historyRow{grid-template-columns:1fr 1fr}.historyHead{display:none}}
+@media(max-width:390px){.taskGrid{grid-template-columns:1fr}.taskCard{min-height:195px}.modernMetrics{grid-template-columns:1fr}.streakBadge{display:none}.homeHero{display:block}.weekStrip{justify-content:space-between}.weekDay{flex:1}.versionPill{padding:6px 8px}.brandMark{width:38px;height:38px}.brandName{font-size:18px}}
+</style>
+
+<style id="ui-v05121-unified">
+/* v0.5.12.1 visual-only unification. No scheduling / scoring / sync logic changes. */
+:root{--accent-blue:#1477ef;--accent-teal:#13b99a;--accent-yellow:#ffb91f;--accent-violet:#7659e8;--accent-green:#16a77f;--page-soft:#f7fbff}
+body{background:
+ radial-gradient(circle at 8% 2%,rgba(111,202,255,.16),transparent 25%),
+ radial-gradient(circle at 92% 7%,rgba(255,204,84,.13),transparent 20%),
+ linear-gradient(180deg,#fbfdff 0,#f4f9ff 45%,#eef6ff 100%)}
+.card{box-shadow:0 12px 30px rgba(39,87,139,.08);border-color:#dfebf8}
+.app>.section:not(#home){--section-accent:#1477ef;--section-soft:#eaf5ff;--section-deep:#0e5fc2;position:relative}
+#review{--section-accent:#7659e8;--section-soft:#f2efff;--section-deep:#5c42ca}
+#test{--section-accent:#1477ef;--section-soft:#e9f4ff;--section-deep:#0b62cb}
+#words{--section-accent:#13aa90;--section-soft:#e9fbf7;--section-deep:#09836f}
+#structures{--section-accent:#f0a719;--section-soft:#fff7df;--section-deep:#a96b00}
+#stats{--section-accent:#20a37b;--section-soft:#eaf9f4;--section-deep:#08745a}
+#report{--section-accent:#5b79e8;--section-soft:#eef1ff;--section-deep:#405ac4}
+#history{--section-accent:#4b79b7;--section-soft:#eef5fb;--section-deep:#345f97}
+#data{--section-accent:#1477ef;--section-soft:#edf6ff;--section-deep:#0d60be}
+.app>.section:not(#home)>h1{margin:1px 0 7px;padding-left:48px;min-height:42px;display:flex;align-items:center;font-size:27px;font-weight:950;letter-spacing:-.45px;color:#103b6f;position:relative}
+.app>.section:not(#home)>h1:before{position:absolute;left:0;top:1px;width:38px;height:38px;border-radius:13px;background:linear-gradient(145deg,var(--section-accent),var(--section-deep));color:#fff;display:grid;place-items:center;font-size:17px;font-weight:950;box-shadow:0 8px 18px color-mix(in srgb,var(--section-accent) 25%,transparent)}
+#review>h1:before{content:"↻"}#test>h1:before{content:"✓"}#words>h1:before{content:"Aa";font-size:13px}#structures>h1:before{content:"↗"}#stats>h1:before{content:"▥"}#report>h1:before{content:"◔"}#history>h1:before{content:"≡"}#data>h1:before{content:"⚙"}
+.app>.section:not(#home)>h1+.sub{margin:0 0 12px;padding:11px 13px;border:1px solid color-mix(in srgb,var(--section-accent) 17%,#e5edf8);border-radius:17px;background:linear-gradient(135deg,var(--section-soft),#fff);color:#62748e;box-shadow:0 7px 18px rgba(62,99,143,.04)}
+.app>.section:not(#home)>h1+.sub b{color:var(--section-deep)}
+
+/* Unified controls */
+.app>.section:not(#home) .card h2{font-size:17px;color:#173f6e;font-weight:900;letter-spacing:-.15px}
+.app>.section:not(#home) .card h3{color:#244c77}
+.app>.section:not(#home) label{font-weight:750;color:#697b94}
+.app>.section:not(#home) input:focus,.app>.section:not(#home) select:focus,.app>.section:not(#home) textarea:focus{outline:none;border-color:color-mix(in srgb,var(--section-accent) 55%,#dce7f4);box-shadow:0 0 0 3px color-mix(in srgb,var(--section-accent) 10%,transparent);background:#fff}
+.app>.section:not(#home) .notice{border:1px solid color-mix(in srgb,var(--section-accent) 22%,#dce8f8);background:linear-gradient(135deg,var(--section-soft),#fff);color:#32547d;box-shadow:0 7px 18px rgba(45,93,146,.05)}
+.app>.section:not(#home) .warning{border-radius:16px;box-shadow:0 7px 18px rgba(190,120,0,.05)}
+.badge.pos{background:#edf5ff;color:#2366ad;border:1px solid #dbeaff}.badge.family{background:#f3eeff;color:#6449c6;border:1px solid #e3dcff}
+.badge.mastered,.badge.maintenance,.badge.graduated{background:#e9faf4;color:#0c8063;border:1px solid #d1f1e6}.badge.unstable,.badge.active{background:#fff7df;color:#a36b00;border:1px solid #f7e8b6}.badge.unmastered,.badge.focus{background:#fff0ed;color:#b54836;border:1px solid #f7d9d2}
+.pill{background:#f1f6fb;color:#536c89;border:1px solid #e1ebf5;padding:5px 8px}
+
+/* Login / onboarding */
+.betaAuth{background:radial-gradient(circle at 12% 8%,rgba(101,198,255,.25),transparent 25%),radial-gradient(circle at 86% 16%,rgba(255,199,62,.18),transparent 24%),linear-gradient(160deg,#f9fcff,#eef7ff 58%,#f7f4ff)}
+.betaAuthInner{position:relative;overflow:hidden;border-radius:28px;padding:22px;border:1px solid #dbeafb;box-shadow:0 24px 70px rgba(32,87,145,.16)}
+.betaAuthInner:before{content:"W";width:52px;height:52px;border-radius:17px;background:linear-gradient(145deg,#0d66d6,#1ba4ff);color:#fff;display:grid;place-items:center;font-weight:950;font-size:28px;box-shadow:0 9px 22px rgba(20,119,239,.22);margin-bottom:13px}
+.betaAuth h1{font-size:28px;font-weight:950;letter-spacing:-.7px;color:#0e4f9f}.betaAuth>.betaAuthInner>.sub{font-size:13px;color:#6f7f96}
+.betaAuthPanel .card{border-radius:22px;background:linear-gradient(150deg,#fff,#f9fcff)}
+.betaAuthPanel .card h2:before{content:"✦";color:#ffb81f;margin-right:7px}
+
+/* Review */
+#review #reviewClearSummary{background:linear-gradient(135deg,#f2efff,#fff);border-color:#ddd6ff;color:#5543a9}
+#review>.card{background:linear-gradient(150deg,#fbfaff,#fff)}
+#review .reviewSolo{min-height:390px;padding:4px}
+#review .reviewModeBadge{background:linear-gradient(135deg,#ece7ff,#f6f3ff);color:#5d43c3;border:1px solid #dfd7ff;padding:7px 10px}
+#review .reviewCue{min-height:155px;background:radial-gradient(circle at 50% -20%,rgba(123,100,239,.12),transparent 55%),linear-gradient(145deg,#faf8ff,#fff);border:1px solid #e6e0ff;box-shadow:inset 0 1px 0 #fff}
+#review .reviewCueMain{color:#3c397a;font-size:34px}
+#review .reviewCueIcon{filter:drop-shadow(0 6px 9px rgba(90,72,190,.13))}
+#review .reviewAnswerBox{background:linear-gradient(135deg,#eef5ff,#f7fbff);border-color:#d7e9ff;box-shadow:0 7px 18px rgba(55,101,150,.05)}
+#review .reviewExtraBox{border-color:#e4eaf3;border-radius:14px;background:#fff}
+
+/* Test */
+#test>.card:first-of-type{background:linear-gradient(145deg,#edf7ff,#fff);border-color:#d6eaff}
+#test #dailyInfo{margin-top:10px!important;padding:10px 11px;border-radius:14px;background:rgba(255,255,255,.78);border:1px solid #e1eefb;color:#57708f}
+#test #testCard{background:radial-gradient(circle at 50% 0,rgba(75,175,255,.14),transparent 38%),linear-gradient(160deg,#fbfdff,#f3f8ff);border-color:#dbeafb;box-shadow:0 18px 42px rgba(34,91,149,.11)}
+#test .big{font-size:46px;color:#116fd4}#test .zh{font-size:30px;color:#193e6d}
+#test .timer{padding:7px 11px;border-radius:999px;background:#fff;border:1px solid #e4edf7}
+#test #result{background:linear-gradient(150deg,#fff,#f8fbff)}
+#test #result>h2{display:flex;align-items:center;gap:8px;font-size:21px}#test #result>h2:before{content:"✓";width:30px;height:30px;border-radius:10px;background:#e8faf4;color:#0d9470;display:grid;place-items:center}
+#test #result>.grid{gap:9px;margin-bottom:9px}#test #result>.grid .metric{border:1px solid #e1ebf6;background:#fff;border-radius:17px;padding:12px}#test #result>.grid .metric:first-child{background:linear-gradient(145deg,#eafaf5,#fff)}#test #result>.grid .metric:nth-child(2){background:linear-gradient(145deg,#eef6ff,#fff)}
+#test .resultTable{border-collapse:separate;border-spacing:0 7px}#test .resultTable th{border:0;padding:6px 7px;color:#7b899e}#test .resultTable td{background:#f8fbff;border-top:1px solid #e5eef8;border-bottom:1px solid #e5eef8;padding:9px 7px}#test .resultTable td:first-child{border-left:1px solid #e5eef8;border-radius:11px 0 0 11px}#test .resultTable td:last-child{border-right:1px solid #e5eef8;border-radius:0 11px 11px 0}
+
+/* Vocabulary pool */
+#words>.card:first-of-type{background:linear-gradient(145deg,#eafaf6,#fff);border-color:#d8f0e9}
+#words details.advanced{background:rgba(255,255,255,.58);border-color:#d9e8f5;border-radius:16px}
+#wordList{display:grid;gap:10px;margin-top:12px}
+#wordList .listItem{padding:13px;border:1px solid #e1ecf6;border-radius:18px;background:linear-gradient(145deg,#fff,#fbfdff);box-shadow:0 8px 20px rgba(49,91,136,.05);border-bottom:1px solid #e1ecf6}
+#wordList .listItem>div:first-child>div:first-child>b{font-size:20px!important;color:#0b6dcb}
+#wordList .listItem>div:first-child>div:nth-child(2){font-size:14px;font-weight:760;color:#294d76;margin-top:2px}
+#wordList .masteryGrid>div{padding:8px;border-radius:13px;background:#f6faff;border:1px solid #e6eff8}
+#wordList .wordActions{padding-top:4px}
+#wordList .wordActions button{border-radius:10px}
+#words .familyBox{background:linear-gradient(145deg,#f8f4ff,#fff);border-color:#e6ddff}
+
+/* Structures */
+#structures>.card:first-of-type{background:linear-gradient(145deg,#fff8e4,#fff);border-color:#f6e5b2}
+#structures>.card:nth-of-type(2){background:linear-gradient(145deg,#effbf8,#fff);border-color:#d8f1e9}
+#structureList.card{background:transparent;border:0;box-shadow:none;padding:0}
+#structureList{display:grid;gap:10px}
+#structureList .listItem{padding:14px;border:1px solid #e5ecf4;border-radius:18px;background:#fff;box-shadow:0 8px 20px rgba(59,87,122,.05);border-bottom:1px solid #e5ecf4}
+#structureList .listItem b[style]{font-size:19px!important;color:#9a6500}
+#structureList .wordActions{padding-top:4px}
+
+/* Analysis */
+#statsCards{grid-template-columns:repeat(2,1fr);gap:10px}
+#statsCards .card{position:relative;overflow:hidden;background:#fff}
+#statsCards .card:after{content:"";position:absolute;width:72px;height:72px;border-radius:50%;right:-25px;top:-27px;opacity:.18}
+#statsCards .card:nth-child(1){background:linear-gradient(145deg,#edf6ff,#fff)}#statsCards .card:nth-child(1):after{background:#1687ff}
+#statsCards .card:nth-child(2){background:linear-gradient(145deg,#f3efff,#fff)}#statsCards .card:nth-child(2):after{background:#7b64ef}
+#statsCards .card:nth-child(3){background:linear-gradient(145deg,#eafaf5,#fff)}#statsCards .card:nth-child(3):after{background:#13b997}
+#statsCards .card:nth-child(4){background:linear-gradient(145deg,#fff7df,#fff)}#statsCards .card:nth-child(4):after{background:#ffb91f}
+#statsCards .metric .v{color:#153f6f;font-size:27px}
+#stats .grid>.card{min-height:128px}
+#stats .statTable th{color:#77879b;font-size:11px}#stats .statTable tr:last-child td{border-bottom:0}
+#watchStats{overflow-x:auto}
+
+/* 14-day family report */
+#parentReport>.grid.stats{grid-template-columns:repeat(4,1fr);gap:9px}
+#parentReport>.grid.stats .card{padding:14px;min-height:100px;position:relative;overflow:hidden}
+#parentReport>.grid.stats .card:after{content:"";position:absolute;width:62px;height:62px;border-radius:50%;right:-22px;top:-22px;opacity:.16}
+#parentReport>.grid.stats .card:nth-child(1){background:linear-gradient(145deg,#eef6ff,#fff)}#parentReport>.grid.stats .card:nth-child(1):after{background:#1477ef}
+#parentReport>.grid.stats .card:nth-child(2){background:linear-gradient(145deg,#f1efff,#fff)}#parentReport>.grid.stats .card:nth-child(2):after{background:#7659e8}
+#parentReport>.grid.stats .card:nth-child(3){background:linear-gradient(145deg,#fff7df,#fff)}#parentReport>.grid.stats .card:nth-child(3):after{background:#ffb91f}
+#parentReport>.grid.stats .card:nth-child(4){background:linear-gradient(145deg,#eafaf5,#fff)}#parentReport>.grid.stats .card:nth-child(4):after{background:#13b99a}
+#parentReport>.grid.stats .k{font-size:11px;color:#74839a;font-weight:760}#parentReport>.grid.stats .v{font-size:26px;color:#133d6d;font-weight:950;margin-top:7px}
+#parentReport>.card{border-radius:20px}#parentReport>.card:nth-of-type(1){background:linear-gradient(145deg,#fbfdff,#fff)}
+#parentReport .listItem{margin-top:8px;padding:11px;border:1px solid #e5edf7;border-radius:15px;background:#fbfdff;border-bottom:1px solid #e5edf7}
+#parentReport>.notice{padding:14px 15px;font-size:13px}
+
+/* History */
+#history>.card{background:linear-gradient(150deg,#fff,#f9fcff)}
+#history .historyFilters>div{padding:8px;border-radius:14px;background:#f7faff;border:1px solid #e8f0f8}
+#historySummary{margin:11px 0 5px;padding:8px 10px;border-radius:12px;background:#edf5ff;color:#4c6889}
+#historyList{margin-top:6px}
+#history .historyRow:not(.historyHead){background:#fff;border:1px solid #e5edf7;border-radius:15px;padding:10px;margin-top:8px;box-shadow:0 5px 14px rgba(50,83,119,.04)}
+#history .historyRow.historyHead{padding:8px 10px;border:0}
+
+/* Settings / data */
+#data>.notice:first-of-type{background:linear-gradient(135deg,#eaf5ff,#f7fbff);border-color:#d5e8fb}
+#data>.card{position:relative;overflow:hidden}
+#data>.card>h2:before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:#1684f3;margin-right:8px;vertical-align:2px;box-shadow:0 0 0 4px #eaf4ff}
+#data details.advanced{border-radius:17px;background:rgba(255,255,255,.7)}
+
+/* Navigation polish */
+.nav button{border-radius:14px;margin:1px 2px}.nav button.active{background:#f3f8ff}.nav button.active .navIcon{background:linear-gradient(145deg,#dff0ff,#eef7ff);box-shadow:0 3px 9px rgba(20,119,239,.08)}
+.nav button:nth-child(1).active .navIcon,.nav button:nth-child(2).active .navIcon{color:#0e72df}.nav button:nth-child(3).active .navIcon{color:#694ed8}.nav button:nth-child(5).active .navIcon{color:#b87800}.nav button:nth-child(7).active .navIcon{color:#4f65cf}
+
+/* Modals */
+.modalWrap{backdrop-filter:blur(6px);background:rgba(22,49,83,.36)}.modal{border-radius:24px;border:1px solid #e1ebf6;box-shadow:0 24px 70px rgba(24,60,103,.20)}.modal h2{color:#123e70;font-weight:950}
+
+@media(max-width:720px){
+  #parentReport>.grid.stats{grid-template-columns:repeat(2,1fr)}
+  #statsCards{grid-template-columns:repeat(2,1fr)}
+  #history .historyRow{grid-template-columns:1.05fr .75fr .72fr .85fr;gap:7px}
+  #history .historyRow .reasonCol{grid-column:1/4}.historyRow .histAction{grid-column:4;grid-row:1/3}
+}
+@media(max-width:520px){
+  .app>.section:not(#home)>h1{font-size:24px;padding-left:44px}.app>.section:not(#home)>h1:before{width:36px;height:36px;border-radius:12px}
+  #statsCards{grid-template-columns:1fr 1fr}
+  #parentReport>.grid.stats{grid-template-columns:1fr 1fr}
+  #test .answerBtns{grid-template-columns:1fr;gap:7px}
+  #test .resultTable{min-width:700px}
+  #wordList .listItem,#structureList .listItem{grid-template-columns:1fr}
+  #wordList .listItem>div:last-child,#structureList .listItem>div:last-child{display:flex;gap:5px;flex-wrap:wrap}
+  #history .historyRow:not(.historyHead){grid-template-columns:1fr 1fr;padding:11px}.historyRow .reasonCol{grid-column:1/-1!important}.historyRow .histAction{grid-column:1/-1!important;grid-row:auto!important;display:flex;gap:7px}.historyRow .histAction>div{display:none}.historyRow .histAction button{flex:1}
+}
+@media(max-width:380px){#statsCards{grid-template-columns:1fr}#parentReport>.grid.stats{grid-template-columns:1fr 1fr}.betaAuth{padding:10px}.betaAuthInner{padding:16px}}
+</style>
+
+<style id="ui-lucas-v0511">
+/* Lucas PET v0.5.11 visual identity; visual only. */
+.brandMark{background:linear-gradient(145deg,#0b65d3,#23a6f4)}
+.brandName span{color:#13aa90}
+.versionPill{background:linear-gradient(135deg,#0f72e8,#268ff6)}
+#home .homeHero{background:linear-gradient(135deg,#e9f6ff 0%,#f2fbff 48%,#eff7ff 100%)}
+#home .streakBadge{background:linear-gradient(145deg,#fff6dc,#fff);border-color:#f5dfa2}
+#home .progressCard{background:linear-gradient(145deg,#edf8ff,#fff)}
+#home .structureMiniCard{background:linear-gradient(145deg,#fff7e1,#fff)}
+#home .textLink{white-space:nowrap}
+@media(max-width:620px){.nav button{min-width:58px}.nav{overflow-x:auto}.nav::-webkit-scrollbar{display:none}}
+</style>
 </head>
 <body>
 <div class="app">
 <section id="home" class="section active">
-  <h1>PET 打卡</h1><div class="sub">智能每日测试 · 间隔记忆 · 听觉词汇 · 词族 · 固定搭配 <span class="tag">v0.5.10.9</span></div>
-  <div class="gap"></div>
-  <div class="checkinHero">
-    <div id="checkinLead" class="checkinLead">Lucas，你已经坚持打卡 <span class="checkinNum" id="checkinDays">—</span> 天了</div>
-    <div id="checkinMsg" class="checkinMsg">新的一天，你又是更好的自己了。</div>
+  <div class="homeTopbar">
+    <div class="brandBlock">
+      <div class="brandMark">L</div>
+      <div><div class="brandName">Lucas <span>PET</span></div><div class="brandSub">每天一点，向 B1 稳稳前进</div></div>
+    </div>
+    <span class="versionPill">v0.5.11</span>
   </div>
+
+  <div class="homeHero">
+    <div class="heroGlow heroGlowA"></div><div class="heroGlow heroGlowB"></div>
+    <div class="heroContent">
+      <div class="heroHello">Hi, <span id="homeGreetingName">Lucas</span> <span class="sunIcon">☀️</span></div>
+      <div id="checkinLead" class="checkinLead">Lucas，你已经坚持打卡 <span class="checkinNum" id="checkinDays">—</span> 天了</div>
+      <div id="checkinMsg" class="checkinMsg">新的一天，你又是更好的自己了。</div>
+      <div class="weekStrip" id="homeWeekDots"></div>
+    </div>
+    <div class="streakBadge"><span>🔥</span><b id="homeStreakBig">—</b><small>坚持天数</small></div>
+  </div>
+
+  <div class="dashboardGrid">
+    <div class="card progressCard">
+      <div class="sectionEyebrow">词汇掌握进度</div>
+      <div class="progressBody">
+        <div class="progressRing" id="homeProgressRing"><div><b id="homeProgressText">—</b><small>完整掌握</small></div></div>
+        <div class="progressCopy"><div class="progressMain"><b id="homeMasteredCount">—</b> / <span id="homeTotalCount">—</span> 词</div><div class="small">英→中与中→英两个方向都稳定后，才计入完整掌握。</div></div>
+      </div>
+    </div>
+    <div class="card structureMiniCard">
+      <div class="sectionEyebrow">固定搭配</div>
+      <div class="structureCount"><span class="miniIcon link">↗</span><b id="homeStructureCount">—</b><small>条已进入训练</small></div>
+      <button class="ghostAction" onclick="showSecById('structures')">查看搭配 ›</button>
+    </div>
+  </div>
+
+  <div class="homeSectionTitle"><div><span>今日学习</span><small id="homeTodaySummary">按计划轻量完成就好</small></div><span class="titleSpark">✦</span></div>
+  <div class="taskGrid">
+    <div class="taskCard reviewTask">
+      <div class="taskIcon">📚</div>
+      <div class="taskHead"><div><small>STEP 1</small><h2>今日复习</h2></div><span class="taskArrow">›</span></div>
+      <div id="reviewPreview"></div>
+      <button class="taskButton purple" onclick="showSecById('review')">开始 Review</button>
+    </div>
+    <div class="taskCard testTask">
+      <div class="taskIcon">✓</div>
+      <div class="taskHead"><div><small>STEP 2</small><h2>智能测试</h2></div><span class="taskArrow">›</span></div>
+      <div id="today" class="sub"></div>
+      <button class="taskButton blue" onclick="quickStart('smart')">开始今日 Test</button>
+    </div>
+  </div>
+
+  <div class="homeSectionTitle"><div><span>学习表现</span><small>英→中与中→英分别看</small></div><button class="textLink" onclick="showSecById('stats')">统计分析 ›</button></div>
+  <div class="grid metrics modernMetrics">
+    <div class="card metric"><div class="metricIcon blue">中</div><div><div class="k">英→中正确率</div><div class="v" id="eAcc">—</div></div></div>
+    <div class="card metric"><div class="metricIcon teal">⚡</div><div><div class="k">英→中平均反应</div><div class="v" id="eRt">—</div></div></div>
+    <div class="card metric"><div class="metricIcon yellow">英</div><div><div class="k">中→英正确率</div><div class="v" id="zAcc">—</div></div></div>
+    <div class="card metric"><div class="metricIcon violet">⚡</div><div><div class="k">中→英平均反应</div><div class="v" id="zRt">—</div></div></div>
+  </div>
+
   <div class="gap"></div>
-  <div class="grid metrics"><div class="card metric"><div class="k">英→中正确率</div><div class="v" id="eAcc">—</div></div><div class="card metric"><div class="k">英→中平均反应</div><div class="v" id="eRt">—</div></div><div class="card metric"><div class="k">中→英正确率</div><div class="v" id="zAcc">—</div></div><div class="card metric"><div class="k">中→英平均反应</div><div class="v" id="zRt">—</div></div></div>
-  <div class="gap"></div><div class="card"><h2>① 今日复习</h2><div id="reviewPreview"></div><div class="gap"></div><button class="purple wide" onclick="showSecById('review')">先完成今日复习</button><div class="small" style="margin-top:8px">每天先 Review：新加入陌生词 → 之前错/不稳的词 → 到期维护词。Review 未清零前，智能 Test 暂不开始。</div></div>
-  <div class="gap"></div><div class="card"><h2>② 今日智能测试</h2><div id="today" class="sub"></div><div class="gap"></div><button class="primary wide" onclick="quickStart('smart')">开始今日智能 Test（一次完成）</button><div class="small" style="margin-top:8px">智能 Test 会把今天应测的英→中、固定搭配和中→英放进同一轮，全天最多 20 项；同一个词当天最多正式测一个方向，不再需要分方向反复“清红点”。</div></div>
-  <div class="gap"></div><div class="card"><h2>最近14天速度变化</h2><div class="trendLegend"><span class="trendLegendItem"><i class="trendSwatch e2z"></i>英→中平均反应时间</span><span class="trendLegendItem"><i class="trendSwatch z2e"></i>中→英平均反应时间</span></div><div class="canvas"><canvas id="trend"></canvas></div><div class="small"><b>横轴：</b>日期（最近14天）｜<b>纵轴：</b>平均反应时间（秒，越低越好）。回答错误、人工剔除的操作延迟不计入平均反应时间；某天没有该方向有效测试时，曲线会断开。</div></div>
+  <div class="card trendCard"><div class="cardTitleRow"><div><div class="sectionEyebrow">最近14天</div><h2>反应速度变化</h2></div><div class="trendMini">越低越好 ↓</div></div><div class="trendLegend"><span class="trendLegendItem"><i class="trendSwatch e2z"></i>英→中</span><span class="trendLegendItem"><i class="trendSwatch z2e"></i>中→英</span></div><div class="canvas"><canvas id="trend"></canvas></div><div class="small">错误和人工剔除的操作延迟不计入平均反应时间；某天没有有效测试时曲线会断开。</div></div>
 </section>
 
 <section id="test" class="section" hidden><h1>今日测试</h1><div class="sub">先完成 Review，再做正式 Test。单词英→中仍以听觉识别为主；固定搭配只考“看英文搭配，说中文意思”。同一个词当天最多正式测一个方向，避免英→中 / 中→英短时重复。</div><div class="gap"></div>
@@ -65,7 +299,7 @@
 <section id="history" class="section" hidden><h1>测试记录</h1><div class="sub">保留原始反应时间；人工修正只新增“修正值 / 剔除标记 / 备注”，不会覆盖原始记录。</div><div class="gap"></div><div class="card"><div class="historyFilters"><div><label>搜索项目</label><input id="histSearch" placeholder="单词/搭配英文或中文…" oninput="renderHistory()"></div><div><label>方向</label><select id="histMode" onchange="renderHistory()"><option value="all">全部</option><option value="e2z">英→中</option><option value="z2e">中→英</option><option value="structure_e2z">固定搭配</option></select></div><div><label>结果</label><select id="histResult" onchange="renderHistory()"><option value="all">全部</option><option value="correct">正确</option><option value="slow">慢</option><option value="wrong">错误</option></select></div><div><label>显示</label><select id="histLimit" onchange="renderHistory()"><option value="30">最近30次</option><option value="100">最近100次</option><option value="9999">全部记录</option></select></div></div><div class="gap"></div><div id="historySummary" class="small"></div><div id="historyList"></div></div></section>
 
 <section id="data" class="section" hidden><h1>数据与设置</h1>
-<div class="notice"><b>v0.5.10.9：测试结果新增“词性”显示。</b> 每次正式 Test 完成后，结果表会在单词旁显示 n. / v. / adj. / adv. 等词性，帮助复盘时同步强化词性记忆；固定搭配显示为“搭配”。其他排期、Review、云同步规则保持不变。</div><div class="gap"></div>
+<div class="notice"><b>v0.5.11：全站 UI 统一升级。</b> 首页、Review、Test、词汇池、固定搭配、分析、记录和数据页统一为新的学习卡片视觉；保留 v0.5.10.9 的测试结果词性显示，以及原有智能排期、记忆周期、双向 Test、词族、固定搭配和云同步逻辑。</div><div class="gap"></div>
 <div class="card"><h2>v0.3 记忆周期</h2><div class="small">错词：1天后；慢 / 重听 / 发音需练习：2天后；连续快速正确（≤3秒且不重听）：1天 → 3天 → 7天 → 14天 → 30天。任何阶段再错，重新回到1天。英→中与中→英分别计算。</div></div><div class="gap"></div>
 <div class="card"><h2>语音设置</h2><label>英语地区</label><select id="voiceLang"><option value="en-GB">英式英语 en-GB</option><option value="en-US">美式英语 en-US</option></select><div class="gap"></div><label>语速：<span id="rateText">0.90</span></label><input id="voiceRate" type="range" min="0.72" max="1.05" step="0.01" value="0.90"><div class="gap"></div><button class="soft" onclick="testVoice()">试听 persuade</button></div>
 <div class="gap"></div><div class="card"><h2>新增词汇</h2><div class="sub">家长只录入 Lucas 真正遇到的陌生词，并按本次实际语境标注词性。新增词最早次日先进入 Review 学习；Review 完成后的下一学习日才进入正式 Test。</div><div class="gap"></div><div class="row"><input id="newEn" placeholder="English" oninput="updateFamilyHint()"><input id="newZh" placeholder="中文意思"></div><div class="gap"></div><div id="newDictHint" class="spellHint skip">输入英文后，会自动匹配常见中文释义和词性；可按实际语境修改。</div><div class="gap"></div><div id="newSpellHint" class="spellHint skip">输入英文后自动检查拼写；只提示，不会擅自改词。</div><div class="gap"></div><div id="newMeaningHint" class="spellHint skip">英文和中文都填好后，会额外检查常见易混词。</div><div class="gap"></div><label>词性（按本次实际语境）</label><select id="newPos"><option value="">请选择词性</option><option value="n.">n. 名词</option><option value="v.">v. 动词</option><option value="adj.">adj. 形容词</option><option value="adv.">adv. 副词</option><option value="prep.">prep. 介词</option><option value="conj.">conj. 连词</option><option value="pron.">pron. 代词</option><option value="det.">det. 限定词</option><option value="phr.">phr. 短语</option><option value="prop. n.">prop. n. 专有名词</option><option value="n./v.">n./v. 名词/动词</option></select><div class="gap"></div><div id="familyHint" class="familyHint neutral">输入英文后，这里会显示词族判断。</div><div class="gap"></div><input id="newNote" placeholder="例句/备注（可选）"><div class="gap"></div><div class="notice"><b>固定搭配（可选）</b><div class="small">只填真正有价值的搭配，不需要每个单词都加。</div><div class="gap"></div><div class="row"><input id="newLinkedStructureEn" placeholder="例如 recommend doing something"><input id="newLinkedStructureZh" placeholder="例如 建议做某事"></div><div class="gap"></div><label class="checkline"><input id="newLinkedStructureKey" type="checkbox" checked>重点 / 易考搭配</label><label class="checkline"><input id="newLinkedStructureReplace" type="checkbox" checked>英→中时优先用这个搭配替代独立单词</label></div><div class="gap"></div><details class="advanced"><summary>高级：手动指定词族（通常不用）</summary><div class="gap"></div><input id="newFamily" placeholder="例如 decorate；留空则由软件判断"></details><div class="gap"></div><button class="primary" onclick="addWord()">加入词汇池</button></div>
@@ -80,7 +314,16 @@
 <div class="gap"></div><div class="card"><h2>备份与迁移</h2><div id="backupInfo" class="small"></div><div class="gap"></div><div class="row"><button class="soft" onclick="exportData()">导出当前 JSON</button><button class="gray" onclick="document.getElementById('importFile').click()">导入 JSON</button></div><div class="gap"></div><button id="preBackupBtn" class="purple wide" onclick="exportPreUpgradeBackup()">导出升级前本机快照</button><div class="gap"></div><button id="recoverPreBtn" class="good wide" onclick="recoverMissingFromSnapshot(true)">从升级前快照恢复缺失数据（合并）</button><input id="importFile" class="hidden" type="file" accept=".json,application/json" onchange="importData(event)"><hr><button class="bad" onclick="resetAll()">清空所有训练记录</button></div>
 </section>
 </div>
-<nav class="nav"><button class="active" onclick="showSec('home',this)">首页</button><button id="testNavBtn" onclick="showSec('test',this)">测试<span id="testNavDot" class="navDot hidden"></span></button><button id="reviewNavBtn" onclick="showSec('review',this)">复习<span id="reviewNavDot" class="navDot hidden"></span></button><button onclick="showSec('words',this)">词汇</button><button onclick="showSec('structures',this)">搭配</button><button onclick="showSec('stats',this)">分析</button><button onclick="showSec('history',this)">记录</button><button onclick="showSec('data',this)">数据</button></nav>
+<nav class="nav">
+<button class="active" onclick="showSec('home',this)"><span class="navIcon">⌂</span><span>首页</span></button>
+<button id="testNavBtn" onclick="showSec('test',this)"><span class="navIcon">✓</span><span>测试</span><span id="testNavDot" class="navDot hidden"></span></button>
+<button id="reviewNavBtn" onclick="showSec('review',this)"><span class="navIcon">↻</span><span>复习</span><span id="reviewNavDot" class="navDot hidden"></span></button>
+<button onclick="showSec('words',this)"><span class="navIcon">Aa</span><span>词汇</span></button>
+<button onclick="showSec('structures',this)"><span class="navIcon">↗</span><span>搭配</span></button>
+<button onclick="showSec('stats',this)"><span class="navIcon">▥</span><span>分析</span></button>
+<button onclick="showSec('history',this)"><span class="navIcon">≡</span><span>记录</span></button>
+<button onclick="showSec('data',this)"><span class="navIcon">⚙</span><span>数据</span></button>
+</nav>
 
 
 <div id="spellModal" class="modalWrap hidden"><div class="modal"><h2>检查词库录入</h2><div class="small">同时检查疑似拼写问题，以及少量高风险易混词的英文↔中文配对。只提示，不会自动覆盖；家长可以一键改正或确认保留。</div><div class="gap"></div><div id="spellResults"></div><div class="gap"></div><button class="gray wide" onclick="closeSpellModal()">关闭</button></div></div>
@@ -103,7 +346,7 @@ const CLOUD_ENDPOINT_PREF_STORAGE='pet_checkin_cloud_endpoint_pref';
 const CLOUD_KEY_STORAGE='pet_checkin_cloud_recovery_key';
 const CLOUD_ENABLED_STORAGE='pet_checkin_cloud_enabled';
 const CLOUD_META_STORAGE='pet_checkin_cloud_meta';
-const APP_VERSION='0.5.10.9';
+const APP_VERSION='0.5.11';
 let cloudTimer=null,cloudBusy=false,cloudQueued=false,cloudSuppressPush=false,cloudConflictState=null;
 const ROLLING_BACKUP_PREFIXES=[
   'pet_checkin_v1_backup_pre_cloud_autopull_',
@@ -643,7 +886,7 @@ function renderStats(){let dirs=['e2z','z2e'],labels={e2z:'英→中',z2e:'中�
 function testVoice(){let u=new SpeechSynthesisUtterance('persuade');u.lang=state.settings.voiceLang;u.rate=state.settings.voiceRate;speechSynthesis.cancel();speechSynthesis.speak(u)}
 voiceLang.onchange=e=>{state.settings.voiceLang=e.target.value;save()};voiceRate.oninput=e=>{rateText.textContent=e.target.value;state.settings.voiceRate=+e.target.value;localStorage.setItem(KEY,JSON.stringify(state));scheduleCloudSync()};
 function downloadJson(obj,name){let blob=new Blob([JSON.stringify(obj,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),300)}
-function exportData(){downloadJson(state,'PET打卡数据_v0.5.10.9_'+new Date().toISOString().slice(0,10)+'.json')}
+function exportData(){downloadJson(state,'PET打卡数据_v0.5.11_'+new Date().toISOString().slice(0,10)+'.json')}
 function exportPreUpgradeBackup(){let x=localStorage.getItem(PRE_V053_KEY)||localStorage.getItem(PRE_V050_KEY)||localStorage.getItem(PRE_V030_KEY)||localStorage.getItem(PRE_KEY);if(!x)return alert('当前浏览器里没有升级前快照。');try{let name=localStorage.getItem(PRE_V053_KEY)?'PET打卡_v0.5.3升级前快照.json':localStorage.getItem(PRE_V050_KEY)?'PET打卡_v0.5升级前快照.json':localStorage.getItem(PRE_V030_KEY)?'PET打卡_v0.3升级前快照.json':'PET打卡_v0.2升级前快照.json';downloadJson(JSON.parse(x),name)}catch(e){alert('升级前快照损坏，无法导出')}}
 function importData(e){let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{let incoming=JSON.parse(r.result);requireLocalSafetyBackup('pet_checkin_v1_backup_pre_import_',state);state=migrateState(incoming);save();alert('导入并迁移成功：原有词汇、历史、每日计划已保留。')}catch(x){alert('导入失败：'+x.message)}finally{e.target.value=''}};r.readAsText(f)}
 function resetAll(){if(confirm('确定清空所有训练记录吗？这会保留升级前快照，但会重置当前数据。')){state=init();save()}}
@@ -1891,7 +2134,7 @@ syncTestSourceUI=function(){
   if(testSource?.value==='smart'){
     mode.disabled=true;
     let sp=smartPlanSummary(),total=sp.e.length+sp.s.length+sp.z.length;
-    dailyInfo.innerHTML=`今日正式 Test 已完成 <b>${sp.doneToday}</b> / ${sp.dailyLimit}，本轮待测 <b>${total}</b> 项：英→中单词 ${sp.e.length}｜固定搭配 ${sp.s.length}｜中→英单词 ${sp.z.length}。<br><span class="small">v0.5.10.9：智能计划一次开完；答题揭晓后统一显示英文、中文并播放英文标准读音；测试结果页同时显示词性；同一词当天最多正式测试一次。</span>`
+    dailyInfo.innerHTML=`今日正式 Test 已完成 <b>${sp.doneToday}</b> / ${sp.dailyLimit}，本轮待测 <b>${total}</b> 项：英→中单词 ${sp.e.length}｜固定搭配 ${sp.s.length}｜中→英单词 ${sp.z.length}。<br><span class="small">v0.5.11：智能计划一次开完；答题揭晓后统一显示英文、中文并播放英文标准读音；测试结果页同时显示词性；同一词当天最多正式测试一次。</span>`
   }else mode.disabled=false
 };
 
@@ -2361,10 +2604,35 @@ state.meta=state.meta||{};state.meta.dictionaryAssist_v05108=state.meta.dictiona
 /* ===== v0.5.10.8 GitHub 英中词典辅助录入：结束 ===== */
 
 
+/* ===== v0.5.11 UI dashboard refresh: start ===== */
+const renderHome_v0511_base=renderHome;
+function v0511HomeDashboard(){
+  const nick='Lucas';
+  const nameEl=document.getElementById('homeGreetingName');if(nameEl)nameEl.textContent=nick;
+  const days=checkinCount();const big=document.getElementById('homeStreakBig');if(big)big.textContent=days||0;
+  const words=state.words||[],total=words.length;
+  const mastered=words.filter(w=>w?.mastery?.e2z==='mastered'&&w?.mastery?.z2e==='mastered').length;
+  const pctv=total?Math.round(mastered/total*100):0;
+  const pt=document.getElementById('homeProgressText');if(pt)pt.textContent=pctv+'%';
+  const mc=document.getElementById('homeMasteredCount');if(mc)mc.textContent=mastered;
+  const tc=document.getElementById('homeTotalCount');if(tc)tc.textContent=total;
+  const ring=document.getElementById('homeProgressRing');if(ring)ring.style.setProperty('--p',pctv+'%');
+  const sc=document.getElementById('homeStructureCount');if(sc)sc.textContent=(state.structures||[]).length;
+  const checked=new Set(checkinDates());
+  const today0=dayStart(),labels=['一','二','三','四','五','六','日'];
+  const jsDay=new Date(today0).getDay(),isoDay=jsDay===0?7:jsDay,mon=today0-(isoDay-1)*DAY;
+  const week=document.getElementById('homeWeekDots');if(week){week.innerHTML=labels.map((lab,i)=>{let key=localDateKey(new Date(mon+i*DAY)),done=checked.has(key),today=key===localDateKey();return `<span class="weekDay ${done?'done':''} ${today?'today':''}"><b>${lab}</b><i>${done?'✓':today?'•':'○'}</i></span>`}).join('')}
+  const sp=smartPlanSummary(),rp=pendingReviewWordsUnified().length,tp=sp.e.length+sp.z.length+sp.s.length;
+  const sum=document.getElementById('homeTodaySummary');if(sum)sum.textContent=(!rp&&!tp)?'今天已经全部完成 ✓':`Review ${rp} · Test ${tp}`;
+}
+renderHome=function(){renderHome_v0511_base();v0511HomeDashboard()};
+/* ===== v0.5.11 UI dashboard refresh: end ===== */
+
+
 renderAll();
 document.querySelectorAll('.app>.section').forEach(x=>{let on=x.id==='home';x.hidden=!on;x.classList.toggle('active',on)});
 if(cloudIsEnabled())setTimeout(()=>cloudSmartSync(false),600);
 if(bootRecoveryReport&& !sessionStorage.getItem('pet031_recovery_notice')){sessionStorage.setItem('pet031_recovery_notice','1');let r=bootRecoveryReport;setTimeout(()=>alert(r.fallback?'检测到旧数据迁移异常，已优先从升级前快照恢复，并保留异常原始数据副本。请到“词汇”和“记录”页核对。':`已自动检查升级前快照并补回缺失数据：${r.words||0} 个词、${r.tests||0} 条测试记录、${r.plans||0} 个清单项目。`),150)}
-if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('./service-worker.js?v=0.5.10.9',{updateViaCache:'none'}).catch(()=>{});
+if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('./service-worker.js?v=lucas-pet-0.5.11-r1',{updateViaCache:'none'}).catch(()=>{});
 </script>
 </body></html>

@@ -1,4 +1,4 @@
-const CACHE='pet-checkin-v0.5.10.9';
+const CACHE='lucas-pet-v0.5.11-r1';
 const ASSETS=['./index.html','./manifest.webmanifest'];
 
 self.addEventListener('install',e=>{

@@ -1,9 +1,9 @@
 {
-  "name": "PET 打卡",
-  "short_name": "PET打卡",
+  "name": "Lucas PET 词汇打卡",
+  "short_name": "Lucas PET",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#f5f7fb",
-  "theme_color": "#2563eb",
-  "description": "Lucas PET v0.5.10.9：测试结果显示词性，并含英文自动匹配中文释义与词性、离线拼写检查、高风险易混词核对、智能 Review、双向 Test、词族、固定搭配和云同步"
+  "background_color": "#f4f8ff",
+  "theme_color": "#1477ef",
+  "description": "Lucas PET v0.5.11：全站统一学习卡片视觉，保留测试结果词性显示、英文自动匹配中文释义与词性、拼写/易混词检查、智能 Review、双向 Test、词族、固定搭配和云同步。"
 }
