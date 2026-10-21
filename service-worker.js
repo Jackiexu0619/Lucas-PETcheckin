@@ -1,4 +1,4 @@
-const CACHE='lucas-pet-v0.5.11.4-safe-merge-preview-r1';
+const CACHE='lucas-pet-v0.5.11.5-skill-evidence-preview-r1';
 const ASSETS=['./index.html','./manifest.webmanifest'];
 
 self.addEventListener('install',e=>{
