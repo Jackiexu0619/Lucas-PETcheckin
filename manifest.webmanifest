@@ -5,5 +5,5 @@
   "display": "standalone",
   "background_color": "#f4f8ff",
   "theme_color": "#1477ef",
-  "description": "Lucas PET v0.5.11.2：全站统一学习卡片视觉，保留测试结果词性显示、英文自动匹配中文释义与词性、拼写/易混词检查、智能 Review、双向 Test、词族、固定搭配和云同步。"
+  "description": "Lucas PET v0.5.11.3：全站统一学习卡片视觉，保留测试结果词性显示、英文自动匹配中文释义与词性、拼写/易混词检查、智能 Review、双向 Test、词族、固定搭配和云同步。 新增独立教材学习档案预览。"
 }
