@@ -1,4 +1,4 @@
-const CACHE='lucas-pet-v0.5.12.4-test-adaptive-r1';
+const CACHE='lucas-pet-v0.5.12.5-unit2-r1';
 const ASSETS=['./index.html','./manifest.webmanifest'];
 
 self.addEventListener('install',e=>{

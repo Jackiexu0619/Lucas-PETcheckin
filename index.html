@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#1477ef">
-<title>Lucas PET v0.5.12.4 热身启动与自动连接修复版</title>
+<title>Lucas PET v0.5.12.5 热身启动与自动连接修复版</title>
 <link rel="manifest" href="manifest.webmanifest">
 <style>
 :root{--bg:#f5f7fb;--card:#fff;--ink:#172033;--muted:#6b7280;--line:#e5e9f2;--blue:#2563eb;--soft:#eaf2ff;--good:#198754;--warn:#b97900;--bad:#c0392b;--purple:#7c3aed}
@@ -282,7 +282,7 @@ body{background:
       <div class="brandMark">L</div>
       <div><div class="brandName">Lucas <span>PET</span></div><div class="brandSub">每天一点，向 B1 稳稳前进</div></div>
     </div>
-    <span class="versionPill">v0.5.12.4</span>
+    <span class="versionPill">v0.5.12.5</span>
   </div>
 
   <div class="homeHero">
@@ -329,7 +329,7 @@ body{background:
 
   <div class="card" style="margin:14px 0"><div class="sectionEyebrow">教材学习</div><h2>剑桥 PET 综合教程</h2><div class="small" id="schoolHomeBrief">打开教材页，记录教材并验证掌握情况</div><div class="gap"></div><button class="soft" onclick="showSecById('schoolStudy')">记录教材学习 ›</button></div>
 <div class="card" style="margin:14px 0"><div class="sectionEyebrow">新增 · AI 辅导</div><h2>DeepSeek AI 英语导师</h2><div class="small">分析真实错误，自动生成两道补练；不修改原有测试成绩与排期。</div><div class="gap"></div><button class="soft" onclick="showSecById('aiTutor')">进入 AI 导师 ›</button></div>
-<div class="card" style="margin:14px 0"><div class="sectionEyebrow">教材训练 · 云端记录</div><h2>纸质教材训练</h2><div class="small">P8–P15 按 Exercise 逐题录入，保存后可查看历史。每页原题校对状态以题库标记为准。</div><div class="gap"></div><button class="soft" onclick="showSecById('learnHub')">打开教材训练 ›</button></div>
+<div class="card" style="margin:14px 0"><div class="sectionEyebrow">教材训练 · 云端记录</div><h2>纸质教材训练</h2><div class="small">Unit 1 P8–P15 / Unit 2 P16–P23 按 Exercise 逐题录入，保存后可查看历史。每页原题校对状态以题库标记为准。</div><div class="gap"></div><button class="soft" onclick="showSecById('learnHub')">打开教材训练 ›</button></div>
 <div class="homeSectionTitle"><div><span>学习表现</span><small>英→中与中→英分别看</small></div><button class="textLink" onclick="showSecById('stats')">统计分析 ›</button></div>
   <div class="grid metrics modernMetrics">
     <div class="card metric"><div class="metricIcon blue">中</div><div><div class="k">英→中正确率</div><div class="v" id="eAcc">—</div></div></div>
@@ -351,11 +351,11 @@ body{background:
 <div class="hub-card"><h2>今日学习 · Daily Plan</h2><div id="hubPlan"></div><div class="hub-muted">动态任务按薄弱程度、复测到期和练习覆盖度排序；原 Review 排期保持独立，不会被覆盖。</div></div>
 
 <div class="hub-card" id="petCatalogCard" style="border:2px solid #60a5fa">
-<h2>教材训练 · Unit 1 P8–P15 <span class="pill">云端逐题录入</span></h2>
+<h2>教材训练 · Unit 1 / Unit 2 <span class="pill">云端逐题录入</span></h2>
 <p class="hub-muted">Lucas 继续纸上答题，家长在这里按题号录入。云端保存后可重新加载并汇总错题；未核准题干/答案不自动判分。请对照原书页码和选项。</p>
 <div class="hub-row" style="gap:8px;flex-wrap:wrap"><input type="password" id="petCatalogToken" placeholder="AI 访问码（与 AI 导师相同）" autocomplete="off" style="min-width:200px;flex:1"><button class="primary" onclick="petCatalogLoad()">连接云端题库</button></div>
 <div id="petCatalogStatus" class="hub-muted" role="status">连接后选择页码开始录入。</div>
-<div class="hub-row" style="gap:8px;flex-wrap:wrap"><label>教材页码 <select id="petPage" onchange="petPageChange()"><option value="">请先加载</option></select></label><label>训练日期 <input type="date" id="petDate"></label></div>
+<div class="hub-row" style="gap:8px;flex-wrap:wrap"><label>教材单元 <select id="petUnit" onchange="petUnitChange()"><option value="1">Unit 1 · My life and home</option><option value="2">Unit 2 · At school</option></select></label><label>教材页码 <select id="petPage" onchange="petPageChange()"><option value="">请先加载</option></select></label><label>训练日期 <input type="date" id="petDate"></label></div>
 <div id="petCatalogRows"></div>
 <div id="petCatalogHistory" class="hub-box" hidden></div>
 <div class="hub-row" style="gap:8px;flex-wrap:wrap"><button class="soft" onclick="petExport()">导出云端训练记录</button><button class="soft" onclick="petHistoryLoad()">刷新历史与统计</button></div>
@@ -3209,17 +3209,19 @@ const norm=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'
 const options=[['','未记录'],['correct','独立正确'],['partial','提示后完成'],['wrong','错误'],['unable','不会'],['guess','猜对'],['skip','未做']];
 const localDay=()=>{const d=new Date();return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-')};
 let catalog=[],history=[],loaded=false;
+let selectedUnit=1;
 function token(){return (E('petCatalogToken').value||window.petSharedAccess?.get()||'').trim()}
 async function call(slug,payload){const r=await fetch(base+slug,{method:'POST',headers:{'Content-Type':'application/json','x-ai-access':token()},body:JSON.stringify(payload)});const o=await r.json().catch(()=>({error:'接口未返回 JSON'}));if(!r.ok)throw Error(o.error||'HTTP '+r.status);return o;}
 function status(s){E('petCatalogStatus').textContent=s}
 window.petCatalogLoad=async()=>{
  if(token())window.petSharedAccess?.set(token());
  if(!token())return status('请先填写 AI 访问码。');status('正在加载题库及已有学习记录…');
- try{const [c,h]=await Promise.all([call('pet-textbook-catalog',{action:'list',unit:1}),call('pet-textbook-results',{action:'list'})]);catalog=c.exercises||[];history=h.records||[];loaded=true;
+ try{const [c,h]=await Promise.all([call('pet-textbook-catalog',{action:'list',unit:'all'}),call('pet-textbook-results',{action:'list'})]);catalog=c.exercises||[];history=h.records||[];loaded=true;
  E('petDate').value||=localDay();E('petPage').innerHTML=Array.from(new Set(catalog.map(x=>x.printed_page))).sort((a,b)=>a-b).map(p=>`<option value="${p}">P${p}</option>`).join('');
- E('petPage').value='14';petPageChange();renderHistory();status(`已加载 ${catalog.length} 组练习，云端训练记录 ${history.length} 条。请选页码并录入。`);
+ selectedUnit=Number(E('petUnit')?.value||1);petUnitChange();renderHistory();status(`已加载 ${catalog.length} 组练习（Unit 1/2），云端训练记录 ${history.length} 条。请选单元、页码并录入。`);
  }catch(e){status('连接失败：'+e.message)}
 };
+window.petUnitChange=()=>{if(!loaded)return;selectedUnit=Number(E('petUnit').value||1);const pages=Array.from(new Set(catalog.filter(x=>x.unit_no?x.unit_no===selectedUnit:(selectedUnit===1?x.printed_page<=15:x.printed_page>=16)).map(x=>x.printed_page))).sort((a,b)=>a-b);E('petPage').innerHTML=pages.map(p=>`<option value="${p}">P${p}</option>`).join('');E('petPage').value=String(selectedUnit===1?14:16);petPageChange();};
 window.petPageChange=()=>{
  if(!loaded)return;const page=Number(E('petPage').value),a=catalog.filter(x=>x.printed_page===page);
  E('petCatalogRows').innerHTML=a.map(ex=>{
@@ -3255,7 +3257,7 @@ function renderHistory(){const done=history.flatMap(x=>x.items||[]),has=done.fil
  const el=E('petCatalogHistory');el.hidden=false;el.innerHTML=`<b>云端训练统计</b><p>已保存 ${history.length} 组训练 · 已记录 ${has.length} 个有效题位 · 独立正确 ${counts.correct||0} · 错误 ${counts.wrong||0} · 不会 ${counts.unable||0} · 猜对 ${counts.guess||0} · 提示后 ${counts.partial||0}</p><details><summary>查看最近待巩固题目（${weak.length}）</summary><ol>${weak.map(x=>`<li>P${x.page} ${norm(x.ex)} 第${x.no}题 · ${norm(x.status)} ${norm(x.remark||'')}</li>`).join('')}</ol></details><p class="hub-muted">这里统计的是家长录入状态，未经答案核准的题目不会自动算为正确。</p>`;
 }
 window.petHistoryLoad=async(show=true)=>{if(!token())return status('请填写访问码');try{const d=await call('pet-textbook-results',{action:'list'});history=d.records||[];renderHistory();if(show)status('已刷新云端训练记录：'+history.length+' 组')}catch(e){status('云端记录读取失败：'+e.message)}};
-window.petExport=()=>{const blob=new Blob([JSON.stringify({product:'lucas-pet',book:'Complete Preliminary for Schools',type:'textbook-training',records:history},null,2)],{type:'application/json'});const a=document.createElement('a'),url=URL.createObjectURL(blob);a.href=url;a.download='Lucas_PET_Unit1_P8-P15_训练记录.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),3000)};
+window.petExport=()=>{const blob=new Blob([JSON.stringify({product:'lucas-pet',book:'Complete Preliminary for Schools',type:'textbook-training',records:history},null,2)],{type:'application/json'});const a=document.createElement('a'),url=URL.createObjectURL(blob);a.href=url;a.download='Lucas_PET_Unit1-2_P8-P23_训练记录.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),3000)};
 })();
 </script>
 <script id="pet5123Auth">
@@ -3286,7 +3288,7 @@ window.petExport=()=>{const blob=new Blob([JSON.stringify({product:'lucas-pet',b
  function add(t){const x=document.createElement('div');x.innerHTML=t.trim();return x.firstElementChild}
  function apply(){
    const hub=document.getElementById('learnHub');if(!hub)return;
-   const heading=hub.querySelector('h1');if(heading)heading.innerHTML='教材训练 <span class="pet5121pill">P8–P15 · 云端录入</span>';
+   const heading=hub.querySelector('h1');if(heading)heading.innerHTML='教材训练 <span class="pet5121pill">P8–P23 · 云端录入</span>';
    const sub=hub.querySelector('.sub');if(sub)sub.textContent='一个教材入口完成：选择页码 → 逐题记录 Lucas 的表现 → 保存云端 → 查看历史。题干与答案尚未核对的题目请对照原书，不自动评分。';
    const box=add(`<div id="pet5121Top">
      <div class="pet5121tiles">
