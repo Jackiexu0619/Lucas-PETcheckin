@@ -45,6 +45,17 @@
 .schoolRowActions{display:flex;gap:6px;justify-content:flex-end;margin-top:7px;flex-wrap:wrap}
 .schoolRowActions button{padding:7px 11px;font-size:12px}
 @media(max-width:620px){#schoolStudy .row>div{flex-basis:100%}#schoolStats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* AI Tutor incremental module: no changes to legacy Review/Test styling or logic */
+#aiTutor .ai-layout{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(260px,1fr);gap:12px}
+#aiTutor .ai-card{border:1px solid #dde6f3;border-radius:14px;padding:15px;background:#fff;margin-bottom:12px}
+#aiTutor .ai-card h2{margin:0 0 9px}#aiTutor textarea{min-height:86px;width:100%}
+#aiTutor .ai-small{font-size:12px;color:#64748b;line-height:1.6}#aiTutor .ai-case{padding:8px;background:#f5f7fc;border-radius:9px;margin:8px 0}
+#aiTutor .ai-options label{display:block;padding:7px;border:1px solid #dbe2ee;border-radius:8px;margin:6px 0}
+#aiTutor .ai-report{background:#eff6ff;border-radius:12px;padding:13px;line-height:1.8;margin-top:10px}
+#aiTutor .ai-history{border-bottom:1px solid #e2e8f0;padding:9px 0;font-size:13px}
+#aiTutor .ai-status{padding:8px;border-radius:8px;background:#f1f5f9;margin:10px 0;font-size:13px}
+@media(max-width:700px){#aiTutor .ai-layout{grid-template-columns:1fr}}
 </style>
 <style id="ui-v0512">
 :root{--bg:#f4f8ff;--card:#fff;--ink:#12315d;--muted:#71809a;--line:#e5edf8;--blue:#1477ef;--blue2:#0758c9;--teal:#12b99b;--yellow:#ffbf23;--violet:#7558e8;--soft:#edf5ff;--shadow:0 10px 30px rgba(31,84,143,.09)}
@@ -299,6 +310,7 @@ body{background:
   </div>
 
   <div class="card" style="margin:14px 0"><div class="sectionEyebrow">教材学习</div><h2>剑桥 PET 综合教程</h2><div class="small" id="schoolHomeBrief">打开教材页，记录教材并验证掌握情况</div><div class="gap"></div><button class="soft" onclick="showSecById('schoolStudy')">记录教材学习 ›</button></div>
+<div class="card" style="margin:14px 0"><div class="sectionEyebrow">新增 · AI 辅导</div><h2>DeepSeek AI 英语导师</h2><div class="small">分析真实错误，自动生成两道补练；不修改原有测试成绩与排期。</div><div class="gap"></div><button class="soft" onclick="showSecById('aiTutor')">进入 AI 导师 ›</button></div>
 <div class="homeSectionTitle"><div><span>学习表现</span><small>英→中与中→英分别看</small></div><button class="textLink" onclick="showSecById('stats')">统计分析 ›</button></div>
   <div class="grid metrics modernMetrics">
     <div class="card metric"><div class="metricIcon blue">中</div><div><div class="k">英→中正确率</div><div class="v" id="eAcc">—</div></div></div>
@@ -309,6 +321,25 @@ body{background:
 
   <div class="gap"></div>
   <div class="card trendCard"><div class="cardTitleRow"><div><div class="sectionEyebrow">最近14天</div><h2>反应速度变化</h2></div><div class="trendMini">越低越好 ↓</div></div><div class="trendLegend"><span class="trendLegendItem"><i class="trendSwatch e2z"></i>英→中</span><span class="trendLegendItem"><i class="trendSwatch z2e"></i>中→英</span></div><div class="canvas"><canvas id="trend"></canvas></div><div class="small">错误和人工剔除的操作延迟不计入平均反应时间；某天没有有效测试时曲线会断开。</div></div>
+</section>
+
+
+<section id="aiTutor" class="section" hidden>
+<h1>AI 英语导师 <span class="pill">v0.5.11.6 增量预览</span></h1>
+<div class="sub">沿用完整 Lucas PET，AI 辅导不覆盖词库、Review、Test、教材和现有云同步。AI 功能需要先配置独立、安全的服务端接口。</div><div class="gap"></div>
+<div class="ai-layout"><div>
+<div class="ai-card"><h2>AI 接口设置</h2><div class="ai-small">填入部署后的 Supabase Edge Function 完整 HTTPS 地址和单独的 AI 访问码。访问码只存在当前标签页，不会进入 WordLoop 云端备份。不要在此填写 DeepSeek API Key。</div>
+<label for="aiEndpoint">AI 服务端地址</label><input id="aiEndpoint" placeholder="https://你的项目.supabase.co/functions/v1/pet-ai-tutor" autocomplete="off" spellcheck="false">
+<div class="gap"></div><label for="aiAccess">AI 访问码（不是 DeepSeek Key）</label><input id="aiAccess" type="password" placeholder="仅当前标签页使用" autocomplete="off"><div class="gap"></div><button class="soft" onclick="aiCheckStatus()">检查连接</button><div id="aiStatus" class="ai-status">AI 尚未连接；其他学习功能照常可用。</div></div>
+<div class="ai-card"><h2>真实答案 → AI 诊断 → 两道补练</h2><label for="aiScenario">训练主题</label><select id="aiScenario" onchange="aiChooseScenario()"><option value="be-do">Unit 1 · be / do 疑问句</option><option value="quantifiers">Unit 1 · 数量词</option><option value="read4">PET Reading Part 4</option><option value="listen4">PET Listening Part 4</option><option value="writing">PET Writing 邮件</option><option value="custom">自定义训练任务</option></select><div class="gap"></div>
+<label for="aiTask">题目或任务</label><textarea id="aiTask" rows="3" placeholder="粘贴真实教材题目或自行编写的训练题"></textarea><div class="gap"></div>
+<label for="aiAnswer">Lucas 的实际回答</label><textarea id="aiAnswer" rows="4" placeholder="填写学生真实答案；请勿填写姓名、账号等隐私信息"></textarea><div class="gap"></div>
+<label for="aiReference">参考答案 / 评分依据（可选）</label><textarea id="aiReference" rows="2" placeholder="可写正确答案或评分标准；没有就留空"></textarea><div class="gap"></div>
+<button class="primary" id="aiDiagnoseBtn" onclick="aiDiagnose()">发送给 DeepSeek 分析并生成补练</button><div id="aiProgress" class="ai-small"></div><div id="aiResult" hidden></div></div>
+</div><div>
+<div class="ai-card"><h2>学习记录</h2><div class="ai-small">AI 结果保存在此设备的独立实验命名空间；可导出 JSON，不会写入原有正式测试成绩。</div><div id="aiHistory"></div><div class="gap"></div><button class="soft" onclick="aiExportHistory()">导出 AI 训练记录</button> <button class="gray" onclick="aiClearHistory()">清空 AI 实验记录</button></div>
+<div class="ai-card"><h2>使用原则</h2><div class="ai-small">① 教材原题以原书为准，AI 生成题只作为补练。<br>② 没有音频时不能声称已经测出听力能力；没有录音时不评价发音。<br>③ AI 结果可能出错，补练正确答案可人工核对。<br>④ 本模块故障时，原有 Review、Test、教材和词汇模块不受影响。</div></div>
+</div></div>
 </section>
 
 <section id="test" class="section" hidden><h1>今日测试</h1><div class="sub">先完成 Review，再做正式 Test。单词英→中仍以听觉识别为主；固定搭配只考“看英文搭配，说中文意思”。同一个词当天最多正式测一个方向，避免英→中 / 中→英短时重复。</div><div class="gap"></div>
@@ -362,7 +393,7 @@ body{background:
 </section>
 
 <section id="data" class="section" hidden><h1>数据与设置</h1>
-<div class="notice"><b>v0.5.11.5：教材学习档案与知识点诊断闭环（预览）；保留原有全站 UI。</b> 首页、Review、Test、词汇池、固定搭配、分析、记录和数据页统一为新的学习卡片视觉；保留 v0.5.10.9 的测试结果词性显示，以及原有智能排期、记忆周期、双向 Test、词族、固定搭配和云同步逻辑。</div><div class="gap"></div>
+<div class="notice"><b>v0.5.11.6：完整功能保留 + AI 导师增量预览；保留原有全站 UI。</b> 首页、Review、Test、词汇池、固定搭配、分析、记录和数据页统一为新的学习卡片视觉；保留 v0.5.10.9 的测试结果词性显示，以及原有智能排期、记忆周期、双向 Test、词族、固定搭配和云同步逻辑。</div><div class="gap"></div>
 <div class="card"><h2>v0.3 记忆周期</h2><div class="small">错词：1天后；慢 / 重听 / 发音需练习：2天后；连续快速正确（≤3秒且不重听）：1天 → 3天 → 7天 → 14天 → 30天。任何阶段再错，重新回到1天。英→中与中→英分别计算。</div></div><div class="gap"></div>
 <div class="card"><h2>语音设置</h2><label>英语地区</label><select id="voiceLang"><option value="en-GB">英式英语 en-GB</option><option value="en-US">美式英语 en-US</option></select><div class="gap"></div><label>语速：<span id="rateText">0.90</span></label><input id="voiceRate" type="range" min="0.72" max="1.05" step="0.01" value="0.90"><div class="gap"></div><button class="soft" onclick="testVoice()">试听 persuade</button></div>
 <div class="gap"></div><div class="card"><h2>新增词汇</h2><div class="sub">家长只录入 Lucas 真正遇到的陌生词，并按本次实际语境标注词性。新增词最早次日先进入 Review 学习；Review 完成后的下一学习日才进入正式 Test。</div><div class="gap"></div><div class="row"><input id="newEn" placeholder="English" oninput="updateFamilyHint()"><input id="newZh" placeholder="中文意思"></div><div class="gap"></div><div id="newDictHint" class="spellHint skip">输入英文后，会自动匹配常见中文释义和词性；可按实际语境修改。</div><div class="gap"></div><div id="newSpellHint" class="spellHint skip">输入英文后自动检查拼写；只提示，不会擅自改词。</div><div class="gap"></div><div id="newMeaningHint" class="spellHint skip">英文和中文都填好后，会额外检查常见易混词。</div><div class="gap"></div><label>词性（按本次实际语境）</label><select id="newPos"><option value="">请选择词性</option><option value="n.">n. 名词</option><option value="v.">v. 动词</option><option value="adj.">adj. 形容词</option><option value="adv.">adv. 副词</option><option value="prep.">prep. 介词</option><option value="conj.">conj. 连词</option><option value="pron.">pron. 代词</option><option value="det.">det. 限定词</option><option value="phr.">phr. 短语</option><option value="prop. n.">prop. n. 专有名词</option><option value="n./v.">n./v. 名词/动词</option></select><div class="gap"></div><div id="familyHint" class="familyHint neutral">输入英文后，这里会显示词族判断。</div><div class="gap"></div><input id="newNote" placeholder="例句/备注（可选）"><div class="gap"></div><div class="notice"><b>固定搭配（可选）</b><div class="small">只填真正有价值的搭配，不需要每个单词都加。</div><div class="gap"></div><div class="row"><input id="newLinkedStructureEn" placeholder="例如 recommend doing something"><input id="newLinkedStructureZh" placeholder="例如 建议做某事"></div><div class="gap"></div><label class="checkline"><input id="newLinkedStructureKey" type="checkbox" checked>重点 / 易考搭配</label><label class="checkline"><input id="newLinkedStructureReplace" type="checkbox" checked>英→中时优先用这个搭配替代独立单词</label></div><div class="gap"></div><details class="advanced"><summary>高级：手动指定词族（通常不用）</summary><div class="gap"></div><input id="newFamily" placeholder="例如 decorate；留空则由软件判断"></details><div class="gap"></div><button class="primary" onclick="addWord()">加入词汇池</button></div>
@@ -384,6 +415,7 @@ body{background:
 <button onclick="showSec('words',this)"><span class="navIcon">Aa</span><span>词汇</span></button>
 <button onclick="showSec('structures',this)"><span class="navIcon">↗</span><span>搭配</span></button>
 <button onclick="showSec('schoolStudy',this)"><span class="navIcon">▤</span><span>教材</span></button>
+<button onclick="showSec('aiTutor',this)"><span class="navIcon">✦</span><span>AI</span></button>
 <button onclick="showSec('stats',this)"><span class="navIcon">▥</span><span>分析</span></button>
 <button onclick="showSec('history',this)"><span class="navIcon">≡</span><span>记录</span></button>
 <button onclick="showSec('data',this)"><span class="navIcon">⚙</span><span>数据</span></button>
@@ -410,7 +442,7 @@ const CLOUD_ENDPOINT_PREF_STORAGE='pet_checkin_cloud_endpoint_pref';
 const CLOUD_KEY_STORAGE='pet_checkin_cloud_recovery_key';
 const CLOUD_ENABLED_STORAGE='pet_checkin_cloud_enabled';
 const CLOUD_META_STORAGE='pet_checkin_cloud_meta';
-const APP_VERSION='0.5.11.5';
+const APP_VERSION='0.5.11.6';
 let cloudTimer=null,cloudBusy=false,cloudQueued=false,cloudSuppressPush=false,cloudConflictState=null;
 const ROLLING_BACKUP_PREFIXES=[
   'pet_checkin_v1_backup_pre_cloud_autopull_',
@@ -2967,6 +2999,35 @@ renderAll();
 document.querySelectorAll('.app>.section').forEach(x=>{let on=x.id==='home';x.hidden=!on;x.classList.toggle('active',on)});
 if(cloudIsEnabled())setTimeout(()=>cloudSmartSync(false),600);
 if(bootRecoveryReport&& !sessionStorage.getItem('pet031_recovery_notice')){sessionStorage.setItem('pet031_recovery_notice','1');let r=bootRecoveryReport;setTimeout(()=>alert(r.fallback?'检测到旧数据迁移异常，已优先从升级前快照恢复，并保留异常原始数据副本。请到“词汇”和“记录”页核对。':`已自动检查升级前快照并补回缺失数据：${r.words||0} 个词、${r.tests||0} 条测试记录、${r.plans||0} 个清单项目。`),150)}
-if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('./service-worker.js?v=lucas-pet-0.5.11.5-skill-evidence-preview-r1',{updateViaCache:'none'}).catch(()=>{});
+if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('./service-worker.js?v=lucas-pet-0.5.11.6-ai-integrated-preview-r1',{updateViaCache:'none'}).catch(()=>{});
+</script>
+<script>
+(() => {
+'use strict';
+const NAMESPACE='lucas_pet_ai_tutor_preview_v05116';
+const CASES={
+'be-do':{skill:'grammar',task:'Turn these into questions: (1) He plays football after school. (2) She is reading a book now.',reference:'Does he play football after school? Is she reading a book now?'},
+'quantifiers':{skill:'grammar',task:'Complete and explain: (1) There are ___ books on the shelf. (2) We have ___ water left.',reference:'many / a few for plural countable books; much / a bit of for water, subject to context'},
+'read4':{skill:'reading',task:'Tom missed the bus. He called his father, but no one answered. ___ He decided to walk to school instead. Write a suitable sentence and explain its link.',reference:'Must connect unanswered call with walking; do not invent unrelated transport'},
+'listen4':{skill:'listening',task:'Describe what the speakers decided and which audio clues support it. Supply the actual listening transcript or content in the task before requesting evaluation.',reference:'No audio/transcript means cannot reliably judge listening comprehension'},
+'writing':{skill:'writing',task:'Write a short email inviting a friend to play basketball on Saturday. Include where, when, and what to bring.',reference:'Check content coverage, grammar, clarity and basic email conventions; not official Cambridge marking'},
+'custom':{skill:'grammar',task:'',reference:''}
+};
+const el=id=>document.getElementById(id);
+const esc=t=>String(t??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let current=null;
+function load(){try{const x=JSON.parse(localStorage.getItem(NAMESPACE)||'[]');return Array.isArray(x)?x:[]}catch{return []}}
+function persist(rows){const serialized=JSON.stringify(rows.slice(-60));localStorage.setItem(NAMESPACE,serialized)}
+function render(){const rows=load();el('aiHistory').innerHTML=rows.length?rows.slice(-8).reverse().map(r=>`<div class="ai-history"><b>${esc(r.title)}</b><div class="ai-small">${esc(new Date(r.ts).toLocaleString())} · ${esc(r.verdict)}${r.followup?' · 补练 '+r.followup.correct+'/2':''}</div>${esc(r.issue)}</div>`).join(''):'<div class="ai-small">尚无 AI 训练记录</div>'}
+window.aiChooseScenario=function(){let c=CASES[el('aiScenario').value];el('aiTask').value=c.task;el('aiReference').value=c.reference;el('aiAnswer').value='';el('aiResult').hidden=true;current=null};
+function apiUrl(){let s=el('aiEndpoint').value.trim();if(!/^https:\/\/[a-z0-9.-]+\/functions\/v1\/pet-ai-tutor\/?$/i.test(s))throw Error('请填写有效的 HTTPS Supabase AI 函数地址');return s}
+async function call(action,body={}){const url=apiUrl(),pass=el('aiAccess').value.trim();if(pass.length<12)throw Error('请填写服务端设置的独立 AI 访问码（至少 12 位）');const ctrl=new AbortController();const timer=setTimeout(()=>ctrl.abort(),35000);try{let r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json','X-AI-Access':pass},body:JSON.stringify({action,...body}),signal:ctrl.signal,cache:'no-store'});let j=await r.json().catch(()=>({}));if(!r.ok)throw Error(j.error||('AI 服务 HTTP '+r.status));return j}finally{clearTimeout(timer)}}
+window.aiCheckStatus=async function(){el('aiStatus').textContent='正在检查连接…';try{const x=await call('status');el('aiStatus').textContent=`AI 服务已连接 · ${x.model||'DeepSeek'} · ${x.ready?'可调用':'未配置模型密钥'}`}catch(e){el('aiStatus').textContent='连接失败：'+e.message}};
+window.aiDiagnose=async function(){const b=el('aiDiagnoseBtn'),answer=el('aiAnswer').value.trim(),task=el('aiTask').value.trim();if(!task||!answer)return alert('请先填写任务和实际答案');b.disabled=true;el('aiProgress').textContent='正在请求 AI 分析…';try{const c=CASES[el('aiScenario').value];const history=load().slice(-4).map(x=>({skill:x.skill,issue:x.issue,verdict:x.verdict}));const r=await call('evaluate',{skill:c.skill,task,reference:el('aiReference').value,studentAnswer:answer,history});if(!Array.isArray(r.questions)||r.questions.length!==2)throw Error('AI 返回的补练格式不正确');const rec={id:crypto.randomUUID(),ts:Date.now(),title:el('aiScenario').selectedOptions[0].textContent,skill:c.skill,task,answer,verdict:r.verdict,issue:r.issue,reason:r.reason,nextStep:r.nextStep,questions:r.questions,model:r.model,usage:r.usage||null,followup:null};persist([...load(),rec]);current=rec;render();const result=el('aiResult');result.hidden=false;result.innerHTML=`<div class="ai-report"><b>判断：${esc(r.verdict)}</b><div><b>错误定位：</b>${esc(r.issue)}</div><div><b>原因：</b>${esc(r.reason)}</div><div><b>建议：</b>${esc(r.nextStep)}</div></div><h3>AI 针对性补练（自编题）</h3>${r.questions.map((q,i)=>`<div class="ai-case"><b>${i+1}. ${esc(q.question)}</b><div class="ai-options">${q.options.map((o,k)=>`<label><input type="radio" name="ai-q${i}" value="${k}"> ${esc(o)}</label>`).join('')}</div></div>`).join('')}<button class="primary" id="aiGradeBtn" onclick="aiGrade()">提交补练答案</button><div id="aiGradeResult"></div>`;el('aiProgress').textContent=`诊断已生成 · ${r.model||'DeepSeek'}`;}catch(e){el('aiProgress').textContent='未生成或保存记录：'+(e.name==='AbortError'?'AI 请求超时':e.message)}finally{b.disabled=false}};
+window.aiGrade=function(){if(!current)return;const answers=current.questions.map((q,i)=>document.querySelector(`input[name="ai-q${i}"]:checked`)?.value);if(answers.some(x=>x===undefined))return alert('请完成两道补练题');const count=answers.filter((v,i)=>Number(v)===current.questions[i].correctIndex).length;const rows=load(),ix=rows.findIndex(x=>x.id===current.id);if(ix<0)return;rows[ix].followup={correct:count,total:2,answers:answers.map(Number),at:Date.now()};try{persist(rows)}catch(e){return alert('本机保存失败：'+e.message)};render();el('aiGradeResult').innerHTML=`<div class="ai-report"><b>正确 ${count}/2</b><div>${current.questions.map((q,i)=>`${i+1}. ${Number(answers[i])===q.correctIndex?'✓':'✗'} 正确答案：${esc(q.options[q.correctIndex])}。${esc(q.explanation)}`).join('<br>')}</div><small>一次做对不代表长期掌握。</small></div>`;el('aiGradeBtn').disabled=true};
+window.aiExportHistory=function(){const url=URL.createObjectURL(new Blob([JSON.stringify({product:'lucas-pet-ai-preview',version:'0.5.11.6',records:load()},null,2)],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download='Lucas_AI_训练记录_'+new Date().toISOString().slice(0,10)+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)};
+window.aiClearHistory=function(){if(confirm('仅清空本机 AI 实验记录？不会删除正式词汇与测试记录。')){localStorage.removeItem(NAMESPACE);render();el('aiResult').hidden=true}};
+window.addEventListener('load',()=>{try{el('aiEndpoint').value=sessionStorage.getItem('lucas_ai_endpoint')||''}catch{};el('aiEndpoint').addEventListener('change',()=>{try{sessionStorage.setItem('lucas_ai_endpoint',el('aiEndpoint').value.trim())}catch{}});aiChooseScenario();render()});
+})();
 </script>
 </body></html>
