@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#1477ef">
-<title>Lucas PET v0.5.12.3 热身启动与自动连接修复版</title>
+<title>Lucas PET v0.5.12.4 热身启动与自动连接修复版</title>
 <link rel="manifest" href="manifest.webmanifest">
 <style>
 :root{--bg:#f5f7fb;--card:#fff;--ink:#172033;--muted:#6b7280;--line:#e5e9f2;--blue:#2563eb;--soft:#eaf2ff;--good:#198754;--warn:#b97900;--bad:#c0392b;--purple:#7c3aed}
@@ -282,7 +282,7 @@ body{background:
       <div class="brandMark">L</div>
       <div><div class="brandName">Lucas <span>PET</span></div><div class="brandSub">每天一点，向 B1 稳稳前进</div></div>
     </div>
-    <span class="versionPill">v0.5.12.3</span>
+    <span class="versionPill">v0.5.12.4</span>
   </div>
 
   <div class="homeHero">
@@ -407,7 +407,7 @@ body{background:
 <div id="pronArea" class="hidden" style="width:100%;margin-top:10px"><div class="small" style="margin-top:7px">记录 Lucas 刚才的发音：</div><div class="pronBtns"><button id="pronGood" class="good" onclick="setPron('correct')">发音正确</button><button id="pronPractice" class="slow" onclick="setPron('practice')">需要练习</button></div></div>
 <div id="gradeBtns" class="answerBtns hidden"><button class="good" onclick="mark('correct')">词义正确</button><button class="slow" onclick="mark('slow')">反应较慢</button><button class="bad" onclick="mark('wrong')">回答错误</button></div>
 <div id="reasonPanel" class="hidden" style="width:100%;margin-top:14px"><div class="small">给这次慢/错标一个原因（可跳过）：</div><div class="reasonBtns" id="reasonBtns"></div><button class="gray wide" style="margin-top:8px" onclick="finishPendingRecord('')">暂不标记</button></div>
-</div><div id="result" class="card hidden"></div><div class="gap"></div><div id="dailyTestRecap" class="card" aria-live="polite"></div></section>
+</div><div id="result" class="card hidden"></div><div class="gap"></div><div id="dailyTestRecap" class="card" aria-live="polite"></div><div id="petWarmupSlot" class="card" aria-live="polite"><h2>每日旧知识热身 · 3 题</h2><p class="small">完成今日词汇 Test 后，直接在这里做 3 道旧知巩固；答完自动判分并提供讲解。</p><div id="petWarmupArea"><p class="small">正在准备……</p></div></div></section>
 
 <section id="review" class="section" hidden><h1>今日复习</h1><div class="sub">每天先 Review、再 Test。默认最多 12 个词，优先顺序：①新加入的陌生词；②之前答错/不稳定且到期的词；③以前会、但到了维护复查期的词。当天 Review 过的词不会再进入当天 Test。</div><div id="reviewClearSummary" class="notice" style="margin-top:10px"></div><div class="gap"></div><div class="card"><div class="reviewStudyToolbar"><div><h2 style="margin-bottom:2px">逐词复习</h2><div class="small">每张卡至少停留 5 秒，并且必须先揭晓答案，才能完成并进入下一词。揭晓答案不会自动算作完成复习。</div></div></div><div id="reviewUnified"></div></div><div class="gap"></div><div id="dailyReviewRecap" class="card" aria-live="polite"></div></section>
 
@@ -502,7 +502,7 @@ const CLOUD_ENDPOINT_PREF_STORAGE='pet_checkin_cloud_endpoint_pref';
 const CLOUD_KEY_STORAGE='pet_checkin_cloud_recovery_key';
 const CLOUD_ENABLED_STORAGE='pet_checkin_cloud_enabled';
 const CLOUD_META_STORAGE='pet_checkin_cloud_meta';
-const APP_VERSION='0.5.12.3';
+const APP_VERSION='0.5.12.4';
 let cloudTimer=null,cloudBusy=false,cloudQueued=false,cloudSuppressPush=false,cloudConflictState=null;
 const ROLLING_BACKUP_PREFIXES=[
   'pet_checkin_v1_backup_pre_cloud_autopull_',
@@ -1125,7 +1125,7 @@ function applyReview(w,rec){let dir=rec.mode,r=w.review[dir],er=effectiveResult(
 function resultLabel(x){return x==='correct'?'正确':x==='slow'?'慢':'错误'}
 function pronLabel(x){return x==='correct'?'✓ 正确':x==='practice'?'需练习':'—'}
 /* ===== v0.5.10.9 测试结果显示词性：开始 ===== */
-function finish(){testCard.classList.add('hidden');result.classList.remove('hidden');let ok=records.filter(x=>effectiveResult(x)!=='wrong'),a=records.length?ok.length/records.length:0,r=avg(ok.map(effectiveRt)),wrong=records.filter(x=>effectiveResult(x)==='wrong'),spAfter=smartPlanSummary(),remainAfter=spAfter.e.length+spAfter.z.length+spAfter.s.length;let rows=records.map(x=>{let isStruct=x.itemType==='structure',w=isStruct?null:wordById(x.wordId),pos=isStruct?'搭配':String(w?.pos||'').trim()||'未标注';return`<tr><td><b>${esc(x.en)}</b>${isStruct?'<div class="small">固定搭配</div>':''}</td><td>${isStruct?'<span class="badge pos">搭配</span>':`<span class="badge pos">${esc(pos)}</span>`}</td><td>${x.mode==='structure_e2z'?'搭配英→中':x.mode==='e2z'?'英→中':'中→英'}</td><td class="res-${x.result}">${resultLabel(x.result)}</td><td>${Number(x.rt).toFixed(1)}s${x.excludeRt?'<div class="small">已剔除</div>':''}</td><td>${isStruct?'—':(x.replays||0)}</td><td>${x.mode==='z2e'?pronLabel(x.pronunciation):'—'}</td><td>${esc(x.reason||'—')}</td></tr>`}).join('');result.innerHTML=`<h2>本次完成</h2><div class="grid"><div class="metric"><div class="k">正确/慢合计</div><div class="v">${pct(a)}</div></div><div class="metric"><div class="k">有效平均反应</div><div class="v">${isFinite(r)?r.toFixed(1)+'s':'—'}</div></div></div><div class="small">正确 ${records.filter(x=>x.result==='correct').length} · 慢 ${records.filter(x=>x.result==='slow').length} · 错误 ${records.filter(x=>x.result==='wrong').length}</div><div style="overflow-x:auto"><table class="resultTable"><thead><tr><th>项目</th><th>词性</th><th>方向</th><th>结果</th><th>反应</th><th>重听</th><th>发音</th><th>原因</th></tr></thead><tbody>${rows}</tbody></table></div>${wrong.length?`<div class="gap"></div><div class="warning">本轮 ${wrong.length} 个错项已经自动安排到下一复查日。今天不会再次自动加入测试，避免短时记忆造成“假掌握”。</div>`:''}${remainAfter?`<div class="gap"></div><div class="notice">今日智能测试还剩 <b>${remainAfter}</b> 个：英→中单词 ${spAfter.e.length} 个，固定搭配 ${spAfter.s.length} 个，中→英单词 ${spAfter.z.length} 个。</div><div class="gap"></div><button class="primary wide" onclick="continueSmartTest()">继续清测试红点</button>`:`<div class="gap"></div><div class="notice">✅ 今日智能测试已全部完成，测试红点已清零。</div>`}<div class="gap"></div><button class="soft wide" onclick="openHistoryFromResult()">查看全部测试记录</button>`;save()}
+function finish(){testCard.classList.add('hidden');result.classList.remove('hidden');let ok=records.filter(x=>effectiveResult(x)!=='wrong'),a=records.length?ok.length/records.length:0,r=avg(ok.map(effectiveRt)),wrong=records.filter(x=>effectiveResult(x)==='wrong'),spAfter=smartPlanSummary(),remainAfter=spAfter.e.length+spAfter.z.length+spAfter.s.length;let rows=records.map(x=>{let isStruct=x.itemType==='structure',w=isStruct?null:wordById(x.wordId),pos=isStruct?'搭配':String(w?.pos||'').trim()||'未标注';return`<tr><td><b>${esc(x.en)}</b>${isStruct?'<div class="small">固定搭配</div>':''}</td><td>${isStruct?'<span class="badge pos">搭配</span>':`<span class="badge pos">${esc(pos)}</span>`}</td><td>${x.mode==='structure_e2z'?'搭配英→中':x.mode==='e2z'?'英→中':'中→英'}</td><td class="res-${x.result}">${resultLabel(x.result)}</td><td>${Number(x.rt).toFixed(1)}s${x.excludeRt?'<div class="small">已剔除</div>':''}</td><td>${isStruct?'—':(x.replays||0)}</td><td>${x.mode==='z2e'?pronLabel(x.pronunciation):'—'}</td><td>${esc(x.reason||'—')}</td></tr>`}).join('');result.innerHTML=`<h2>本次完成</h2><div class="grid"><div class="metric"><div class="k">正确/慢合计</div><div class="v">${pct(a)}</div></div><div class="metric"><div class="k">有效平均反应</div><div class="v">${isFinite(r)?r.toFixed(1)+'s':'—'}</div></div></div><div class="small">正确 ${records.filter(x=>x.result==='correct').length} · 慢 ${records.filter(x=>x.result==='slow').length} · 错误 ${records.filter(x=>x.result==='wrong').length}</div><div style="overflow-x:auto"><table class="resultTable"><thead><tr><th>项目</th><th>词性</th><th>方向</th><th>结果</th><th>反应</th><th>重听</th><th>发音</th><th>原因</th></tr></thead><tbody>${rows}</tbody></table></div>${wrong.length?`<div class="gap"></div><div class="warning">本轮 ${wrong.length} 个错项已经自动安排到下一复查日。今天不会再次自动加入测试，避免短时记忆造成“假掌握”。</div>`:''}${remainAfter?`<div class="gap"></div><div class="notice">今日智能测试还剩 <b>${remainAfter}</b> 个：英→中单词 ${spAfter.e.length} 个，固定搭配 ${spAfter.s.length} 个，中→英单词 ${spAfter.z.length} 个。</div><div class="gap"></div><button class="primary wide" onclick="continueSmartTest()">继续清测试红点</button>`:`<div class="gap"></div><div class="notice">✅ 今日智能测试已全部完成，测试红点已清零。</div>`}<div class="gap"></div><button class="soft wide" onclick="openHistoryFromResult()">查看全部测试记录</button>`;save();if(!remainAfter)queueMicrotask(()=>window.petWarmupAfterTest?.());}
 /* ===== v0.5.10.9 测试结果显示词性：结束 ===== */
 function retestWrong(){let wrong=records.filter(x=>effectiveResult(x)==='wrong');if(!wrong.length)return;session=wrong.map(x=>x.itemType==='structure'?structureById(x.structureId)&&structureTestItem(structureById(x.structureId)):wordById(x.wordId)&&wordTestItem(wordById(x.wordId))).filter(Boolean);showSecById('test');currentMode=wrong.some(x=>x.itemType==='structure')?'e2z':currentMode;mode.value=currentMode;cur=-1;records=[];result.classList.add('hidden');testCard.classList.remove('hidden');nextQ()}
 function retestOne(id,m){startSpecific([id],m)}
@@ -3323,42 +3323,43 @@ window.petExport=()=>{const blob=new Blob([JSON.stringify({product:'lucas-pet',b
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',apply,{once:true});else apply();
 })();
 </script>
-<style id="pet5122warmupStyle">
-#learnHub #warmupCard{display:block !important;visibility:visible !important;scroll-margin-top:25px;border:2px solid #0d9488}#warmupCard .wuQ{border:1px solid #dbeafe;border-radius:12px;padding:14px;margin:12px 0;background:var(--card,#fff)}
-#warmupCard .wuAnswers{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin-top:12px}
-#warmupCard .wuChoice{border:1px solid #cbd5e1;border-radius:10px;text-align:center;padding:10px 5px;cursor:pointer;font-size:16px;font-weight:650}
-#warmupCard .wuChoice:has(input:checked){border:2px solid #0d9488;background:#d8f7ec;color:#064e3b}
-#warmupCard .wuChoice input{margin-right:6px}#warmupCard .wuExplain{padding:12px;margin-top:9px;border-radius:9px;background:#f1f5f9;color:#334155;line-height:1.65}
-#warmupCard .wuMark{font-weight:750;margin-bottom:5px}#warmupCard .wuMark.good{color:#047857}#warmupCard .wuMark.bad{color:#b91c1c}
-#warmupCard .wuStatus{margin:9px 0;font-size:14px;color:#475569}#warmupCard .wuNext{padding:12px;border-radius:10px;background:#eff6ff;color:#1e40af}
-@media(max-width:430px){#warmupCard .wuAnswers{grid-template-columns:repeat(3,minmax(0,1fr))}#warmupCard .wuChoice{font-size:14px;padding:9px 1px}}
+<style id="pet5124warmupStyles">
+#petWarmupSlot{scroll-margin-top:20px;border:1px solid #14b8a6}#petWarmupSlot .wu-q{border:1px solid #cbd5e1;border-radius:12px;padding:14px;margin:12px 0}
+#petWarmupSlot .wu-choices{display:flex;flex-wrap:wrap;gap:9px;margin:10px 0}#petWarmupSlot .wu-choice{display:inline-flex;align-items:center;gap:5px;border:1px solid #cbd5e1;border-radius:9px;padding:8px 14px;cursor:pointer}
+#petWarmupSlot .wu-choice:has(input:checked){border-color:#0d9488;background:#d7f7eb;color:#065f46}
+#petWarmupSlot .wu-feedback{padding:10px;border-radius:8px;background:#eff6ff;margin:8px 0;line-height:1.65}
+#petWarmupSlot .wu-message{font-size:14px;color:#475569;margin:10px 0}
 </style>
-<script id="pet5122warmupLogic">
-(function(){
-'use strict';
+<script id="pet5124warmupTestIntegration">
+(()=>{'use strict';
 const API='https://gemzboxhkkrfjqresxjt.supabase.co/functions/v1/pet-warmup';
-const Q=id=>document.getElementById(id),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const day=()=>{const d=new Date();return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-')};
-let questions=[],history=[],setId='loc-a',result=null;
-function token(){const t=(Q('wuAccess')?.value||Q('petCatalogToken')?.value||window.petSharedAccess?.get()||'').trim();if(t)window.petSharedAccess?.set(t);return t}
-async function api(payload){const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json','x-ai-access':token()},body:JSON.stringify(payload)});const v=await r.json().catch(()=>({error:'无法解析服务端回复'}));if(!r.ok)throw Error(v.error||'HTTP '+r.status);return v}
-function state(txt){Q('wuState').textContent=txt}
-function pickSet(rows){const prev=rows.filter(x=>x.session_date<day());return prev[0]?.set_id==='loc-a'?'loc-b':'loc-a'}
-function todaySaved(){return history.filter(x=>x.session_date===day())}
-function render(){const saved=todaySaved();if(saved.length){const ok=saved.filter(x=>x.is_correct).length;let h='<div class="wuNext">今天已经完成热身：<b>'+ok+'/'+saved.length+'</b>。教材主线继续按 P15 进行，不重复刷同一套题。</div>';
-for(const x of saved){const q=questions.find(z=>z.id===x.question_id);h+='<div class="wuQ"><b>'+esc(q?.q||x.question_id)+'</b><div class="wuMark '+(x.is_correct?'good':'bad')+'">'+(x.is_correct?'✓ 回答正确':'✗ 需要巩固')+'</div><div class="wuExplain">Lucas 选择：'+esc(x.selected_answer)+'　｜　正确答案：<b>'+esc(x.correct_answer)+'</b><div>'+esc(x.explanation)+'</div></div></div>'}
-Q('wuQuestions').innerHTML=h;Q('wuSubmit').hidden=true;return}
-const chosen=questions.filter(x=>(setId==='loc-a'?['loc01','loc02','loc03']:['loc04','loc05','loc06']).includes(x.id));Q('wuQuestions').innerHTML=chosen.map((q,i)=>'<div class="wuQ"><div class="small">第 '+(i+1)+' 题 · '+esc(q.skill)+'</div><b style="font-size:17px">'+esc(q.q)+'</b><div class="wuAnswers">'+q.opts.map(o=>'<label class="wuChoice"><input type="radio" name="wu_'+esc(q.id)+'" value="'+esc(o)+'">'+esc(o)+'</label>').join('')+'</div></div>').join('');Q('wuSubmit').hidden=false;Q('wuSubmit').disabled=false;}
-function showExamResults(values){const map=new Map(values.map(x=>[x.id,x]));for(const q of questions){const card=Q('wuQuestions').querySelector('input[name="wu_'+q.id+'"]')?.closest('.wuQ');if(!card)continue;const data=map.get(q.id);if(!data)continue;card.querySelectorAll('input').forEach(x=>x.disabled=true);card.insertAdjacentHTML('beforeend','<div class="wuExplain"><div class="wuMark '+(data.correct?'good':'bad')+'">'+(data.correct?'✓ 正确':'✗ 错误')+'，答案：'+esc(data.answer)+'</div>'+esc(data.why)+'</div>')}
-Q('wuSubmit').hidden=true;}
-async function load(){if(!token()){state('请填写访问码后加载热身题（与教材训练访问码相同）。');return}state('正在读取今日热身和历史表现……');Q('wuStart').disabled=true;
-try{const [a,b]=await Promise.all([api({action:'questions'}),api({action:'history'})]);questions=a.questions||[];history=b.records||[];setId=todaySaved().length?todaySaved()[0].set_id:pickSet(history);render();state(todaySaved().length?'已从云端恢复今日答题及讲解。':'今日 3 题已准备好，先独立作答，再提交统一判分。');const total=history.length,w=history.filter(x=>!x.is_correct).length;Q('wuHistory').textContent='历史热身：'+total+' 题，其中待巩固 '+w+' 题。之后会用于选择复习知识点。';}
-catch(e){state('热身加载失败：'+e.message+'；教材训练不受影响。')}finally{Q('wuStart').disabled=false}}
-async function submit(){const list=questions.filter(x=>(setId==='loc-a'?['loc01','loc02','loc03']:['loc04','loc05','loc06']).includes(x.id));if(list.length!==3)return state('题目尚未加载完成');const answers=list.map(q=>({id:q.id,answer:Q('wuQuestions').querySelector('input[name="wu_'+q.id+'"]:checked')?.value||''}));if(answers.some(x=>!x.answer))return state('请先完成全部 3 道题，再统一提交。');Q('wuSubmit').disabled=true;state('正在云端判分并保存……');try{const out=await api({action:'submit',date:day(),set_id:setId,answers});showExamResults(out.results||[]);state('完成：'+out.correct+'/3 正确。结果已云端保存，讲解已展开。明天继续教材主线，旧知热身不超过 3 题。');Q('wuHistory').textContent='本次已保存 '+out.saved+' 题，可刷新后重新加载查阅。'}catch(e){state('保存失败：'+e.message+'。本次选项保留，可再次提交。');Q('wuSubmit').disabled=false}}
-function init(){const parent=Q('petCatalogCard');if(!parent)return;const card=document.createElement('div');card.id='warmupCard';card.className='hub-card';card.innerHTML='<h2>旧知识热身 <span class="pill">每天 3 题 · 在线判分</span></h2><p class="hub-muted">跟教材进度走：今天针对 P14 的 at / in / on 做少量迁移练习，接着正常学习 P15。题目为新编训练题，不是原书题目。</p><div class="hub-row" style="gap:8px;flex-wrap:wrap"><input id="wuAccess" type="password" placeholder="访问码（也可先在教材训练处填写）" autocomplete="off" style="flex:1;min-width:190px"><button class="soft" id="wuStart" type="button">加载今日 3 题</button></div><div class="wuStatus" id="wuState" role="status">点击加载后开始。全部作答再判分，避免看完第一题讲解影响后续题目。</div><div id="wuQuestions"></div><button type="button" class="primary wide" id="wuSubmit" hidden>提交 · 判分并查看讲解</button><div class="wuStatus" id="wuHistory"></div><div class="wuNext">教材主线：P15 Writing Part 1 按原书继续，热身不替代教材，也不占用 WordLoop 原有 Review / Test 计划。</div>';
-parent.insertAdjacentElement('beforebegin',card);Q('wuStart').addEventListener('click',load);Q('wuSubmit').addEventListener('click',submit);if(window.petSharedAccess?.get()){Q('wuAccess').value=window.petSharedAccess.get();setTimeout(load,250)}
-const top=Q('pet5121Top');if(top){const link=document.createElement('div');link.className='pet5121tile';link.innerHTML='<h3>旧知识热身</h3><p>每天 3 题，在线作答、云端判分并讲解。</p><button class="soft" type="button">开始热身 ↓</button>';const tiles=top.querySelector('.pet5121tiles');tiles?.prepend(link);link.querySelector('button').onclick=()=>{if(typeof window.showSecById==='function')window.showSecById('learnHub');card.hidden=false;card.scrollIntoView({behavior:'smooth',block:'start'});Q('wuStart').focus();if(token())load()};}
-const home=Q('home');if(home){const section=home.querySelector('.homeSectionTitle');if(section){const quick=document.createElement('div');quick.className='card';quick.style.margin='12px 0';quick.innerHTML='<div class="sectionEyebrow">旧知识热身 · 每日 3 题</div><h2>at / in / on 迁移训练</h2><p class="small">在软件内答题、即时判分、中文讲解，之后继续教材 P15。</p><button class="soft" id="wuHomeBtn" type="button">进入在线热身 ›</button>';section.insertAdjacentElement('afterend',quick);Q('wuHomeBtn').onclick=()=>{if(typeof window.showSecById==='function')window.showSecById('learnHub');else Q('learnHub').hidden=false;setTimeout(()=>{card.hidden=false;card.scrollIntoView({behavior:'smooth',block:'start'});Q('wuStart').focus();if(token())load()},80)}}}
+const el=id=>document.getElementById(id);const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const date=()=>{const d=new Date();return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-')};
+let questions=[],records=[],setId='',loaded=false,busy=false;
+function key(){let k=(window.petSharedAccess?.get?.()||el('petCatalogToken')?.value||el('wuAccess')?.value||'').trim();if(k)window.petSharedAccess?.set?.(k);return k}
+function message(t){const e=el('wuMessage');if(e)e.textContent=t}
+function pendingWords(){try{const p=smartPlanSummary();return p.e.length+p.z.length+p.s.length}catch{return 0}}
+async function call(o){let r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json','x-ai-access':key()},body:JSON.stringify(o)});let data=await r.json().catch(()=>({error:'云端回应不是有效数据'}));if(!r.ok)throw new Error(data.error||'HTTP '+r.status);return data}
+function dayHistory(){return records.filter(x=>x.session_date===date())}
+function setUI(html){const area=el('petWarmupArea');if(area)area.innerHTML=html}
+function render(){
+ const old=dayHistory();let count=pendingWords();
+ if(count){setUI('<p class="wu-message">今天还有 <b>'+count+'</b> 项词汇测试待完成。先把 Test 红点清零，系统随后自动展示三题。<button type="button" class="soft" id="wuRefresh">检查词汇进度</button></p>');el('wuRefresh').onclick=()=>load(true);return}
+ if(!key()){setUI('<p class="wu-message">首次使用请输入教材/AI 访问码，后续本次浏览器会话内可自动复用。</p><input id="wuAccess" type="password" autocomplete="off" placeholder="教材与 AI 共用访问码" style="max-width:340px"><button class="soft" id="wuConnect" type="button">加载今日 3 题</button>');el('wuConnect').onclick=()=>{window.petSharedAccess?.set?.(el('wuAccess').value.trim());load(true)};return}
+ if(old.length){let good=old.filter(x=>x.is_correct).length;let html='<p class="wu-message">✅ 今天已完成 '+old.length+' 道题，答对 '+good+' 道。下面可回看答案与讲解；明天将结合错题安排不同情境。</p>';
+ for(const [i,x] of old.entries()){let q=questions.find(q=>q.id===x.question_id);html+='<div class="wu-q"><div>第 '+(i+1)+' 题 · '+esc(x.skill)+'</div><b>'+esc(q?.q||'已完成题目 '+x.question_id)+'</b><div class="wu-feedback">你的答案：'+esc(x.selected_answer)+' · '+(x.is_correct?'✓ 正确':'✗ 错误，正确答案：'+esc(x.correct_answer))+'<p>'+esc(x.explanation)+'</p></div></div>'}setUI(html);return}
+ if(!loaded){setUI('<button class="soft" id="wuLoad" type="button">加载今日 3 题</button><p class="wu-message">会根据最近历史记录选择题目。</p>');el('wuLoad').onclick=()=>load(true);return}
+ if(questions.length!==3){setUI('<p class="wu-message">暂时没有完整的三题计划。</p><button class="soft" id="wuReload">重试</button>');el('wuReload').onclick=()=>load(true);return}
+ let html='<p class="wu-message">先独立完成 3 题，统一提交后才显示答案与讲解。</p>';
+ for(const [i,q] of questions.entries())html+='<div class="wu-q"><span class="small">第 '+(i+1)+' 题 · '+esc(q.skill)+'</span><p><b>'+esc(q.q)+'</b></p><div class="wu-choices">'+q.opts.map(o=>'<label class="wu-choice"><input type="radio" name="pw_'+esc(q.id)+'" value="'+esc(o)+'">'+esc(o)+'</label>').join('')+'</div></div>';
+ html+='<button type="button" class="primary wide" id="wuSubmit">提交三题 · 自动判分</button><div id="wuMessage" class="wu-message"></div>';
+ setUI(html);el('wuSubmit').onclick=submit;
+}
+async function load(force=false){if(busy)return;if(pendingWords()){render();return}if(!key()){render();return}busy=true;try{setUI('<p class="wu-message">正在从云端读取今日题目及已完成记录……</p>');const [p,h]=await Promise.all([call({action:'questions',date:date()}),call({action:'history'})]);questions=p.questions||[];records=h.records||[];setId=p.set_id||'adapt-'+date();loaded=true;render()}catch(e){setUI('<p class="wu-message">读取失败：'+esc(e.message)+'。词汇 Test 不受影响。</p><button type="button" class="soft" id="wuTry">重试加载</button>');el('wuTry').onclick=()=>load(true)}finally{busy=false}}
+async function submit(){const answers=questions.map(q=>({id:q.id,answer:el('petWarmupSlot').querySelector('input[name="pw_'+q.id+'"]:checked')?.value||''}));if(answers.some(x=>!x.answer)){message('请先答完 3 道题');return}el('wuSubmit').disabled=true;message('正在自动判分并云端保存……');try{let res=await call({action:'submit',date:date(),set_id:setId,answers});let results=new Map((res.results||[]).map(x=>[x.id,x]));let html='<p class="wu-message">✅ 今日热身完成，答对 '+res.correct+'/3。可在此回看解析。</p>';for(const [i,q] of questions.entries()){const r=results.get(q.id);html+='<div class="wu-q"><span class="small">第 '+(i+1)+' 题 · '+esc(q.skill)+'</span><p><b>'+esc(q.q)+'</b></p><div class="wu-feedback">你的答案：'+esc(answers[i].answer)+' · '+(r?.correct?'✓ 正确':'✗ 错误，正确答案：'+esc(r?.answer))+'<p>'+esc(r?.why||'')+'</p></div></div>'}setUI(html);await load(true)}catch(e){message('提交失败：'+e.message+'。已保留所选答案，可重试。');el('wuSubmit').disabled=false}}
+window.petWarmupAfterTest=()=>{if(pendingWords())return;const slot=el('petWarmupSlot');if(!slot)return;load(true);setTimeout(()=>slot.scrollIntoView({behavior:'smooth',block:'start'}),120)};
+function init(){if(!el('petWarmupSlot'))return;render();const links=document.querySelectorAll('[onclick*="showSecById(\'test\')"]');for(const link of links){link.addEventListener('click',()=>setTimeout(()=>{if(!pendingWords())load(true);else render()},200))}
+ if(!pendingWords()&&key())load(true);
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
 })();
