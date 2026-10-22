@@ -337,8 +337,8 @@ body{background:
 <div class="hub-card"><h2>今日学习 · Daily Plan</h2><div id="hubPlan"></div><div class="hub-muted">动态任务按薄弱程度、复测到期和练习覆盖度排序；原 Review 排期保持独立，不会被覆盖。</div></div>
 
 <div class="hub-card" id="p14Card" style="border:2px solid #94a3b8">
-<h2>今晚教材 · Unit 1 P14 <span class="pill">纸质答题 / 家长录入</span></h2>
-<p class="hub-muted">按原书训练，不改变题型。Ex2 为对照课本的开放口语描述；Ex5 与 Ex8 以已经确认的原题问题录入。只有家长标记的结果会成为能力证据。</p>
+<h2>今晚教材 · Unit 1 P14 <span class="pill">原书八项练习 · 家长录入</span></h2>
+<p class="hub-muted">按原书训练，不改变题型。已按你提供的 P14 原书照片核对 Exercise 1–8。书面题保留原始题型，口语任务按活动整体记录；Ex7 请播放教材音频 03。家长只需标记结果，可选填实际答案。</p>
 <div class="hub-row"><button class="primary" onclick="p14Open()">打开 P14 逐题录入</button><button class="soft" onclick="p14Export()">导出 P14 记录</button></div>
 <div id="p14Quick" class="hub-muted"></div>
 <div id="p14Panel" hidden>
@@ -3105,40 +3105,74 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 </script>
 
 <script>
-/* Unit1 P14 paper-based exercise entry: isolated experimental evidence. */
+/* Unit1 P14 verified from parent-supplied textbook page photo, Oct 22. */
 (()=>{'use strict';
-const KEY='lucas_pet_p14_paper_records_v1';
+const KEY='lucas_pet_p14_paper_records_v2';
+const OLD_KEY='lucas_pet_p14_paper_records_v1';
 const GROUPS=[
- {id:'ex2',name:'Exercise 2 · Describe your home',mode:'口语·空间描述',source:'对照教材完成；完整图片/题干待书页核验',items:[
- ['描述房间与家具摆放','以课本 P14 Exercise 2 为准；描述自己家的房间、家具和空间布局。'],
- ['回答位置追问','家长追问至少两个具体位置，如 where / next to / between / under / in front of。']],tags:['prepositions of place','空间描述','完整句']},
- {id:'ex5',name:'Exercise 5 · Personal information',mode:'PET Speaking Part 1',source:'已核对的五道原题',items:[
- ["What's your name?",'完整回答名字'],["How old are you?",'年龄表达'],["Where do you live?",'地点表达'],["Do you study English at school?",'一般现在时、do 疑问句'],["Do you like it?",'观点与理由']],tags:['be/do 疑问句','个人信息','完整回答']},
- {id:'ex8',name:'Exercise 8 · Matteo / Alba dialogue',mode:'口语·个人话题迁移',source:'已核对的六道原题',items:[
- ["How old are you?",'年龄与 be'],["When is your birthday?",'日期、介词 on/in'],["Where do you come from?",'来源地'],["Who do you live with?",'家庭成员'],["How do you go to school?",'交通方式'],["What do you enjoy doing in your free time?",'enjoy doing 与爱好']],tags:['生日','家庭','交通','兴趣','疑问句']}
+ {id:'ex1',name:'Exercise 1 · Choose the correct option',mode:'介词选择 · 6题',source:'原书 P14',tags:['介词 at/in/on','地点'],items:[
+  ['Sometimes we play on / at his house.','at'],
+  ['She sometimes goes running at / in the park.','in'],
+  ['We usually stay in / at home playing computer games.','at'],
+  ["There's a window on / in the left of my bed.",'on'],
+  ['I normally spend my day in / at the beach.','at'],
+  ['I have some photos in / on the wall.','on'] ]},
+ {id:'ex2',name:'Exercise 2 · Describe your home',mode:'两人活动 · 一项开放任务',source:'原书要求：相互介绍住所，描述各房间及物品，并画出对方家的房间示意图',tags:['空间描述','完整口语表达','方位介词'],items:[
+  ['Tell your partner about your apartment or house. Describe each room and what’s in it. Draw a picture of your partner’s home. Show it to your partner.','开放式任务，无统一标准答案'] ]},
+ {id:'ex3',name:'Exercise 3 · Complete with at, in and on',mode:'介词填空 · 9空',source:'与原书三组词汇一一对应',tags:['at/in/on','固定介词短语'],items:[
+  ['___ school','at'],['___ work','at'],['___ home','at'],
+  ['___ a town','in'],['___ a country','in'],['___ my room','in'],
+  ['___ the coast','on'],['___ a hill','on'],['___ an island','on'] ]},
+ {id:'ex4',name:'Exercise 4 · Put the words in order; match the answers',mode:'句子排序 + 答案配对 · 5题',source:'每题应同时完成问句排序与 a–e 配对；记录时可填写如 Does... / e',tags:['疑问句语序','be/do','问答配对'],items:[
+  ["your / what's / name?", "What's your name? → d (Matteo Bianchi.)"],
+  ['old / you / are / how?', 'How old are you? → c (I’m 13. I’ll be 14 next month.)'],
+  ['live / where / you / do?', 'Where do you live? → a (In Ancona, a town on the coast, in Italy.)'],
+  ['at / English / do / study / school / you?', 'Do you study English at school? → e (Yes, I have English lessons every day.)'],
+  ['it / you / like / do?', 'Do you like it? → b (Yes, because I enjoy talking to people in English.)'] ]},
+ {id:'ex5',name:'Exercise 5 · Ask and answer Exercise 4',mode:'两人问答 · 5个原题',source:'回答须使用正确介词；口语按表达质量记录',tags:['PET Speaking Part 1','个人信息','完整回答'],items:[
+  ["What's your name?",'开放口语'],["How old are you?",'开放口语'],["Where do you live?",'开放口语'],
+  ["Do you study English at school?",'开放口语'],["Do you like it?",'开放口语'] ]},
+ {id:'ex6',name:'Exercise 6 · Complete Matteo / Alba dialogue',mode:'对话动词形式与时间地点介词 · 12空',source:'原书编号 1–12；回答时填写完整动词结构或介词',tags:['be/do 疑问句','时间地点介词','现在时'],items:[
+  ['How old (1) ___ (you / be), Alba?','are you'],
+  ['My birthday was (2) ___ March.','in'],
+  ['And where (3) ___ (you / come) from?','do you come'],
+  ['I live (4) ___ Manresa, a town about 60 kilometres from Barcelona.','in'],
+  ['Who (5) ___ (you / live) with?','do you live'],
+  ["My little brother Miquel’s still (6) ___ primary school.",'at'],
+  ['How (7) ___ (you / go) to school?','do you go'],
+  ['I usually go by bus, though (8) ___ spring and summer I sometimes walk.','in'],
+  ['What (9) ___ (you / enjoy) doing in your free time?','do you enjoy'],
+  ['I really like seeing my friends (10) ___ the evenings','in'],
+  ['and (11) ___ weekends,','at'],
+  ['but I often stay (12) ___ home and read.','at'] ]},
+ {id:'ex7',name:'Exercise 7 · Listen and check',mode:'教材音频 03 · 核对 Exercise 6',source:'原书只写 Listen and check；需使用配套 Track 03，不提供伪造音频',tags:['听力核对','语音语调'],items:[
+  ['Listen to Track 03 and check your answers to Exercise 6.','核对任务，无单独正确答案'] ]},
+ {id:'ex8',name:'Exercise 8 · New pairs: ask Exercise 6 questions',mode:'两人问答 · 6道原对话问题',source:'问答内容源自 Exercise 6；口语回答可因本人情况改变',tags:['PET 口语','生日','家庭','交通','爱好'],items:[
+  ['How old are you?','开放口语'],['When is your birthday?','开放口语'],
+  ['Where do you come from?','开放口语'],['Who do you live with?','开放口语'],
+  ['How do you go to school?','开放口语'],['What do you enjoy doing in your free time?','开放口语'] ]}
 ];
-const OPT=[['','未记录'],['correct','独立完成'],['partial','提示后完成'],['wrong','错误'],['unable','不会'],['guess','猜对'],['skip','未做']];
+const OPT=[['','未记录'],['correct','独立正确'],['partial','提示后完成'],['wrong','错误'],['unable','不会'],['guess','猜对'],['skip','未做']];
 const $=x=>document.getElementById(x),safe=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-function read(){try{const v=JSON.parse(localStorage.getItem(KEY)||'[]');return Array.isArray(v)?v:[]}catch{return []}}
-function resetForm(){for(const sel of document.querySelectorAll('#p14Questions select'))sel.value='';$('p14Minutes').value='';$('p14Turns').value='';$('p14Note').value='';$('p14Message').textContent=''}
-function localDay(){let d=new Date();return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-')}
+function read(key=KEY){try{const v=JSON.parse(localStorage.getItem(key)||'[]');return Array.isArray(v)?v:[]}catch{return []}}
+function localDay(){const d=new Date();return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-')}
 function render(){
  $('p14Date').value||=localDay();
- $('p14Questions').innerHTML=GROUPS.map(g=>`<div class="hub-box"><h3>${safe(g.name)}</h3><p class="hub-muted">${safe(g.mode)} · ${safe(g.source)}</p>${g.items.map((row,i)=>`<div class="hub-q"><b>${i+1}. ${safe(row[0])}</b><div class="hub-muted">${safe(row[1])}</div><div class="hub-row"><select id="p14_${g.id}_${i}" style="min-width:160px" aria-label="${safe(g.name)} 第${i+1}题">${OPT.map(o=>`<option value="${o[0]}">${o[1]}</option>`).join('')}</select><input id="p14note_${g.id}_${i}" maxlength="240" placeholder="错误表达/备注（选填）" style="min-width:180px;flex:1"></div></div>`).join('')}<div class="hub-muted">标签：${g.tags.map(safe).join(' · ')}</div></div>`).join('');
+ $('p14Questions').innerHTML=GROUPS.map(g=>`<section class="hub-box"><h3>${safe(g.name)}</h3><p class="hub-muted">${safe(g.mode)} · ${safe(g.source)}</p>${g.items.map((row,i)=>`<div class="hub-q"><b>${i+1}. ${safe(row[0])}</b><div class="hub-row" style="margin-top:7px"><select id="p14_${g.id}_${i}" aria-label="${safe(g.id)} 第${i+1}题表现" style="min-width:140px;flex:1">${OPT.map(o=>`<option value="${o[0]}">${o[1]}</option>`).join('')}</select><input id="p14answer_${g.id}_${i}" maxlength="260" placeholder="Lucas的答案（选填）" style="min-width:155px;flex:1"></div><input id="p14note_${g.id}_${i}" maxlength="240" placeholder="错误表达／提示内容（选填）" style="width:100%;margin-top:5px"></div>`).join('')}<details><summary>家长核对答案 / 参考</summary><ol>${g.items.map(row=>`<li>${safe(row[1])}</li>`).join('')}</ol></details><div class="hub-muted">能力点：${g.tags.map(safe).join(' · ')}</div></section>`).join('');
  summary();
 }
-function summary(){let rr=read();$('p14Quick').textContent=rr.length?`已记录 ${rr.length} 次 · 最近一次 ${rr.at(-1).date} · 独立完成 ${rr.at(-1).independent}/${rr.at(-1).assessed}（跳过与未记录不计）`:'尚无 P14 训练结果；等待今晚纸质作答后录入。'}
+function summary(){const records=read(),old=read(OLD_KEY);let last=records.at(-1);$('p14Quick').textContent=last?`P14 已记录 ${records.length} 次（新版）· 最近 ${last.date} · 独立正确 ${last.independent}/${last.assessed}（已做题）${old.length?'；旧格式 '+old.length+' 条仍保留':''}`:`新版尚无训练结果。${old.length?'旧版 '+old.length+' 条记录保留不变，可导出备份。':''}`}
 window.p14Open=()=>{let p=$('p14Panel');p.hidden=!p.hidden;if(!p.hidden){render();p.scrollIntoView({behavior:'smooth',block:'nearest'})}};
 window.p14Save=()=>{
- const date=$('p14Date').value;if(!/^\d{4}-\d{2}-\d{2}$/.test(date))return alert('请选择练习日期');
- let items=[];for(const g of GROUPS)for(let i=0;i<g.items.length;i++){let status=$(`p14_${g.id}_${i}`).value,remark=$(`p14note_${g.id}_${i}`).value.trim();if(status)items.push({questionId:`U1-P14-${g.id.toUpperCase()}-${i+1}`,exercise:g.id,question:g.items[i][0],status,remark:remark.slice(0,240),tags:g.tags})}
- if(!items.length)return $('p14Message').textContent='请至少标记一道题的表现；没有作答的题选“未做”。';
- const assessed=items.filter(x=>!['skip'].includes(x.status)),independent=assessed.filter(x=>x.status==='correct').length;
- const record={id:'p14_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,7),date,unit:1,page:14,source:'教材纸笔训练 · 家长登记',items,assessed:assessed.length,independent,minutes:Number($('p14Minutes').value)||null,effectiveSpeakingTurns:Number($('p14Turns').value)||0,note:$('p14Note').value.trim().slice(0,1200),createdAt:new Date().toISOString(),demo:false};
- try{let r=read();r.push(record);localStorage.setItem(KEY,JSON.stringify(r.slice(-60)));$('p14Message').textContent=`已存本浏览器：共登记 ${items.length} 道，独立完成 ${independent}/${assessed.length}。注意：这不是跨设备云同步。`;summary()}catch(e){$('p14Message').textContent='保存失败，可能是浏览器存储已满：'+e.message}
+ const date=$('p14Date').value;if(!/^\d{4}-\d{2}-\d{2}$/.test(date))return $('p14Message').textContent='请选择正确的练习日期';
+ let items=[];for(const g of GROUPS)for(let i=0;i<g.items.length;i++){const status=$(`p14_${g.id}_${i}`).value,answer=$(`p14answer_${g.id}_${i}`).value.trim(),remark=$(`p14note_${g.id}_${i}`).value.trim();if(status)items.push({questionId:`U1-P14-${g.id.toUpperCase()}-${i+1}`,exercise:g.id,question:g.items[i][0],reference:g.items[i][1],status,studentAnswer:answer.slice(0,260),remark:remark.slice(0,240),tags:g.tags})}
+ if(!items.length)return $('p14Message').textContent='请至少选择一题的完成状态，未做的题可以保留“未记录”。';
+ const assessed=items.filter(x=>x.status!=='skip'),independent=assessed.filter(x=>x.status==='correct').length;
+ const record={id:'p14_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,7),schema:2,date,unit:1,page:14,source:'P14 教材原书 · 纸质训练家长登记',items,assessed:assessed.length,independent,minutes:Number($('p14Minutes').value)||null,effectiveSpeakingTurns:Number($('p14Turns').value)||0,note:$('p14Note').value.trim().slice(0,1200),createdAt:new Date().toISOString(),demo:false};
+ try{let history=read();history.push(record);localStorage.setItem(KEY,JSON.stringify(history.slice(-60)));$('p14Message').textContent=`已保存当前浏览器：登记 ${items.length} 项，独立正确 ${independent}/${assessed.length}。请导出 JSON 备份；尚未跨设备同步。`;summary()}catch(e){$('p14Message').textContent='保存失败（请检查浏览器空间）：'+e.message}
 };
-window.p14Clear=()=>{resetForm();for(const n of document.querySelectorAll('#p14Questions input'))n.value=''};
-window.p14Export=()=>{const records=read();const blob=new Blob([JSON.stringify({product:'lucas-pet',source:'U1-P14-parent-entry',schema:1,records},null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='Lucas_Unit1_P14_家长录入.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),3000)};
+window.p14Clear=()=>{for(const c of document.querySelectorAll('#p14Questions select'))c.value='';for(const c of document.querySelectorAll('#p14Questions input'))c.value='';$('p14Minutes').value='';$('p14Turns').value='';$('p14Note').value='';$('p14Message').textContent=''};
+window.p14Export=()=>{const records=read(),legacy=read(OLD_KEY);const data={product:'lucas-pet',source:'U1-P14-parent-entry',schema:2,records,legacyRecords:legacy};const url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'})),a=document.createElement('a');a.href=url;a.download='Lucas_Unit1_P14_家长录入.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),3000)};
 window.addEventListener('load',()=>{if($('p14Card')){render();$('p14Panel').hidden=true}});
 })();
 </script>
