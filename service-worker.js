@@ -1,4 +1,4 @@
-const CACHE='lucas-pet-v0.5.11.8-p14-live-r1';
+const CACHE='lucas-pet-v0.5.11.8-p14-unified-r2';
 const ASSETS=['./index.html','./manifest.webmanifest'];
 
 self.addEventListener('install',e=>{

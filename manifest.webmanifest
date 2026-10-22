@@ -5,5 +5,5 @@
   "display": "standalone",
   "background_color": "#f4f8ff",
   "theme_color": "#1477ef",
-  "description": "Lucas PET v0.5.11.6 预览：新增独立知识点证据、保守诊断和练习建议，保留现有 Review/Test/教材及云同步。"
+  "description": "Lucas PET v0.5.11.8：保留原有词库、Review、Test、云同步，新增 DeepSeek AI 导师、EchoType 学习工作台和 P14 纸质训练逐题录入。"
 }

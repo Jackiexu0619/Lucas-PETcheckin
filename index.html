@@ -268,7 +268,7 @@ body{background:
       <div class="brandMark">L</div>
       <div><div class="brandName">Lucas <span>PET</span></div><div class="brandSub">每天一点，向 B1 稳稳前进</div></div>
     </div>
-    <span class="versionPill">v0.5.11.5</span>
+    <span class="versionPill">v0.5.11.8</span>
   </div>
 
   <div class="homeHero">
@@ -331,7 +331,7 @@ body{background:
 
 
 <section id="learnHub" class="section" hidden>
-<h1>学习工作台 <span class="pill">EchoType × WordLoop · v0.5.11.7 预览</span></h1>
+<h1>学习工作台 <span class="pill">EchoType × WordLoop · 融合模块</span></h1>
 <div class="sub">一个素材贯穿听、读、说、写；今日计划依据训练表现自动排序。原词库、Review、Test、教材与云同步逻辑不变。新模块记录暂存在当前浏览器。</div>
 <div class="gap"></div><div class="hub-grid"><div>
 <div class="hub-card"><h2>今日学习 · Daily Plan</h2><div id="hubPlan"></div><div class="hub-muted">动态任务按薄弱程度、复测到期和练习覆盖度排序；原 Review 排期保持独立，不会被覆盖。</div></div>
@@ -359,7 +359,7 @@ body{background:
 </div></div></section>
 
 <section id="aiTutor" class="section" hidden>
-<h1>AI 英语导师 <span class="pill">v0.5.11.6 增量预览</span></h1>
+<h1>AI 英语导师 <span class="pill">DeepSeek 已接入</span></h1>
 <div class="sub">沿用完整 Lucas PET，AI 辅导不覆盖词库、Review、Test、教材和现有云同步。AI 功能需要先配置独立、安全的服务端接口。</div><div class="gap"></div>
 <div class="ai-layout"><div>
 <div class="ai-card"><h2>AI 接口设置</h2><div class="ai-small">填入部署后的 Supabase Edge Function 完整 HTTPS 地址和单独的 AI 访问码。访问码只存在当前标签页，不会进入 WordLoop 云端备份。不要在此填写 DeepSeek API Key。</div>
@@ -414,7 +414,7 @@ body{background:
 <div class="gap"></div><div class="row"><div><label for="schoolStatus">完成情况</label><select id="schoolStatus"><option value="done">已完成</option><option value="partial">进行中</option><option value="review">需要复习</option></select></div><div><label for="schoolVideo">教材视频 / 讲解</label><select id="schoolVideo"><option value="none">不涉及视频</option><option value="pending">视频待看</option><option value="done">视频已看完</option></select></div><div><label for="schoolMinutes">用时（分钟，可选）</label><input type="number" min="0" max="600" id="schoolMinutes" placeholder="例如 20"></div></div>
 <div class="gap"></div><label for="schoolNote">学习记录 / 遇到的问题（可选）</label><textarea id="schoolNote" maxlength="1000" rows="3" placeholder="例如：a few / a bit of 需要继续练习"></textarea>
 <div class="gap"></div><button class="primary" onclick="schoolSaveRecord()" id="schoolSaveBtn">保存学习记录</button> <button class="gray" onclick="schoolClearForm()">清空填写</button><div id="schoolMessage" class="small" role="status" style="margin-top:8px"></div></div>
-<div class="card" id="skillDiagnostics"><h2>知识点诊断 · v0.5.11.5 预览</h2>
+<div class="card" id="skillDiagnostics"><h2>知识点诊断</h2>
 <div class="small">这不是自动判分：只有明确录入的独立练习证据才影响状态。教材标签、已看视频和一次做对，都不能证明掌握。</div>
 <div class="gap"></div><div class="row"><div><label>知识点</label><select id="skillChoose"></select></div><div><label>日期</label><input type="date" id="skillDate"></div><div><label>表现</label><select id="skillResult"><option value="learning">刚接触／学习中</option><option value="wrong">独立错误</option><option value="prompted_right">提示后正确</option><option value="independent_right">独立正确</option><option value="transfer_right">延迟／新语境独立正确</option></select></div></div>
 <div class="gap"></div><label>证据来源（必填）</label><input id="skillSource" maxlength="120" placeholder="例如 Unit1 P12 Grammar Ex3；或 10/21 Speaking Part3"><div class="gap"></div><label>具体错因／解释（可选）</label><textarea id="skillNote" maxlength="500" rows="2" placeholder="例如：不知道什么时候用 do 而不是 be；未使用提示"></textarea>
@@ -427,7 +427,7 @@ body{background:
 </section>
 
 <section id="data" class="section" hidden><h1>数据与设置</h1>
-<div class="notice"><b>v0.5.11.6：完整功能保留 + AI 导师增量预览；保留原有全站 UI。</b> 首页、Review、Test、词汇池、固定搭配、分析、记录和数据页统一为新的学习卡片视觉；保留 v0.5.10.9 的测试结果词性显示，以及原有智能排期、记忆周期、双向 Test、词族、固定搭配和云同步逻辑。</div><div class="gap"></div>
+<div class="notice"><b>v0.5.11.8：完整功能保留 + AI 导师 + 学习工作台 + P14 纸质训练录入。</b> 首页、Review、Test、词汇池、固定搭配、分析、记录和数据页统一为新的学习卡片视觉；保留 v0.5.10.9 的测试结果词性显示，以及原有智能排期、记忆周期、双向 Test、词族、固定搭配和云同步逻辑。</div><div class="gap"></div>
 <div class="card"><h2>v0.3 记忆周期</h2><div class="small">错词：1天后；慢 / 重听 / 发音需练习：2天后；连续快速正确（≤3秒且不重听）：1天 → 3天 → 7天 → 14天 → 30天。任何阶段再错，重新回到1天。英→中与中→英分别计算。</div></div><div class="gap"></div>
 <div class="card"><h2>语音设置</h2><label>英语地区</label><select id="voiceLang"><option value="en-GB">英式英语 en-GB</option><option value="en-US">美式英语 en-US</option></select><div class="gap"></div><label>语速：<span id="rateText">0.90</span></label><input id="voiceRate" type="range" min="0.72" max="1.05" step="0.01" value="0.90"><div class="gap"></div><button class="soft" onclick="testVoice()">试听 persuade</button></div>
 <div class="gap"></div><div class="card"><h2>新增词汇</h2><div class="sub">家长只录入 Lucas 真正遇到的陌生词，并按本次实际语境标注词性。新增词最早次日先进入 Review 学习；Review 完成后的下一学习日才进入正式 Test。</div><div class="gap"></div><div class="row"><input id="newEn" placeholder="English" oninput="updateFamilyHint()"><input id="newZh" placeholder="中文意思"></div><div class="gap"></div><div id="newDictHint" class="spellHint skip">输入英文后，会自动匹配常见中文释义和词性；可按实际语境修改。</div><div class="gap"></div><div id="newSpellHint" class="spellHint skip">输入英文后自动检查拼写；只提示，不会擅自改词。</div><div class="gap"></div><div id="newMeaningHint" class="spellHint skip">英文和中文都填好后，会额外检查常见易混词。</div><div class="gap"></div><label>词性（按本次实际语境）</label><select id="newPos"><option value="">请选择词性</option><option value="n.">n. 名词</option><option value="v.">v. 动词</option><option value="adj.">adj. 形容词</option><option value="adv.">adv. 副词</option><option value="prep.">prep. 介词</option><option value="conj.">conj. 连词</option><option value="pron.">pron. 代词</option><option value="det.">det. 限定词</option><option value="phr.">phr. 短语</option><option value="prop. n.">prop. n. 专有名词</option><option value="n./v.">n./v. 名词/动词</option></select><div class="gap"></div><div id="familyHint" class="familyHint neutral">输入英文后，这里会显示词族判断。</div><div class="gap"></div><input id="newNote" placeholder="例句/备注（可选）"><div class="gap"></div><div class="notice"><b>固定搭配（可选）</b><div class="small">只填真正有价值的搭配，不需要每个单词都加。</div><div class="gap"></div><div class="row"><input id="newLinkedStructureEn" placeholder="例如 recommend doing something"><input id="newLinkedStructureZh" placeholder="例如 建议做某事"></div><div class="gap"></div><label class="checkline"><input id="newLinkedStructureKey" type="checkbox" checked>重点 / 易考搭配</label><label class="checkline"><input id="newLinkedStructureReplace" type="checkbox" checked>英→中时优先用这个搭配替代独立单词</label></div><div class="gap"></div><details class="advanced"><summary>高级：手动指定词族（通常不用）</summary><div class="gap"></div><input id="newFamily" placeholder="例如 decorate；留空则由软件判断"></details><div class="gap"></div><button class="primary" onclick="addWord()">加入词汇池</button></div>
@@ -477,7 +477,7 @@ const CLOUD_ENDPOINT_PREF_STORAGE='pet_checkin_cloud_endpoint_pref';
 const CLOUD_KEY_STORAGE='pet_checkin_cloud_recovery_key';
 const CLOUD_ENABLED_STORAGE='pet_checkin_cloud_enabled';
 const CLOUD_META_STORAGE='pet_checkin_cloud_meta';
-const APP_VERSION='0.5.11.7';
+const APP_VERSION='0.5.11.8';
 let cloudTimer=null,cloudBusy=false,cloudQueued=false,cloudSuppressPush=false,cloudConflictState=null;
 const ROLLING_BACKUP_PREFIXES=[
   'pet_checkin_v1_backup_pre_cloud_autopull_',
@@ -3034,7 +3034,7 @@ renderAll();
 document.querySelectorAll('.app>.section').forEach(x=>{let on=x.id==='home';x.hidden=!on;x.classList.toggle('active',on)});
 if(cloudIsEnabled())setTimeout(()=>cloudSmartSync(false),600);
 if(bootRecoveryReport&& !sessionStorage.getItem('pet031_recovery_notice')){sessionStorage.setItem('pet031_recovery_notice','1');let r=bootRecoveryReport;setTimeout(()=>alert(r.fallback?'检测到旧数据迁移异常，已优先从升级前快照恢复，并保留异常原始数据副本。请到“词汇”和“记录”页核对。':`已自动检查升级前快照并补回缺失数据：${r.words||0} 个词、${r.tests||0} 条测试记录、${r.plans||0} 个清单项目。`),150)}
-if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('./service-worker.js?v=lucas-pet-0.5.11.6-ai-integrated-preview-r1',{updateViaCache:'none'}).catch(()=>{});
+if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('./service-worker.js?v=lucas-pet-0.5.11.8-p14-unified-r2',{updateViaCache:'none'}).catch(()=>{});
 </script>
 <script>
 (() => {
