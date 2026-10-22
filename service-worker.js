@@ -1,4 +1,4 @@
-const CACHE='lucas-pet-v0.5.11.8-p14-book-verified-r3';
+const CACHE='lucas-pet-v0.5.11.9-p14-book-verified-r3';
 const ASSETS=['./index.html','./manifest.webmanifest'];
 
 self.addEventListener('install',e=>{
