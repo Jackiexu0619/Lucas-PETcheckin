@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#1477ef">
-<title>Lucas PET v0.5.12.0 P14 教材试运行</title>
+<title>Lucas PET v0.5.12.1 教材训练整合版</title>
 <link rel="manifest" href="manifest.webmanifest">
 <style>
 :root{--bg:#f5f7fb;--card:#fff;--ink:#172033;--muted:#6b7280;--line:#e5e9f2;--blue:#2563eb;--soft:#eaf2ff;--good:#198754;--warn:#b97900;--bad:#c0392b;--purple:#7c3aed}
@@ -259,6 +259,20 @@ body{background:
  .nav button{min-width:0;flex:1 0 0;padding-left:3px;padding-right:3px;}
 }
 </style>
+<style id="pet5121clean">
+/* Hide obsolete UI, retain corresponding data for recovery. */
+#p14Card {display:none !important}
+#learnHub .hub-grid > div > .hub-card:not(#petCatalogCard),
+#learnHub .hub-grid > div:nth-child(2) {display:none !important}
+#learnHub .hub-grid {display:block !important;max-width:1100px;margin:0 auto}
+#petCatalogCard {width:100%;max-width:1100px;margin:0 auto;border:1px solid #cbd5e1 !important;border-radius:15px}
+#pet5121Top {max-width:1100px;margin:0 auto 16px}
+.pet5121tile {background:#fff;border:1px solid #d9e3f1;border-radius:12px;padding:14px;flex:1;min-width:185px}
+.pet5121tile h3{margin:0 0 6px;font-size:16px}.pet5121tile p{margin:0 0 12px;color:#65748c;font-size:13px}
+.pet5121tile button{border-radius:9px}.pet5121tiles{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+.pet5121hint{font-size:13px;color:#5b6475;line-height:1.6}
+.pet5121pill{display:inline-block;background:#eff6ff;border-radius:30px;padding:4px 9px;font-size:12px;color:#1e40af}
+</style>
 </head>
 <body>
 <div class="app">
@@ -268,7 +282,7 @@ body{background:
       <div class="brandMark">L</div>
       <div><div class="brandName">Lucas <span>PET</span></div><div class="brandSub">每天一点，向 B1 稳稳前进</div></div>
     </div>
-    <span class="versionPill">v0.5.12.0</span>
+    <span class="versionPill">v0.5.12.1</span>
   </div>
 
   <div class="homeHero">
@@ -315,7 +329,7 @@ body{background:
 
   <div class="card" style="margin:14px 0"><div class="sectionEyebrow">教材学习</div><h2>剑桥 PET 综合教程</h2><div class="small" id="schoolHomeBrief">打开教材页，记录教材并验证掌握情况</div><div class="gap"></div><button class="soft" onclick="showSecById('schoolStudy')">记录教材学习 ›</button></div>
 <div class="card" style="margin:14px 0"><div class="sectionEyebrow">新增 · AI 辅导</div><h2>DeepSeek AI 英语导师</h2><div class="small">分析真实错误，自动生成两道补练；不修改原有测试成绩与排期。</div><div class="gap"></div><button class="soft" onclick="showSecById('aiTutor')">进入 AI 导师 ›</button></div>
-<div class="card" style="margin:14px 0"><div class="sectionEyebrow">EchoType × WordLoop · 新增</div><h2>今日学习工作台</h2><div class="small">统一素材库 · 听读说写联动 · 自动计划与训练记录</div><div class="gap"></div><button class="soft" onclick="showSecById('learnHub')">进入学习工作台 ›</button></div>
+<div class="card" style="margin:14px 0"><div class="sectionEyebrow">教材训练 · 云端记录</div><h2>纸质教材训练</h2><div class="small">P8–P15 按 Exercise 逐题录入，保存后可查看历史。每页原题校对状态以题库标记为准。</div><div class="gap"></div><button class="soft" onclick="showSecById('learnHub')">打开教材训练 ›</button></div>
 <div class="homeSectionTitle"><div><span>学习表现</span><small>英→中与中→英分别看</small></div><button class="textLink" onclick="showSecById('stats')">统计分析 ›</button></div>
   <div class="grid metrics modernMetrics">
     <div class="card metric"><div class="metricIcon blue">中</div><div><div class="k">英→中正确率</div><div class="v" id="eAcc">—</div></div></div>
@@ -438,7 +452,7 @@ body{background:
 </section>
 
 <section id="data" class="section" hidden><h1>数据与设置</h1>
-<div class="notice"><b>v0.5.12.0：完整功能保留 + AI 导师 + 学习工作台 + P14 纸质训练录入。</b> 首页、Review、Test、词汇池、固定搭配、分析、记录和数据页统一为新的学习卡片视觉；保留 v0.5.10.9 的测试结果词性显示，以及原有智能排期、记忆周期、双向 Test、词族、固定搭配和云同步逻辑。</div><div class="gap"></div>
+<div class="notice"><b>v0.5.12.1：完整功能保留 + AI 导师 + 学习工作台 + P14 纸质训练录入。</b> 首页、Review、Test、词汇池、固定搭配、分析、记录和数据页统一为新的学习卡片视觉；保留 v0.5.10.9 的测试结果词性显示，以及原有智能排期、记忆周期、双向 Test、词族、固定搭配和云同步逻辑。</div><div class="gap"></div>
 <div class="card"><h2>v0.3 记忆周期</h2><div class="small">错词：1天后；慢 / 重听 / 发音需练习：2天后；连续快速正确（≤3秒且不重听）：1天 → 3天 → 7天 → 14天 → 30天。任何阶段再错，重新回到1天。英→中与中→英分别计算。</div></div><div class="gap"></div>
 <div class="card"><h2>语音设置</h2><label>英语地区</label><select id="voiceLang"><option value="en-GB">英式英语 en-GB</option><option value="en-US">美式英语 en-US</option></select><div class="gap"></div><label>语速：<span id="rateText">0.90</span></label><input id="voiceRate" type="range" min="0.72" max="1.05" step="0.01" value="0.90"><div class="gap"></div><button class="soft" onclick="testVoice()">试听 persuade</button></div>
 <div class="gap"></div><div class="card"><h2>新增词汇</h2><div class="sub">家长只录入 Lucas 真正遇到的陌生词，并按本次实际语境标注词性。新增词最早次日先进入 Review 学习；Review 完成后的下一学习日才进入正式 Test。</div><div class="gap"></div><div class="row"><input id="newEn" placeholder="English" oninput="updateFamilyHint()"><input id="newZh" placeholder="中文意思"></div><div class="gap"></div><div id="newDictHint" class="spellHint skip">输入英文后，会自动匹配常见中文释义和词性；可按实际语境修改。</div><div class="gap"></div><div id="newSpellHint" class="spellHint skip">输入英文后自动检查拼写；只提示，不会擅自改词。</div><div class="gap"></div><div id="newMeaningHint" class="spellHint skip">英文和中文都填好后，会额外检查常见易混词。</div><div class="gap"></div><label>词性（按本次实际语境）</label><select id="newPos"><option value="">请选择词性</option><option value="n.">n. 名词</option><option value="v.">v. 动词</option><option value="adj.">adj. 形容词</option><option value="adv.">adv. 副词</option><option value="prep.">prep. 介词</option><option value="conj.">conj. 连词</option><option value="pron.">pron. 代词</option><option value="det.">det. 限定词</option><option value="phr.">phr. 短语</option><option value="prop. n.">prop. n. 专有名词</option><option value="n./v.">n./v. 名词/动词</option></select><div class="gap"></div><div id="familyHint" class="familyHint neutral">输入英文后，这里会显示词族判断。</div><div class="gap"></div><input id="newNote" placeholder="例句/备注（可选）"><div class="gap"></div><div class="notice"><b>固定搭配（可选）</b><div class="small">只填真正有价值的搭配，不需要每个单词都加。</div><div class="gap"></div><div class="row"><input id="newLinkedStructureEn" placeholder="例如 recommend doing something"><input id="newLinkedStructureZh" placeholder="例如 建议做某事"></div><div class="gap"></div><label class="checkline"><input id="newLinkedStructureKey" type="checkbox" checked>重点 / 易考搭配</label><label class="checkline"><input id="newLinkedStructureReplace" type="checkbox" checked>英→中时优先用这个搭配替代独立单词</label></div><div class="gap"></div><details class="advanced"><summary>高级：手动指定词族（通常不用）</summary><div class="gap"></div><input id="newFamily" placeholder="例如 decorate；留空则由软件判断"></details><div class="gap"></div><button class="primary" onclick="addWord()">加入词汇池</button></div>
@@ -3241,6 +3255,49 @@ function renderHistory(){const done=history.flatMap(x=>x.items||[]),has=done.fil
 }
 window.petHistoryLoad=async(show=true)=>{if(!token())return status('请填写访问码');try{const d=await call('pet-textbook-results',{action:'list'});history=d.records||[];renderHistory();if(show)status('已刷新云端训练记录：'+history.length+' 组')}catch(e){status('云端记录读取失败：'+e.message)}};
 window.petExport=()=>{const blob=new Blob([JSON.stringify({product:'lucas-pet',book:'Complete Preliminary for Schools',type:'textbook-training',records:history},null,2)],{type:'application/json'});const a=document.createElement('a'),url=URL.createObjectURL(blob);a.href=url;a.download='Lucas_PET_Unit1_P8-P15_训练记录.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),3000)};
+})();
+</script>
+<script id="pet5121ui">
+(function(){
+ function go(id){if(typeof window.showSecById==='function')window.showSecById(id);else{const b=document.querySelector('.nav button[onclick*="'+id+'"]');if(b)b.click()}}
+ function add(t){const x=document.createElement('div');x.innerHTML=t.trim();return x.firstElementChild}
+ function apply(){
+   const hub=document.getElementById('learnHub');if(!hub)return;
+   const heading=hub.querySelector('h1');if(heading)heading.innerHTML='教材训练 <span class="pet5121pill">P8–P15 · 云端录入</span>';
+   const sub=hub.querySelector('.sub');if(sub)sub.textContent='一个教材入口完成：选择页码 → 逐题记录 Lucas 的表现 → 保存云端 → 查看历史。题干与答案尚未核对的题目请对照原书，不自动评分。';
+   const box=add(`<div id="pet5121Top">
+     <div class="pet5121tiles">
+       <div class="pet5121tile"><h3>① 教材训练</h3><p>纸质书上完成，家长按题号录入。</p><button class="soft" id="pet5121GoCatalog">开始录入 ↓</button></div>
+       <div class="pet5121tile"><h3>② 词汇 Review / Test</h3><p>保留 WordLoop 原有词库、复习和测试。</p><button class="soft" id="pet5121GoReview">进入复习</button></div>
+       <div class="pet5121tile"><h3>③ AI 错因分析</h3><p>使用 DeepSeek；目前需手动提供题目与答案。</p><button class="soft" id="pet5121GoAI">打开 AI 导师</button></div>
+     </div>
+     <p class="pet5121hint">教材 P8–P15 已有云端练习结构，但部分页题干及答案仍未完成逐字校对。周末自动组卷尚未上线，不显示无效的组卷按钮。</p>
+     <details><summary class="pet5121hint">以前的教材进度档案（保留原数据）</summary><p class="pet5121hint">旧进度记录仍可从原页面查看、导出；它尚未与新逐题成绩自动合并。</p><button class="soft" id="pet5121GoOld">打开旧教材档案</button></details>
+   </div>`);
+   const gap=hub.querySelector('.gap');if(gap)gap.insertAdjacentElement('afterend',box);else hub.prepend(box);
+   document.getElementById('pet5121GoCatalog').onclick=()=>{document.getElementById('petCatalogCard')?.scrollIntoView({block:'start',behavior:'smooth'})};
+   document.getElementById('pet5121GoReview').onclick=()=>go('review');
+   document.getElementById('pet5121GoAI').onclick=()=>go('aiTutor');
+   document.getElementById('pet5121GoOld').onclick=()=>go('schoolStudy');
+   const nav=document.querySelector('.nav');if(nav){
+      for(const b of nav.querySelectorAll('button')){
+       const click=b.getAttribute('onclick')||'';
+       if(click.includes("'learnHub'"))b.innerHTML='<span class="navIcon">▤</span><span>教材训练</span>';
+       if(click.includes("'schoolStudy'"))b.style.display='none';
+       if(click.includes("'structures'"))b.style.display='none';
+       if(click.includes("'history'"))b.style.display='none';
+       if(click.includes("'stats'"))b.innerHTML='<span class="navIcon">▥</span><span>学习档案</span>';
+       if(click.includes("'data'"))b.innerHTML='<span class="navIcon">⚙</span><span>设置</span>';
+      }
+   }
+   // Keep access to hidden legacy history and collocations from existing sections.
+   const words=document.getElementById('words');if(words){let bar=add('<div class="card"><h3>相关学习工具</h3><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="soft" id="pet5121Colloc">固定搭配</button><button class="soft" id="pet5121OldHistory">测试历史</button></div></div>');words.appendChild(bar);bar.querySelector('#pet5121Colloc').onclick=()=>go('structures');bar.querySelector('#pet5121OldHistory').onclick=()=>go('history')}
+   // Hide the separate EchoType sandbox, not its stored training records.
+   const home=document.getElementById('home');if(home){
+     for(const card of home.querySelectorAll('.card')){if(card.textContent.includes('统一素材库 · 听读说写联动'))card.style.display='none'}
+   }
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',apply,{once:true});else apply();
 })();
 </script>
 </body></html>
