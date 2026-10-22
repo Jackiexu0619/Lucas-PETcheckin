@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#1477ef">
-<title>Lucas PET v0.5.12.2 教材主线与旧知热身版</title>
+<title>Lucas PET v0.5.12.3 热身启动与自动连接修复版</title>
 <link rel="manifest" href="manifest.webmanifest">
 <style>
 :root{--bg:#f5f7fb;--card:#fff;--ink:#172033;--muted:#6b7280;--line:#e5e9f2;--blue:#2563eb;--soft:#eaf2ff;--good:#198754;--warn:#b97900;--bad:#c0392b;--purple:#7c3aed}
@@ -262,7 +262,7 @@ body{background:
 <style id="pet5121clean">
 /* Hide obsolete UI, retain corresponding data for recovery. */
 #p14Card {display:none !important}
-#learnHub .hub-grid > div > .hub-card:not(#petCatalogCard),
+#learnHub .hub-grid > div > .hub-card:not(#petCatalogCard):not(#warmupCard),
 #learnHub .hub-grid > div:nth-child(2) {display:none !important}
 #learnHub .hub-grid {display:block !important;max-width:1100px;margin:0 auto}
 #petCatalogCard {width:100%;max-width:1100px;margin:0 auto;border:1px solid #cbd5e1 !important;border-radius:15px}
@@ -282,7 +282,7 @@ body{background:
       <div class="brandMark">L</div>
       <div><div class="brandName">Lucas <span>PET</span></div><div class="brandSub">每天一点，向 B1 稳稳前进</div></div>
     </div>
-    <span class="versionPill">v0.5.12.2</span>
+    <span class="versionPill">v0.5.12.3</span>
   </div>
 
   <div class="homeHero">
@@ -502,7 +502,7 @@ const CLOUD_ENDPOINT_PREF_STORAGE='pet_checkin_cloud_endpoint_pref';
 const CLOUD_KEY_STORAGE='pet_checkin_cloud_recovery_key';
 const CLOUD_ENABLED_STORAGE='pet_checkin_cloud_enabled';
 const CLOUD_META_STORAGE='pet_checkin_cloud_meta';
-const APP_VERSION='0.5.12.0';
+const APP_VERSION='0.5.12.3';
 let cloudTimer=null,cloudBusy=false,cloudQueued=false,cloudSuppressPush=false,cloudConflictState=null;
 const ROLLING_BACKUP_PREFIXES=[
   'pet_checkin_v1_backup_pre_cloud_autopull_',
@@ -3209,10 +3209,11 @@ const norm=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'
 const options=[['','未记录'],['correct','独立正确'],['partial','提示后完成'],['wrong','错误'],['unable','不会'],['guess','猜对'],['skip','未做']];
 const localDay=()=>{const d=new Date();return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-')};
 let catalog=[],history=[],loaded=false;
-function token(){return E('petCatalogToken').value.trim()}
+function token(){return (E('petCatalogToken').value||window.petSharedAccess?.get()||'').trim()}
 async function call(slug,payload){const r=await fetch(base+slug,{method:'POST',headers:{'Content-Type':'application/json','x-ai-access':token()},body:JSON.stringify(payload)});const o=await r.json().catch(()=>({error:'接口未返回 JSON'}));if(!r.ok)throw Error(o.error||'HTTP '+r.status);return o;}
 function status(s){E('petCatalogStatus').textContent=s}
 window.petCatalogLoad=async()=>{
+ if(token())window.petSharedAccess?.set(token());
  if(!token())return status('请先填写 AI 访问码。');status('正在加载题库及已有学习记录…');
  try{const [c,h]=await Promise.all([call('pet-textbook-catalog',{action:'list',unit:1}),call('pet-textbook-results',{action:'list'})]);catalog=c.exercises||[];history=h.records||[];loaded=true;
  E('petDate').value||=localDay();E('petPage').innerHTML=Array.from(new Set(catalog.map(x=>x.printed_page))).sort((a,b)=>a-b).map(p=>`<option value="${p}">P${p}</option>`).join('');
@@ -3255,6 +3256,28 @@ function renderHistory(){const done=history.flatMap(x=>x.items||[]),has=done.fil
 }
 window.petHistoryLoad=async(show=true)=>{if(!token())return status('请填写访问码');try{const d=await call('pet-textbook-results',{action:'list'});history=d.records||[];renderHistory();if(show)status('已刷新云端训练记录：'+history.length+' 组')}catch(e){status('云端记录读取失败：'+e.message)}};
 window.petExport=()=>{const blob=new Blob([JSON.stringify({product:'lucas-pet',book:'Complete Preliminary for Schools',type:'textbook-training',records:history},null,2)],{type:'application/json'});const a=document.createElement('a'),url=URL.createObjectURL(blob);a.href=url;a.download='Lucas_PET_Unit1_P8-P15_训练记录.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),3000)};
+})();
+</script>
+<script id="pet5123Auth">
+(function(){
+ 'use strict';
+ const KEY='lucas_pet_access_session_v1';
+ function get(){try{return sessionStorage.getItem(KEY)||''}catch{return ''}}
+ function set(s){try{if(s)sessionStorage.setItem(KEY,s)}catch{}}
+ window.petSharedAccess={get,set};
+ function init(){
+  const ids=['petCatalogToken','wuAccess','aiAccess'];
+  const found=ids.map(x=>document.getElementById(x)).filter(Boolean);
+  let auth=get();
+  if(!auth)auth=found.map(e=>e.value.trim()).find(Boolean)||'';
+  if(auth)found.forEach(e=>{if(!e.value)e.value=auth});
+  found.forEach(e=>e.addEventListener('input',()=>{const v=e.value.trim();if(v){set(v);found.forEach(peer=>{if(peer!==e)peer.value=v})}}));
+  // Auto-load only when the access code is already available in this browser session.
+  if(auth){set(auth);setTimeout(()=>{if(typeof window.petCatalogLoad==='function')window.petCatalogLoad();},0)}
+  const status=document.getElementById('petCatalogStatus');
+  if(status&&!auth)status.textContent='首次请填写一次 AI 访问码；当前浏览器会话内刷新或升级将自动恢复。';
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
 })();
 </script>
 <script id="pet5121ui">
@@ -3301,7 +3324,7 @@ window.petExport=()=>{const blob=new Blob([JSON.stringify({product:'lucas-pet',b
 })();
 </script>
 <style id="pet5122warmupStyle">
-#warmupCard{scroll-margin-top:25px;border:2px solid #0d9488}#warmupCard .wuQ{border:1px solid #dbeafe;border-radius:12px;padding:14px;margin:12px 0;background:var(--card,#fff)}
+#learnHub #warmupCard{display:block !important;visibility:visible !important;scroll-margin-top:25px;border:2px solid #0d9488}#warmupCard .wuQ{border:1px solid #dbeafe;border-radius:12px;padding:14px;margin:12px 0;background:var(--card,#fff)}
 #warmupCard .wuAnswers{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin-top:12px}
 #warmupCard .wuChoice{border:1px solid #cbd5e1;border-radius:10px;text-align:center;padding:10px 5px;cursor:pointer;font-size:16px;font-weight:650}
 #warmupCard .wuChoice:has(input:checked){border:2px solid #0d9488;background:#d8f7ec;color:#064e3b}
@@ -3317,7 +3340,7 @@ const API='https://gemzboxhkkrfjqresxjt.supabase.co/functions/v1/pet-warmup';
 const Q=id=>document.getElementById(id),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const day=()=>{const d=new Date();return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-')};
 let questions=[],history=[],setId='loc-a',result=null;
-function token(){return (Q('petCatalogToken')?.value||Q('wuAccess')?.value||'').trim()}
+function token(){const t=(Q('wuAccess')?.value||Q('petCatalogToken')?.value||window.petSharedAccess?.get()||'').trim();if(t)window.petSharedAccess?.set(t);return t}
 async function api(payload){const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json','x-ai-access':token()},body:JSON.stringify(payload)});const v=await r.json().catch(()=>({error:'无法解析服务端回复'}));if(!r.ok)throw Error(v.error||'HTTP '+r.status);return v}
 function state(txt){Q('wuState').textContent=txt}
 function pickSet(rows){const prev=rows.filter(x=>x.session_date<day());return prev[0]?.set_id==='loc-a'?'loc-b':'loc-a'}
@@ -3333,9 +3356,9 @@ try{const [a,b]=await Promise.all([api({action:'questions'}),api({action:'histor
 catch(e){state('热身加载失败：'+e.message+'；教材训练不受影响。')}finally{Q('wuStart').disabled=false}}
 async function submit(){const list=questions.filter(x=>(setId==='loc-a'?['loc01','loc02','loc03']:['loc04','loc05','loc06']).includes(x.id));if(list.length!==3)return state('题目尚未加载完成');const answers=list.map(q=>({id:q.id,answer:Q('wuQuestions').querySelector('input[name="wu_'+q.id+'"]:checked')?.value||''}));if(answers.some(x=>!x.answer))return state('请先完成全部 3 道题，再统一提交。');Q('wuSubmit').disabled=true;state('正在云端判分并保存……');try{const out=await api({action:'submit',date:day(),set_id:setId,answers});showExamResults(out.results||[]);state('完成：'+out.correct+'/3 正确。结果已云端保存，讲解已展开。明天继续教材主线，旧知热身不超过 3 题。');Q('wuHistory').textContent='本次已保存 '+out.saved+' 题，可刷新后重新加载查阅。'}catch(e){state('保存失败：'+e.message+'。本次选项保留，可再次提交。');Q('wuSubmit').disabled=false}}
 function init(){const parent=Q('petCatalogCard');if(!parent)return;const card=document.createElement('div');card.id='warmupCard';card.className='hub-card';card.innerHTML='<h2>旧知识热身 <span class="pill">每天 3 题 · 在线判分</span></h2><p class="hub-muted">跟教材进度走：今天针对 P14 的 at / in / on 做少量迁移练习，接着正常学习 P15。题目为新编训练题，不是原书题目。</p><div class="hub-row" style="gap:8px;flex-wrap:wrap"><input id="wuAccess" type="password" placeholder="访问码（也可先在教材训练处填写）" autocomplete="off" style="flex:1;min-width:190px"><button class="soft" id="wuStart" type="button">加载今日 3 题</button></div><div class="wuStatus" id="wuState" role="status">点击加载后开始。全部作答再判分，避免看完第一题讲解影响后续题目。</div><div id="wuQuestions"></div><button type="button" class="primary wide" id="wuSubmit" hidden>提交 · 判分并查看讲解</button><div class="wuStatus" id="wuHistory"></div><div class="wuNext">教材主线：P15 Writing Part 1 按原书继续，热身不替代教材，也不占用 WordLoop 原有 Review / Test 计划。</div>';
-parent.insertAdjacentElement('beforebegin',card);Q('wuStart').addEventListener('click',load);Q('wuSubmit').addEventListener('click',submit);
-const top=Q('pet5121Top');if(top){const link=document.createElement('div');link.className='pet5121tile';link.innerHTML='<h3>旧知识热身</h3><p>每天 3 题，在线作答、云端判分并讲解。</p><button class="soft" type="button">开始热身 ↓</button>';const tiles=top.querySelector('.pet5121tiles');tiles?.prepend(link);link.querySelector('button').onclick=()=>card.scrollIntoView({behavior:'smooth',block:'start'});}
-const home=Q('home');if(home){const section=home.querySelector('.homeSectionTitle');if(section){const quick=document.createElement('div');quick.className='card';quick.style.margin='12px 0';quick.innerHTML='<div class="sectionEyebrow">旧知识热身 · 每日 3 题</div><h2>at / in / on 迁移训练</h2><p class="small">在软件内答题、即时判分、中文讲解，之后继续教材 P15。</p><button class="soft" id="wuHomeBtn" type="button">进入在线热身 ›</button>';section.insertAdjacentElement('afterend',quick);Q('wuHomeBtn').onclick=()=>{if(typeof window.showSecById==='function')window.showSecById('learnHub');else Q('learnHub').hidden=false;setTimeout(()=>card.scrollIntoView({behavior:'smooth',block:'start'}),80)}}}
+parent.insertAdjacentElement('beforebegin',card);Q('wuStart').addEventListener('click',load);Q('wuSubmit').addEventListener('click',submit);if(window.petSharedAccess?.get()){Q('wuAccess').value=window.petSharedAccess.get();setTimeout(load,250)}
+const top=Q('pet5121Top');if(top){const link=document.createElement('div');link.className='pet5121tile';link.innerHTML='<h3>旧知识热身</h3><p>每天 3 题，在线作答、云端判分并讲解。</p><button class="soft" type="button">开始热身 ↓</button>';const tiles=top.querySelector('.pet5121tiles');tiles?.prepend(link);link.querySelector('button').onclick=()=>{if(typeof window.showSecById==='function')window.showSecById('learnHub');card.hidden=false;card.scrollIntoView({behavior:'smooth',block:'start'});Q('wuStart').focus();if(token())load()};}
+const home=Q('home');if(home){const section=home.querySelector('.homeSectionTitle');if(section){const quick=document.createElement('div');quick.className='card';quick.style.margin='12px 0';quick.innerHTML='<div class="sectionEyebrow">旧知识热身 · 每日 3 题</div><h2>at / in / on 迁移训练</h2><p class="small">在软件内答题、即时判分、中文讲解，之后继续教材 P15。</p><button class="soft" id="wuHomeBtn" type="button">进入在线热身 ›</button>';section.insertAdjacentElement('afterend',quick);Q('wuHomeBtn').onclick=()=>{if(typeof window.showSecById==='function')window.showSecById('learnHub');else Q('learnHub').hidden=false;setTimeout(()=>{card.hidden=false;card.scrollIntoView({behavior:'smooth',block:'start'});Q('wuStart').focus();if(token())load()},80)}}}
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
 })();

@@ -1,4 +1,4 @@
-const CACHE='lucas-pet-v0.5.12.2-warmup-r1';
+const CACHE='lucas-pet-v0.5.12.3-fix-start-auth-r1';
 const ASSETS=['./index.html','./manifest.webmanifest'];
 
 self.addEventListener('install',e=>{
