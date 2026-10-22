@@ -1,4 +1,4 @@
-const CACHE='lucas-pet-v0.5.11.9-p14-book-verified-r3';
+const CACHE='lucas-pet-v0.5.12.0-parent-entry-cloud-r1';
 const ASSETS=['./index.html','./manifest.webmanifest'];
 
 self.addEventListener('install',e=>{

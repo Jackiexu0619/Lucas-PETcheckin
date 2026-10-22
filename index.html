@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#1477ef">
-<title>Lucas PET v0.5.11.9 P14 教材试运行</title>
+<title>Lucas PET v0.5.12.0 P14 教材试运行</title>
 <link rel="manifest" href="manifest.webmanifest">
 <style>
 :root{--bg:#f5f7fb;--card:#fff;--ink:#172033;--muted:#6b7280;--line:#e5e9f2;--blue:#2563eb;--soft:#eaf2ff;--good:#198754;--warn:#b97900;--bad:#c0392b;--purple:#7c3aed}
@@ -268,7 +268,7 @@ body{background:
       <div class="brandMark">L</div>
       <div><div class="brandName">Lucas <span>PET</span></div><div class="brandSub">每天一点，向 B1 稳稳前进</div></div>
     </div>
-    <span class="versionPill">v0.5.11.9</span>
+    <span class="versionPill">v0.5.12.0</span>
   </div>
 
   <div class="homeHero">
@@ -336,15 +336,16 @@ body{background:
 <div class="gap"></div><div class="hub-grid"><div>
 <div class="hub-card"><h2>今日学习 · Daily Plan</h2><div id="hubPlan"></div><div class="hub-muted">动态任务按薄弱程度、复测到期和练习覆盖度排序；原 Review 排期保持独立，不会被覆盖。</div></div>
 
-<div class="hub-card" id="petCatalogCard" style="border:2px solid #b3d5ed">
-<h2>教材题库 · Unit 1 P8–P15 <span class="pill">云端目录</span></h2>
-<p class="hub-muted">原书扫描页练习结构已入库；P14 逐题文本部分核对，其他页仍需逐题转录与校对。此区不自动评分，不会改变 Review/Test。</p>
-<div class="hub-row" style="gap:8px; flex-wrap:wrap">
- <input type="password" id="petCatalogToken" placeholder="AI 访问码（与 AI 导师相同）" autocomplete="off" style="min-width:220px;flex:1" aria-label="教材目录访问码">
- <button class="primary" onclick="petCatalogLoad()">从云端加载 P8–P15</button>
-</div>
-<div id="petCatalogStatus" class="hub-muted" role="status">点击加载后查看已入库的教材目录。</div>
+<div class="hub-card" id="petCatalogCard" style="border:2px solid #60a5fa">
+<h2>教材训练 · Unit 1 P8–P15 <span class="pill">云端逐题录入</span></h2>
+<p class="hub-muted">Lucas 继续纸上答题，家长在这里按题号录入。云端保存后可重新加载并汇总错题；未核准题干/答案不自动判分。请对照原书页码和选项。</p>
+<div class="hub-row" style="gap:8px;flex-wrap:wrap"><input type="password" id="petCatalogToken" placeholder="AI 访问码（与 AI 导师相同）" autocomplete="off" style="min-width:200px;flex:1"><button class="primary" onclick="petCatalogLoad()">连接云端题库</button></div>
+<div id="petCatalogStatus" class="hub-muted" role="status">连接后选择页码开始录入。</div>
+<div class="hub-row" style="gap:8px;flex-wrap:wrap"><label>教材页码 <select id="petPage" onchange="petPageChange()"><option value="">请先加载</option></select></label><label>训练日期 <input type="date" id="petDate"></label></div>
 <div id="petCatalogRows"></div>
+<div id="petCatalogHistory" class="hub-box" hidden></div>
+<div class="hub-row" style="gap:8px;flex-wrap:wrap"><button class="soft" onclick="petExport()">导出云端训练记录</button><button class="soft" onclick="petHistoryLoad()">刷新历史与统计</button></div>
+<p class="hub-muted">云端训练结果与 WordLoop 的 Review/Test 分开保存。此阶段使用共享 AI 访问码进行家长测试，后续需改成账号身份验证。</p>
 </div>
 <div class="hub-card" id="p14Card" style="border:2px solid #94a3b8">
 <h2>今晚教材 · Unit 1 P14 <span class="pill">原书八项练习 · 家长录入</span></h2>
@@ -437,7 +438,7 @@ body{background:
 </section>
 
 <section id="data" class="section" hidden><h1>数据与设置</h1>
-<div class="notice"><b>v0.5.11.9：完整功能保留 + AI 导师 + 学习工作台 + P14 纸质训练录入。</b> 首页、Review、Test、词汇池、固定搭配、分析、记录和数据页统一为新的学习卡片视觉；保留 v0.5.10.9 的测试结果词性显示，以及原有智能排期、记忆周期、双向 Test、词族、固定搭配和云同步逻辑。</div><div class="gap"></div>
+<div class="notice"><b>v0.5.12.0：完整功能保留 + AI 导师 + 学习工作台 + P14 纸质训练录入。</b> 首页、Review、Test、词汇池、固定搭配、分析、记录和数据页统一为新的学习卡片视觉；保留 v0.5.10.9 的测试结果词性显示，以及原有智能排期、记忆周期、双向 Test、词族、固定搭配和云同步逻辑。</div><div class="gap"></div>
 <div class="card"><h2>v0.3 记忆周期</h2><div class="small">错词：1天后；慢 / 重听 / 发音需练习：2天后；连续快速正确（≤3秒且不重听）：1天 → 3天 → 7天 → 14天 → 30天。任何阶段再错，重新回到1天。英→中与中→英分别计算。</div></div><div class="gap"></div>
 <div class="card"><h2>语音设置</h2><label>英语地区</label><select id="voiceLang"><option value="en-GB">英式英语 en-GB</option><option value="en-US">美式英语 en-US</option></select><div class="gap"></div><label>语速：<span id="rateText">0.90</span></label><input id="voiceRate" type="range" min="0.72" max="1.05" step="0.01" value="0.90"><div class="gap"></div><button class="soft" onclick="testVoice()">试听 persuade</button></div>
 <div class="gap"></div><div class="card"><h2>新增词汇</h2><div class="sub">家长只录入 Lucas 真正遇到的陌生词，并按本次实际语境标注词性。新增词最早次日先进入 Review 学习；Review 完成后的下一学习日才进入正式 Test。</div><div class="gap"></div><div class="row"><input id="newEn" placeholder="English" oninput="updateFamilyHint()"><input id="newZh" placeholder="中文意思"></div><div class="gap"></div><div id="newDictHint" class="spellHint skip">输入英文后，会自动匹配常见中文释义和词性；可按实际语境修改。</div><div class="gap"></div><div id="newSpellHint" class="spellHint skip">输入英文后自动检查拼写；只提示，不会擅自改词。</div><div class="gap"></div><div id="newMeaningHint" class="spellHint skip">英文和中文都填好后，会额外检查常见易混词。</div><div class="gap"></div><label>词性（按本次实际语境）</label><select id="newPos"><option value="">请选择词性</option><option value="n.">n. 名词</option><option value="v.">v. 动词</option><option value="adj.">adj. 形容词</option><option value="adv.">adv. 副词</option><option value="prep.">prep. 介词</option><option value="conj.">conj. 连词</option><option value="pron.">pron. 代词</option><option value="det.">det. 限定词</option><option value="phr.">phr. 短语</option><option value="prop. n.">prop. n. 专有名词</option><option value="n./v.">n./v. 名词/动词</option></select><div class="gap"></div><div id="familyHint" class="familyHint neutral">输入英文后，这里会显示词族判断。</div><div class="gap"></div><input id="newNote" placeholder="例句/备注（可选）"><div class="gap"></div><div class="notice"><b>固定搭配（可选）</b><div class="small">只填真正有价值的搭配，不需要每个单词都加。</div><div class="gap"></div><div class="row"><input id="newLinkedStructureEn" placeholder="例如 recommend doing something"><input id="newLinkedStructureZh" placeholder="例如 建议做某事"></div><div class="gap"></div><label class="checkline"><input id="newLinkedStructureKey" type="checkbox" checked>重点 / 易考搭配</label><label class="checkline"><input id="newLinkedStructureReplace" type="checkbox" checked>英→中时优先用这个搭配替代独立单词</label></div><div class="gap"></div><details class="advanced"><summary>高级：手动指定词族（通常不用）</summary><div class="gap"></div><input id="newFamily" placeholder="例如 decorate；留空则由软件判断"></details><div class="gap"></div><button class="primary" onclick="addWord()">加入词汇池</button></div>
@@ -487,7 +488,7 @@ const CLOUD_ENDPOINT_PREF_STORAGE='pet_checkin_cloud_endpoint_pref';
 const CLOUD_KEY_STORAGE='pet_checkin_cloud_recovery_key';
 const CLOUD_ENABLED_STORAGE='pet_checkin_cloud_enabled';
 const CLOUD_META_STORAGE='pet_checkin_cloud_meta';
-const APP_VERSION='0.5.11.9';
+const APP_VERSION='0.5.12.0';
 let cloudTimer=null,cloudBusy=false,cloudQueued=false,cloudSuppressPush=false,cloudConflictState=null;
 const ROLLING_BACKUP_PREFIXES=[
   'pet_checkin_v1_backup_pre_cloud_autopull_',
@@ -3044,7 +3045,7 @@ renderAll();
 document.querySelectorAll('.app>.section').forEach(x=>{let on=x.id==='home';x.hidden=!on;x.classList.toggle('active',on)});
 if(cloudIsEnabled())setTimeout(()=>cloudSmartSync(false),600);
 if(bootRecoveryReport&& !sessionStorage.getItem('pet031_recovery_notice')){sessionStorage.setItem('pet031_recovery_notice','1');let r=bootRecoveryReport;setTimeout(()=>alert(r.fallback?'检测到旧数据迁移异常，已优先从升级前快照恢复，并保留异常原始数据副本。请到“词汇”和“记录”页核对。':`已自动检查升级前快照并补回缺失数据：${r.words||0} 个词、${r.tests||0} 条测试记录、${r.plans||0} 个清单项目。`),150)}
-if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('./service-worker.js?v=lucas-pet-0.5.11.9-p14-unified-r2',{updateViaCache:'none'}).catch(()=>{});
+if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('./service-worker.js?v=lucas-pet-0.5.12.0-p14-unified-r2',{updateViaCache:'none'}).catch(()=>{});
 </script>
 <script>
 (() => {
@@ -3189,29 +3190,57 @@ window.addEventListener('load',()=>{if($('p14Card')){render();$('p14Panel').hidd
 <script>
 (function(){
 const E=id=>document.getElementById(id);
-const endpoint='https://gemzboxhkkrfjqresxjt.supabase.co/functions/v1/pet-textbook-catalog';
-const statuses={'outline_verified':'目录已核对，题干待录','partial_transcript_verified':'部分题干已核对'};
-const localKey='lucas-pet-catalog-unit1-exercise-notes-v1';
-let catalog=[];
-function clean(x){return String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
-function read(){try{return JSON.parse(localStorage.getItem(localKey)||'{}')}catch{return {}}}
-function write(id,v){const data=read();data[id]={...(data[id]||{}),status:v,at:new Date().toISOString()};localStorage.setItem(localKey,JSON.stringify(data));}
+const base='https://gemzboxhkkrfjqresxjt.supabase.co/functions/v1/';
+const norm=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const options=[['','未记录'],['correct','独立正确'],['partial','提示后完成'],['wrong','错误'],['unable','不会'],['guess','猜对'],['skip','未做']];
+const localDay=()=>{const d=new Date();return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-')};
+let catalog=[],history=[],loaded=false;
+function token(){return E('petCatalogToken').value.trim()}
+async function call(slug,payload){const r=await fetch(base+slug,{method:'POST',headers:{'Content-Type':'application/json','x-ai-access':token()},body:JSON.stringify(payload)});const o=await r.json().catch(()=>({error:'接口未返回 JSON'}));if(!r.ok)throw Error(o.error||'HTTP '+r.status);return o;}
+function status(s){E('petCatalogStatus').textContent=s}
 window.petCatalogLoad=async()=>{
- const o=E('petCatalogStatus'),panel=E('petCatalogRows'),token=E('petCatalogToken').value.trim();
- if(!token){o.textContent='请填写与 AI 导师相同的访问码。';return}
- o.textContent='正在加载云端教材目录…';panel.replaceChildren();
- try{
- const r=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json','x-ai-access':token},body:JSON.stringify({action:'list',unit:1})});
- const data=await r.json().catch(()=>({error:'响应不是 JSON'}));
- if(!r.ok)throw Error(data.error||'请求失败：'+r.status);
- catalog=data.exercises||[];
- const pageCounts={};catalog.forEach(v=>pageCounts[v.printed_page]=(pageCounts[v.printed_page]||0)+1);
- o.textContent='云端已载入 '+catalog.length+' 组练习。按书本页码查看；练习状态仅保存在当前浏览器。';
- const saved=read();
- panel.innerHTML=Object.entries(pageCounts).sort((a,b)=>a[0]-b[0]).map(([page,count])=>'<details class="hub-box"><summary><b>P'+page+'</b> · '+count+' 组练习</summary>'+catalog.filter(x=>String(x.printed_page)===page).map(x=>'<div class="hub-box" style="padding:9px;margin-top:8px"><b>'+clean(x.section)+' · Ex '+x.exercise_no+'</b><div>'+clean(x.title)+'</div><div class="hub-muted">'+clean(statuses[x.transcription_status]||'需核对')+' · '+(x.needs_image?'需原书图片 · ':'')+(x.needs_audio?'需配套音频 · ':'')+'参考题位 '+x.item_count+'（待进一步逐题确认）</div>'+(x.items||[]).some(y=>y.verified_text)?'<details><summary>查看已核实的题目片段</summary><ol>'+x.items.filter(y=>y.verified_text).map(y=>'<li>'+clean(y.text)+'</li>').join('')+'</ol></details>':''+'<label>本次练习情况（临时本地记录） <select data-exid="'+clean(x.id)+'"><option value="">未录入</option><option value="done">已完成</option><option value="partial">部分完成</option><option value="not_done">未做</option></select></label></div>').join('')+'</details>').join('');
- panel.querySelectorAll('select[data-exid]').forEach(el=>{el.value=saved[el.dataset.exid]?.status||'';el.addEventListener('change',()=>write(el.dataset.exid,el.value))});
- }catch(e){o.textContent='加载失败：'+(e.message||e)+'。请确认访问码与 AI 导师一致。'}
+ if(!token())return status('请先填写 AI 访问码。');status('正在加载题库及已有学习记录…');
+ try{const [c,h]=await Promise.all([call('pet-textbook-catalog',{action:'list',unit:1}),call('pet-textbook-results',{action:'list'})]);catalog=c.exercises||[];history=h.records||[];loaded=true;
+ E('petDate').value||=localDay();E('petPage').innerHTML=Array.from(new Set(catalog.map(x=>x.printed_page))).sort((a,b)=>a-b).map(p=>`<option value="${p}">P${p}</option>`).join('');
+ E('petPage').value='14';petPageChange();renderHistory();status(`已加载 ${catalog.length} 组练习，云端训练记录 ${history.length} 条。请选页码并录入。`);
+ }catch(e){status('连接失败：'+e.message)}
 };
+window.petPageChange=()=>{
+ if(!loaded)return;const page=Number(E('petPage').value),a=catalog.filter(x=>x.printed_page===page);
+ E('petCatalogRows').innerHTML=a.map(ex=>{
+ const hasText=(ex.items||[]).some(y=>y.verified_text),last=history.find(h=>h.exercise_id===ex.id);
+ return `<details class="hub-box" style="margin:10px 0" data-ex="${norm(ex.id)}"><summary><b>Exercise ${ex.exercise_no} · ${norm(ex.title)}</b> <span class="hub-muted">${ex.item_count} 题位 ${last?'· 已录过':''}</span></summary>
+ <p class="hub-muted">${norm(ex.directions||'请对照教材原题作答')} · ${norm(ex.task_type)} ${ex.needs_image?'· 请看原书图片':''} ${ex.needs_audio?'· 请播放原书音频':''}</p>
+ ${!hasText?'<p class="hub-muted">本练习的逐字题干尚未核对；下面按原书题号录入，不展示未经核实的题目文字。</p>':''}
+ ${(ex.items||[]).map(item=>`<div class="hub-q" style="margin:8px 0;padding:10px 0;border-bottom:1px solid #e2e8f0"><b>第 ${item.no} ${item.verified_text?'· '+norm(item.text||''):'题（参照原书）'}</b>
+ <div class="hub-row" style="gap:6px;flex-wrap:wrap"><select data-no="${item.no}" data-role="status" style="flex:1;min-width:115px">${options.map(o=>`<option value="${o[0]}">${o[1]}</option>`).join('')}</select>
+ <input data-no="${item.no}" data-role="answer" maxlength="300" placeholder="Lucas实际答案（可选）" style="flex:2;min-width:130px"></div>
+ <input data-no="${item.no}" data-role="remark" maxlength="400" placeholder="错因 / 提示 / 口语表达（可选）" style="width:100%;margin-top:5px"></div>`).join('')}
+ <label>家长备注 <textarea data-role="parent-note" maxlength="1500" rows="2" placeholder="本组练习的总体观察"></textarea></label>
+ <div class="hub-row" style="gap:8px;flex-wrap:wrap"><button class="primary" data-action="save" data-id="${norm(ex.id)}">保存本组到云端</button><button class="soft" data-action="restore" data-id="${norm(ex.id)}">恢复最近记录</button></div>
+ <p class="hub-muted" data-role="save-msg"></p></details>`
+ }).join('');
+ E('petCatalogRows').querySelectorAll('[data-action]').forEach(btn=>btn.addEventListener('click',()=>btn.dataset.action==='save'?save(btn.dataset.id):restore(btn.dataset.id)));
+};
+function form(id){return [...E('petCatalogRows').querySelectorAll('details[data-ex]')].find(x=>x.dataset.ex===id)}
+function restore(id){const el=form(id),r=history.find(h=>h.exercise_id===id);if(!el||!r){if(el)el.querySelector('[data-role="save-msg"]').textContent='暂无可恢复的云端记录';return}
+ E('petDate').value=r.session_date;(r.items||[]).forEach(q=>{for(const key of ['status','answer','remark']){const input=el.querySelector(`[data-no="${q.no}"][data-role="${key}"]`);if(input)input.value=key==='status'?q.status:(q[key]||'')}});el.querySelector('[data-role="parent-note"]').value=r.parent_note||'';
+ el.querySelector('[data-role="save-msg"]').textContent='已恢复 '+r.session_date+' 的云端记录；修改后请重新保存。';el.dataset.savedId=r.id;
+}
+async function save(id){const el=form(id),ex=catalog.find(x=>x.id===id),msg=el?.querySelector('[data-role="save-msg"]');if(!el||!ex)return;
+ const items=(ex.items||[]).map(q=>({no:q.no,status:el.querySelector(`[data-no="${q.no}"][data-role="status"]`)?.value||'',answer:el.querySelector(`[data-no="${q.no}"][data-role="answer"]`)?.value.trim()||'',remark:el.querySelector(`[data-no="${q.no}"][data-role="remark"]`)?.value.trim()||''})).filter(x=>x.status);
+ if(!items.length){msg.textContent='请先标记至少一道题；未做也可以选择「未做」';return}
+ const date=E('petDate').value;if(!/^\d{4}-\d{2}-\d{2}$/.test(date)){msg.textContent='请选择训练日期';return}
+ // A separate id per exercise/date, so saving again updates rather than duplicates.
+ const stable='pet_'+btoa(unescape(encodeURIComponent(id+'_'+date))).replace(/[^a-zA-Z0-9]/g,'').slice(0,65);
+ const record={id:stable,exercise_id:id,printed_page:ex.printed_page,session_date:date,items,parent_note:el.querySelector('[data-role="parent-note"]').value.trim(),duration_minutes:null};
+ msg.textContent='正在写入云端…';try{await call('pet-textbook-results',{action:'save',record});msg.textContent='已保存云端：'+items.length+' 条表现（日期 '+date+'）。再次保存会更新本次记录。';await petHistoryLoad(false)}catch(e){msg.textContent='保存失败：'+e.message+'。输入仍保留，请勿刷新页面'}
+}
+function renderHistory(){const done=history.flatMap(x=>x.items||[]),has=done.filter(x=>x.status!=='skip');const counts={};for(const x of has)counts[x.status]=(counts[x.status]||0)+1;const weak=history.flatMap(x=>(x.items||[]).filter(z=>['wrong','unable','guess','partial'].includes(z.status)).map(z=>({page:x.printed_page,ex:x.exercise_id.split('-').at(-1),no:z.no,status:z.status,remark:z.remark}))).slice(0,30);
+ const el=E('petCatalogHistory');el.hidden=false;el.innerHTML=`<b>云端训练统计</b><p>已保存 ${history.length} 组训练 · 已记录 ${has.length} 个有效题位 · 独立正确 ${counts.correct||0} · 错误 ${counts.wrong||0} · 不会 ${counts.unable||0} · 猜对 ${counts.guess||0} · 提示后 ${counts.partial||0}</p><details><summary>查看最近待巩固题目（${weak.length}）</summary><ol>${weak.map(x=>`<li>P${x.page} ${norm(x.ex)} 第${x.no}题 · ${norm(x.status)} ${norm(x.remark||'')}</li>`).join('')}</ol></details><p class="hub-muted">这里统计的是家长录入状态，未经答案核准的题目不会自动算为正确。</p>`;
+}
+window.petHistoryLoad=async(show=true)=>{if(!token())return status('请填写访问码');try{const d=await call('pet-textbook-results',{action:'list'});history=d.records||[];renderHistory();if(show)status('已刷新云端训练记录：'+history.length+' 组')}catch(e){status('云端记录读取失败：'+e.message)}};
+window.petExport=()=>{const blob=new Blob([JSON.stringify({product:'lucas-pet',book:'Complete Preliminary for Schools',type:'textbook-training',records:history},null,2)],{type:'application/json'});const a=document.createElement('a'),url=URL.createObjectURL(blob);a.href=url;a.download='Lucas_PET_Unit1_P8-P15_训练记录.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),3000)};
 })();
 </script>
 </body></html>
