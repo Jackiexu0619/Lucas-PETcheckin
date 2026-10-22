@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#1477ef">
-<title>Lucas PET 词汇打卡 v0.5.11.5</title>
+<title>Lucas PET v0.5.11.8 P14 教材试运行</title>
 <link rel="manifest" href="manifest.webmanifest">
 <style>
 :root{--bg:#f5f7fb;--card:#fff;--ink:#172033;--muted:#6b7280;--line:#e5e9f2;--blue:#2563eb;--soft:#eaf2ff;--good:#198754;--warn:#b97900;--bad:#c0392b;--purple:#7c3aed}
@@ -56,6 +56,10 @@
 #aiTutor .ai-history{border-bottom:1px solid #e2e8f0;padding:9px 0;font-size:13px}
 #aiTutor .ai-status{padding:8px;border-radius:8px;background:#f1f5f9;margin:10px 0;font-size:13px}
 @media(max-width:700px){#aiTutor .ai-layout{grid-template-columns:1fr}}
+
+/* EchoType inspired additive learning workspace */
+#learnHub{--hub:#2364cc}#learnHub .hub-grid{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(250px,.85fr);gap:14px}#learnHub .hub-card{background:#fff;border:1px solid #dce6f5;border-radius:16px;padding:16px;margin:0 0 13px}#learnHub .hub-card h2{margin:0 0 8px;font-size:19px}#learnHub .hub-muted{font-size:12px;color:#64748b;line-height:1.65}#learnHub .hub-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}#learnHub button{cursor:pointer}#learnHub .hub-chip{border:1px solid #cbdcf4;background:#f1f6ff;color:#174988;border-radius:20px;padding:7px 12px}#learnHub .hub-chip.selected{background:#2169d5;color:#fff}#learnHub .hub-box{border:1px solid #e1e7f0;border-radius:12px;padding:11px;margin:9px 0;background:#f8fbff}#learnHub .hub-q label{display:block;border:1px solid #dfe6f2;border-radius:9px;margin:7px 0;padding:9px;background:#fff}#learnHub textarea{min-height:100px;width:100%}#learnHub .hub-tag{display:inline-block;background:#eef4ff;padding:3px 8px;border-radius:14px;font-size:11px;color:#2459a3}#learnHub .hub-success{background:#e9f7ef;padding:10px;border-radius:9px}#learnHub .hub-warn{background:#fff4e5;padding:10px;border-radius:9px}#learnHub .hub-stat{display:inline-block;margin:3px 7px 3px 0;font-size:12px}#learnHub .hub-smallbtn{padding:7px 12px;font-size:12px}#learnHub .hub-history{font-size:12px;border-bottom:1px solid #eef1f6;padding:9px 0}#learnHub .hub-card button:disabled{opacity:.5}#learnHub .hub-paragraph{font-size:15px;line-height:1.85;white-space:pre-line}#learnHub .hub-progress{height:8px;border-radius:8px;background:#e9eef9;overflow:hidden}#learnHub .hub-progress i{display:block;height:100%;background:#397ce5}#learnHub input[type=file]{max-width:100%}@media(max-width:750px){#learnHub .hub-grid{grid-template-columns:1fr}#learnHub .hub-card{padding:12px}}
+
 </style>
 <style id="ui-v0512">
 :root{--bg:#f4f8ff;--card:#fff;--ink:#12315d;--muted:#71809a;--line:#e5edf8;--blue:#1477ef;--blue2:#0758c9;--teal:#12b99b;--yellow:#ffbf23;--violet:#7558e8;--soft:#edf5ff;--shadow:0 10px 30px rgba(31,84,143,.09)}
@@ -311,6 +315,7 @@ body{background:
 
   <div class="card" style="margin:14px 0"><div class="sectionEyebrow">教材学习</div><h2>剑桥 PET 综合教程</h2><div class="small" id="schoolHomeBrief">打开教材页，记录教材并验证掌握情况</div><div class="gap"></div><button class="soft" onclick="showSecById('schoolStudy')">记录教材学习 ›</button></div>
 <div class="card" style="margin:14px 0"><div class="sectionEyebrow">新增 · AI 辅导</div><h2>DeepSeek AI 英语导师</h2><div class="small">分析真实错误，自动生成两道补练；不修改原有测试成绩与排期。</div><div class="gap"></div><button class="soft" onclick="showSecById('aiTutor')">进入 AI 导师 ›</button></div>
+<div class="card" style="margin:14px 0"><div class="sectionEyebrow">EchoType × WordLoop · 新增</div><h2>今日学习工作台</h2><div class="small">统一素材库 · 听读说写联动 · 自动计划与训练记录</div><div class="gap"></div><button class="soft" onclick="showSecById('learnHub')">进入学习工作台 ›</button></div>
 <div class="homeSectionTitle"><div><span>学习表现</span><small>英→中与中→英分别看</small></div><button class="textLink" onclick="showSecById('stats')">统计分析 ›</button></div>
   <div class="grid metrics modernMetrics">
     <div class="card metric"><div class="metricIcon blue">中</div><div><div class="k">英→中正确率</div><div class="v" id="eAcc">—</div></div></div>
@@ -323,6 +328,35 @@ body{background:
   <div class="card trendCard"><div class="cardTitleRow"><div><div class="sectionEyebrow">最近14天</div><h2>反应速度变化</h2></div><div class="trendMini">越低越好 ↓</div></div><div class="trendLegend"><span class="trendLegendItem"><i class="trendSwatch e2z"></i>英→中</span><span class="trendLegendItem"><i class="trendSwatch z2e"></i>中→英</span></div><div class="canvas"><canvas id="trend"></canvas></div><div class="small">错误和人工剔除的操作延迟不计入平均反应时间；某天没有有效测试时曲线会断开。</div></div>
 </section>
 
+
+
+<section id="learnHub" class="section" hidden>
+<h1>学习工作台 <span class="pill">EchoType × WordLoop · v0.5.11.7 预览</span></h1>
+<div class="sub">一个素材贯穿听、读、说、写；今日计划依据训练表现自动排序。原词库、Review、Test、教材与云同步逻辑不变。新模块记录暂存在当前浏览器。</div>
+<div class="gap"></div><div class="hub-grid"><div>
+<div class="hub-card"><h2>今日学习 · Daily Plan</h2><div id="hubPlan"></div><div class="hub-muted">动态任务按薄弱程度、复测到期和练习覆盖度排序；原 Review 排期保持独立，不会被覆盖。</div></div>
+
+<div class="hub-card" id="p14Card" style="border:2px solid #94a3b8">
+<h2>今晚教材 · Unit 1 P14 <span class="pill">纸质答题 / 家长录入</span></h2>
+<p class="hub-muted">按原书训练，不改变题型。Ex2 为对照课本的开放口语描述；Ex5 与 Ex8 以已经确认的原题问题录入。只有家长标记的结果会成为能力证据。</p>
+<div class="hub-row"><button class="primary" onclick="p14Open()">打开 P14 逐题录入</button><button class="soft" onclick="p14Export()">导出 P14 记录</button></div>
+<div id="p14Quick" class="hub-muted"></div>
+<div id="p14Panel" hidden>
+ <div class="hub-box"><div class="hub-row" style="justify-content:space-between"><b>练习日期</b><input type="date" id="p14Date" style="max-width:175px"></div>
+ <label>纸质训练耗时（分钟，可选）</label><input type="number" min="0" max="120" id="p14Minutes" placeholder="例如 12">
+ <label>Lucas 的补充说明（可选）</label><textarea id="p14Note" maxlength="1200" placeholder="例如：at/in/on 用错，描述家具位置时需要提示"></textarea></div>
+ <div id="p14Questions"></div>
+ <div class="hub-box"><b>口语有效回合（按实际记录）</b><div class="hub-muted">目标 10 个有效回合、8–12 分钟；只回答 Yes/No 不计为有效回合。这里不自动把题号当作回合数。</div><input type="number" min="0" max="50" id="p14Turns" placeholder="例如 10"></div>
+ <div class="hub-row"><button class="primary" onclick="p14Save()">保存本次教材逐题结果</button><button class="soft" onclick="p14Clear()">清空当前表单</button></div><p id="p14Message" class="hub-muted" role="status"></p>
+</div>
+</div>
+<div class="hub-card"><h2>统一素材库 · Library</h2><div class="hub-row"><select id="hubMaterial" aria-label="选择学习素材"></select><button class="soft" onclick="hubOpen()">打开素材</button></div><div id="hubMaterialInfo" class="hub-box"></div><details><summary>导入自备文字素材（保存到本机）</summary><div class="gap"></div><label>标题</label><input id="hubImportTitle" maxlength="100" placeholder="例如 Unit 1 家庭话题"><label>英文正文</label><textarea id="hubImportText" maxlength="5000" placeholder="粘贴有权使用的英文材料（至少 80 个字符）"></textarea><button class="soft" onclick="hubImport()">添加到素材库</button><div class="hub-muted">支持自备文字；不会自动生成真实 PET 试题，也不会上传至云端。录音材料须另行使用有授权的音频。</div></details></div>
+<div class="hub-card"><h2>同一素材 · 四项训练</h2><div class="hub-row" id="hubTabs"></div><div id="hubPractice" class="hub-box"></div><div id="hubResult"></div></div>
+</div><div>
+<div class="hub-card"><h2>能力画像</h2><div id="hubProfile"></div></div>
+<div class="hub-card"><h2>自动训练记录</h2><div id="hubHistory"></div><div class="hub-row"><button class="soft hub-smallbtn" onclick="hubExport()">导出学习记录</button><button class="gray hub-smallbtn" onclick="hubReset()">清空工作台记录</button></div><p class="hub-muted">与 AI 导师的实验记录分开存储，不影响原有考试成绩。跨设备记录同步尚未实现。</p></div>
+<div class="hub-card"><h2>AI 导师</h2><p class="hub-muted">完成听读说写后，可把题目和实际回答带到已连通 DeepSeek 的 AI 导师，由模型诊断并生成迁移补练。</p><button class="soft" onclick="hubToAI()">携带本次素材进入 AI 导师 →</button></div>
+</div></div></section>
 
 <section id="aiTutor" class="section" hidden>
 <h1>AI 英语导师 <span class="pill">v0.5.11.6 增量预览</span></h1>
@@ -415,6 +449,7 @@ body{background:
 <button onclick="showSec('words',this)"><span class="navIcon">Aa</span><span>词汇</span></button>
 <button onclick="showSec('structures',this)"><span class="navIcon">↗</span><span>搭配</span></button>
 <button onclick="showSec('schoolStudy',this)"><span class="navIcon">▤</span><span>教材</span></button>
+<button onclick="showSec('learnHub',this)"><span class="navIcon">◈</span><span>学习</span></button>
 <button onclick="showSec('aiTutor',this)"><span class="navIcon">✦</span><span>AI</span></button>
 <button onclick="showSec('stats',this)"><span class="navIcon">▥</span><span>分析</span></button>
 <button onclick="showSec('history',this)"><span class="navIcon">≡</span><span>记录</span></button>
@@ -442,7 +477,7 @@ const CLOUD_ENDPOINT_PREF_STORAGE='pet_checkin_cloud_endpoint_pref';
 const CLOUD_KEY_STORAGE='pet_checkin_cloud_recovery_key';
 const CLOUD_ENABLED_STORAGE='pet_checkin_cloud_enabled';
 const CLOUD_META_STORAGE='pet_checkin_cloud_meta';
-const APP_VERSION='0.5.11.6';
+const APP_VERSION='0.5.11.7';
 let cloudTimer=null,cloudBusy=false,cloudQueued=false,cloudSuppressPush=false,cloudConflictState=null;
 const ROLLING_BACKUP_PREFIXES=[
   'pet_checkin_v1_backup_pre_cloud_autopull_',
@@ -3028,6 +3063,83 @@ window.aiGrade=function(){if(!current)return;const answers=current.questions.map
 window.aiExportHistory=function(){const url=URL.createObjectURL(new Blob([JSON.stringify({product:'lucas-pet-ai-preview',version:'0.5.11.6',records:load()},null,2)],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download='Lucas_AI_训练记录_'+new Date().toISOString().slice(0,10)+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)};
 window.aiClearHistory=function(){if(confirm('仅清空本机 AI 实验记录？不会删除正式词汇与测试记录。')){localStorage.removeItem(NAMESPACE);render();el('aiResult').hidden=true}};
 window.addEventListener('load',()=>{try{el('aiEndpoint').value=sessionStorage.getItem('lucas_ai_endpoint')||''}catch{};el('aiEndpoint').addEventListener('change',()=>{try{sessionStorage.setItem('lucas_ai_endpoint',el('aiEndpoint').value.trim())}catch{}});aiChooseScenario();render()});
+})();
+</script>
+
+<script>
+(()=>{'use strict';
+const PREFIX='lucas_pet_echotype_hub_05117';const KEY=PREFIX+'attempts',LIB=PREFIX+'custom';
+const BUILTINS=[
+{id:'u1-home-b1',title:'Unit 1 · House and Home',kind:'自编 B1 练习',tags:['Unit 1','空间介词','家居'],text:'Last Saturday, Emma helped her family tidy their house. First, she moved a small rug from the living room to the bedroom. Her brother put the cushions on the sofa, while her father repaired a kitchen tap. In the afternoon, Emma found an old photo under the bookcase. It showed her grandparents standing in front of their first home. Emma decided to put the photo on a shelf beside her desk. She felt happy because the family had worked together.',questions:[{q:'Where did Emma move the rug?',a:['To the bedroom','To the kitchen','To the garden'],c:0,why:'She moved a rug from the living room to the bedroom.'},{q:'What did her father repair?',a:['A window','A kitchen tap','A bookcase'],c:1,why:'Her father repaired a kitchen tap.'},{q:'Where did Emma put the photo?',a:['Under the sofa','Inside a cupboard','On a shelf beside her desk'],c:2,why:'The photo went on a shelf beside her desk.'}],prompt:'Retell what Emma and her family did. Use at least three past tense verbs.',writing:'Write 45–60 words about how you helped at home. Say what you did, where things were, and how you felt.'},
+{id:'pet-library-b1',title:'A Visit to the Town Library',kind:'自编 B1 练习',tags:['PET','阅读','听力'],text:'Tom wanted to prepare for a school science project, so he visited the new town library on Wednesday afternoon. At first, he could not find the books about oceans. A librarian explained that the science section had moved upstairs. Tom borrowed two books and joined a short workshop on using reliable websites. Although he had planned to leave at four o’clock, the workshop finished later than expected. On his way home, Tom realised that he had left his notebook on a table. Luckily, a member of staff found it and kept it at the information desk.',questions:[{q:'Why did Tom visit the library?',a:['To meet his cousin','To prepare for a science project','To buy a notebook'],c:1,why:'He wanted to prepare for a school science project.'},{q:'Where were the science books?',a:['Upstairs','By the entrance','In the café'],c:0,why:'The science section had moved upstairs.'},{q:'What did Tom leave behind?',a:['His coat','His books','His notebook'],c:2,why:'He had left his notebook on a table.'}],prompt:'Retell Tom’s visit in four sentences. Explain one unexpected thing.',writing:'Write 45–60 words about a helpful place you visited. Describe why you went there and what happened.'}
+];
+let materialId=BUILTINS[0].id,mode='listen',started=Date.now();
+const $=id=>document.getElementById(id),safe=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function get(k,def=[]){try{let a=JSON.parse(localStorage.getItem(k)||'null');return Array.isArray(a)?a:def}catch{return def}}
+function save(k,a){localStorage.setItem(k,JSON.stringify(a))}
+function lib(){return [...BUILTINS,...get(LIB)]}function current(){return lib().find(x=>x.id===materialId)||BUILTINS[0]}
+function records(){return get(KEY)}function store(r){let a=records();a.push(r);save(KEY,a.slice(-300));refresh()}
+const names={listen:'听力 Listen',read:'阅读 Read',speak:'口语 Speak',write:'写作 Write'};
+function stats(id,skill){return records().filter(x=>x.materialId===id&&x.skill===skill)}
+function priority(id,skill){let r=stats(id,skill),last=r[r.length-1],days=last?Math.floor((Date.now()-last.ts)/864e5):10,confidence=last?.score??0;return (r.length?100-confidence:75)+Math.min(days*3,20)+(skill==='listen'?5:0)}
+function taskPairs(){return lib().flatMap(m=>Object.keys(names).map(k=>({m,k,p:priority(m.id,k),n:stats(m.id,k).length}))).sort((a,b)=>b.p-a.p)}
+function refresh(){let items=lib();$('hubMaterial').innerHTML=items.map(m=>`<option value="${safe(m.id)}">${safe(m.title)}</option>`).join('');$('hubMaterial').value=materialId;let m=current();$('hubMaterialInfo').innerHTML=`<b>${safe(m.title)}</b> <span class="hub-tag">${safe(m.kind)}</span><p class="hub-muted">ID: ${safe(m.id)} · ${m.text.split(/\s+/).length} words · ${m.questions?.length||0} 道自编理解题</p><div class="hub-row">${m.tags.map(t=>`<span class="hub-tag">${safe(t)}</span>`).join('')}</div>`;
+ let ordered=taskPairs().slice(0,4);$('hubPlan').innerHTML=ordered.map((t,i)=>`<div class="hub-box"><div class="hub-row" style="justify-content:space-between"><div><b>${i+1}. ${safe(t.m.title)}</b><div class="hub-muted">${names[t.k]} · ${t.n?'薄弱/复测':'尚未练习'} · 优先分 ${t.p}</div></div><button class="soft hub-smallbtn" data-mid="${safe(t.m.id)}" data-skill="${t.k}">开始</button></div></div>`).join('');$('hubPlan').querySelectorAll('button').forEach(b=>b.onclick=()=>{materialId=b.dataset.mid;mode=b.dataset.skill;started=Date.now();refresh()});
+ let rs=records(),finished=rs.length,avg=finished?Math.round(rs.reduce((a,b)=>a+b.score,0)/finished):0;$('hubProfile').innerHTML=`<div class="hub-stat">已完成 <b>${finished}</b> 次</div><div class="hub-stat">参考分 <b>${finished?avg+'%':'—'}</b></div>`+Object.keys(names).map(k=>{let rr=rs.filter(x=>x.skill===k),s=rr.length?Math.round(rr.reduce((a,b)=>a+b.score,0)/rr.length):0;return `<div class="hub-box"><b>${names[k]}</b><span class="hub-muted"> ${rr.length} 次 · ${rr.length?s+'%':'暂无评分'}</span><div class="hub-progress"><i style="width:${s}%"></i></div></div>`}).join('')+'<div class="hub-muted">口语/写作的自评仅作训练完成度参考，不代表自动语言能力评分。</div>';
+ $('hubHistory').innerHTML=rs.length?rs.slice(-8).reverse().map(r=>`<div class="hub-history"><b>${safe(r.title)}</b><div>${names[r.skill]} · ${new Date(r.ts).toLocaleString()} · ${r.score}%</div></div>`).join(''):'<p class="hub-muted">暂无工作台训练记录</p>';
+ $('hubTabs').innerHTML=Object.keys(names).map(k=>`<button class="hub-chip ${mode===k?'selected':''}" data-skill="${k}">${names[k]}</button>`).join('');$('hubTabs').querySelectorAll('button').forEach(b=>b.onclick=()=>{mode=b.dataset.skill;started=Date.now();refresh()});renderPractice();}
+function qHtml(m){if(!m.questions?.length)return '<p class="hub-muted">自备文章尚无配套选择题。可进行阅读理解自述，并转交 AI 导师诊断。</p>';return m.questions.map((q,i)=>`<div class="hub-q"><b>${i+1}. ${safe(q.q)}</b>${q.a.map((v,j)=>`<label><input type="radio" name="hubq${i}" value="${j}"> ${safe(v)}</label>`).join('')}</div>`).join('')}
+function renderPractice(){let m=current(),txt=safe(m.text);$('hubResult').innerHTML='';const p=$('hubPractice');if(mode==='listen'){p.innerHTML=`<div class="hub-muted">先听语音，再做理解题。提交前不展示原文。使用浏览器 TTS，不等同 PET 官方录音。</div><p class="hub-row"><button class="soft" id="hubPlay">▶ 播放短文</button><button class="gray" id="hubStop">■ 停止</button></p>${qHtml(m)}<button class="primary" id="hubSubmit">提交听力理解</button>`;$('hubPlay').onclick=()=>{if(!('speechSynthesis'in window)){alert('浏览器不支持语音朗读');return}speechSynthesis.cancel();let u=new SpeechSynthesisUtterance(m.text);u.lang='en-GB';u.rate=.86;speechSynthesis.speak(u)};$('hubStop').onclick=()=>{if('speechSynthesis'in window)speechSynthesis.cancel()};$('hubSubmit').onclick=()=>scoreMC(m)}
+ else if(mode==='read'){p.innerHTML=`<div class="hub-paragraph">${txt}</div><hr>${qHtml(m)}<button class="primary" id="hubSubmit">提交阅读理解</button>`;$('hubSubmit').onclick=()=>scoreMC(m)}
+ else if(mode==='speak'){p.innerHTML=`<div class="hub-muted">请先独立复述。录音/识别依赖设备浏览器；未启用专业发音评测，不自动断言发音准确度。</div><p><b>任务：</b>${safe(m.prompt)}</p><button class="soft" id="hubMic">🎙 尝试语音识别</button><p class="hub-muted" id="hubMicStatus">若设备不支持，请自己朗读后输入或粘贴复述内容。</p><textarea id="hubSpoken" placeholder="语音识别的文字或自己记录的复述内容"></textarea><p><label><input type="checkbox" id="hubSpokenDone"> 我已独立进行口头复述</label></p><button class="primary" id="hubSubmit">记录口语训练</button>`;$('hubMic').onclick=()=>{const R=window.SpeechRecognition||window.webkitSpeechRecognition;if(!R){$('hubMicStatus').textContent='当前浏览器不支持语音识别，请口头完成后手动记录。';return}try{let rec=new R();rec.lang='en-US';rec.continuous=true;rec.interimResults=false;rec.onresult=e=>{let t=Array.from(e.results).map(x=>x[0].transcript).join(' ');$('hubSpoken').value=t};rec.onerror=e=>$('hubMicStatus').textContent='识别失败：'+e.error+'，可直接手动记录';rec.onend=()=>$('hubMicStatus').textContent='录音结束，可检查识别结果';rec.start();$('hubMicStatus').textContent='正在聆听，请开始复述…'}catch(e){$('hubMicStatus').textContent='设备不支持：'+e.message}};$('hubSubmit').onclick=()=>textRecord(m,'speak')}
+ else {p.innerHTML=`<p><b>写作任务：</b>${safe(m.writing)}</p><textarea id="hubWritten" placeholder="独立写作，先不要打开 AI 提示"></textarea><p class="hub-muted" id="hubWordCount">0 words</p><button class="primary" id="hubSubmit">保存写作并生成反馈入口</button>`;$('hubWritten').oninput=()=>{$('hubWordCount').textContent=($('hubWritten').value.trim().split(/\s+/).filter(Boolean).length)+' words'};$('hubSubmit').onclick=()=>textRecord(m,'write')}
+}
+function scoreMC(m){if(!m.questions?.length)return alert('这份自备文章没有选择题，请选用自编配套素材进行选择练习');let vals=m.questions.map((q,i)=>document.querySelector(`input[name="hubq${i}"]:checked`)?.value);if(vals.some(v=>v===undefined))return alert('请先完成全部选择题');let count=vals.filter((v,i)=>+v===m.questions[i].c).length,score=Math.round(count/vals.length*100);store({id:crypto.randomUUID(),materialId:m.id,title:m.title,skill:mode,score,ts:Date.now(),seconds:Math.round((Date.now()-started)/1000),answers:vals.map(Number)});$('hubResult').innerHTML=`<div class="hub-success"><b>正确 ${count}/${vals.length} · ${score}%</b><p>${m.questions.map((q,i)=>`${i+1}. ${+vals[i]===q.c?'✓':'✗'} ${safe(q.why)}`).join('<br>')}</p><small>这是自编练习，不计入官方 PET 测试成绩。</small></div>`;started=Date.now()}
+function textRecord(m,skill){let t=($(skill==='speak'?'hubSpoken':'hubWritten').value||'').trim();let count=t.split(/\s+/).filter(Boolean).length;if(skill==='speak'&&!$('hubSpokenDone').checked)return alert('请先完成口头复述后勾选确认');if(count<8)return alert('内容太短，请至少记录 8 个英文单词');let score=skill==='write'?Math.min(100,Math.round(count/45*80)):60;store({id:crypto.randomUUID(),materialId:m.id,title:m.title,skill,score,ts:Date.now(),seconds:Math.round((Date.now()-started)/1000),text:t,kind:'completion_proxy'});$('hubResult').innerHTML='<div class="hub-warn">已保存。这里的分数是训练完成度参考，不是 AI 批改或口语评分。可点击右侧 AI 导师进行错因诊断。</div>'}
+window.hubOpen=()=>{materialId=$('hubMaterial').value;started=Date.now();refresh()};window.hubImport=()=>{let title=$('hubImportTitle').value.trim(),text=$('hubImportText').value.trim();if(title.length<3||text.length<80)return alert('请输入至少 3 字符的标题与 80 字符的正文');if(get(LIB).length>=20)return alert('本机自备素材暂限 20 篇');let id='own-'+crypto.randomUUID();let m={id,title,kind:'自备文字',tags:['自备'],text,questions:[],prompt:'Retell the main ideas of the text in your own words.',writing:'Write 45–60 words to respond to the ideas in this text.'};try{save(LIB,[...get(LIB),m]);materialId=id;mode='read';started=Date.now();refresh()}catch(e){alert('保存失败：'+e.message)}};
+window.hubToAI=()=>{let m=current();if(typeof window.showSecById==='function')window.showSecById('aiTutor');let task=$('aiTask'),ref=$('aiReference');if(task)task.value=`Read this learning material and diagnose the student's answer: ${m.title}\n${m.text.slice(0,900)}\nTask: ${mode==='write'?m.writing:m.prompt}`;if(ref)ref.value='';let last=records().filter(r=>r.materialId===m.id&&r.text).slice(-1)[0];if(last&&$('aiAnswer'))$('aiAnswer').value=last.text;alert('素材与最近一次文字回答已带入 AI 导师。请核对「训练主题」是否匹配，尤其听力题不能仅凭文字判断听力能力。')};
+window.hubExport=()=>{let blob=new Blob([JSON.stringify({product:'lucas-pet-hub',version:'0.5.11.7',records:records(),customMaterials:get(LIB)},null,2)],{type:'application/json'}),u=URL.createObjectURL(blob),a=document.createElement('a');a.href=u;a.download='Lucas_学习工作台_记录.json';a.click();setTimeout(()=>URL.revokeObjectURL(u),5000)};
+window.hubReset=()=>{if(confirm('仅清空本浏览器的 EchoType 学习工作台记录与自备素材？不会影响 WordLoop 原数据。')){localStorage.removeItem(KEY);localStorage.removeItem(LIB);materialId=BUILTINS[0].id;refresh()}};
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',refresh);else refresh();
+})();
+</script>
+
+<script>
+/* Unit1 P14 paper-based exercise entry: isolated experimental evidence. */
+(()=>{'use strict';
+const KEY='lucas_pet_p14_paper_records_v1';
+const GROUPS=[
+ {id:'ex2',name:'Exercise 2 · Describe your home',mode:'口语·空间描述',source:'对照教材完成；完整图片/题干待书页核验',items:[
+ ['描述房间与家具摆放','以课本 P14 Exercise 2 为准；描述自己家的房间、家具和空间布局。'],
+ ['回答位置追问','家长追问至少两个具体位置，如 where / next to / between / under / in front of。']],tags:['prepositions of place','空间描述','完整句']},
+ {id:'ex5',name:'Exercise 5 · Personal information',mode:'PET Speaking Part 1',source:'已核对的五道原题',items:[
+ ["What's your name?",'完整回答名字'],["How old are you?",'年龄表达'],["Where do you live?",'地点表达'],["Do you study English at school?",'一般现在时、do 疑问句'],["Do you like it?",'观点与理由']],tags:['be/do 疑问句','个人信息','完整回答']},
+ {id:'ex8',name:'Exercise 8 · Matteo / Alba dialogue',mode:'口语·个人话题迁移',source:'已核对的六道原题',items:[
+ ["How old are you?",'年龄与 be'],["When is your birthday?",'日期、介词 on/in'],["Where do you come from?",'来源地'],["Who do you live with?",'家庭成员'],["How do you go to school?",'交通方式'],["What do you enjoy doing in your free time?",'enjoy doing 与爱好']],tags:['生日','家庭','交通','兴趣','疑问句']}
+];
+const OPT=[['','未记录'],['correct','独立完成'],['partial','提示后完成'],['wrong','错误'],['unable','不会'],['guess','猜对'],['skip','未做']];
+const $=x=>document.getElementById(x),safe=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function read(){try{const v=JSON.parse(localStorage.getItem(KEY)||'[]');return Array.isArray(v)?v:[]}catch{return []}}
+function resetForm(){for(const sel of document.querySelectorAll('#p14Questions select'))sel.value='';$('p14Minutes').value='';$('p14Turns').value='';$('p14Note').value='';$('p14Message').textContent=''}
+function localDay(){let d=new Date();return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-')}
+function render(){
+ $('p14Date').value||=localDay();
+ $('p14Questions').innerHTML=GROUPS.map(g=>`<div class="hub-box"><h3>${safe(g.name)}</h3><p class="hub-muted">${safe(g.mode)} · ${safe(g.source)}</p>${g.items.map((row,i)=>`<div class="hub-q"><b>${i+1}. ${safe(row[0])}</b><div class="hub-muted">${safe(row[1])}</div><div class="hub-row"><select id="p14_${g.id}_${i}" style="min-width:160px" aria-label="${safe(g.name)} 第${i+1}题">${OPT.map(o=>`<option value="${o[0]}">${o[1]}</option>`).join('')}</select><input id="p14note_${g.id}_${i}" maxlength="240" placeholder="错误表达/备注（选填）" style="min-width:180px;flex:1"></div></div>`).join('')}<div class="hub-muted">标签：${g.tags.map(safe).join(' · ')}</div></div>`).join('');
+ summary();
+}
+function summary(){let rr=read();$('p14Quick').textContent=rr.length?`已记录 ${rr.length} 次 · 最近一次 ${rr.at(-1).date} · 独立完成 ${rr.at(-1).independent}/${rr.at(-1).assessed}（跳过与未记录不计）`:'尚无 P14 训练结果；等待今晚纸质作答后录入。'}
+window.p14Open=()=>{let p=$('p14Panel');p.hidden=!p.hidden;if(!p.hidden){render();p.scrollIntoView({behavior:'smooth',block:'nearest'})}};
+window.p14Save=()=>{
+ const date=$('p14Date').value;if(!/^\d{4}-\d{2}-\d{2}$/.test(date))return alert('请选择练习日期');
+ let items=[];for(const g of GROUPS)for(let i=0;i<g.items.length;i++){let status=$(`p14_${g.id}_${i}`).value,remark=$(`p14note_${g.id}_${i}`).value.trim();if(status)items.push({questionId:`U1-P14-${g.id.toUpperCase()}-${i+1}`,exercise:g.id,question:g.items[i][0],status,remark:remark.slice(0,240),tags:g.tags})}
+ if(!items.length)return $('p14Message').textContent='请至少标记一道题的表现；没有作答的题选“未做”。';
+ const assessed=items.filter(x=>!['skip'].includes(x.status)),independent=assessed.filter(x=>x.status==='correct').length;
+ const record={id:'p14_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,7),date,unit:1,page:14,source:'教材纸笔训练 · 家长登记',items,assessed:assessed.length,independent,minutes:Number($('p14Minutes').value)||null,effectiveSpeakingTurns:Number($('p14Turns').value)||0,note:$('p14Note').value.trim().slice(0,1200),createdAt:new Date().toISOString(),demo:false};
+ try{let r=read();r.push(record);localStorage.setItem(KEY,JSON.stringify(r.slice(-60)));$('p14Message').textContent=`已存本浏览器：共登记 ${items.length} 道，独立完成 ${independent}/${assessed.length}。注意：这不是跨设备云同步。`;summary()}catch(e){$('p14Message').textContent='保存失败，可能是浏览器存储已满：'+e.message}
+};
+window.p14Clear=()=>{resetForm();for(const n of document.querySelectorAll('#p14Questions input'))n.value=''};
+window.p14Export=()=>{const records=read();const blob=new Blob([JSON.stringify({product:'lucas-pet',source:'U1-P14-parent-entry',schema:1,records},null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='Lucas_Unit1_P14_家长录入.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),3000)};
+window.addEventListener('load',()=>{if($('p14Card')){render();$('p14Panel').hidden=true}});
 })();
 </script>
 </body></html>
