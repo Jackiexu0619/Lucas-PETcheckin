@@ -1,4 +1,4 @@
-const CACHE='lucas-pet-v0.5.12.5-unit2-r1';
+const CACHE='lucas-pet-v0.5.12.6-unit2-r2';
 const ASSETS=['./index.html','./manifest.webmanifest'];
 
 self.addEventListener('install',e=>{
@@ -14,11 +14,7 @@ self.addEventListener('activate',e=>e.waitUntil(
 
 self.addEventListener('fetch',e=>{
   const url=new URL(e.request.url);
-
-  // Cloud sync uses cross-origin POST requests. Let the browser send those
-  // directly instead of routing them through the Service Worker.
   if(url.origin!==self.location.origin || e.request.method!=='GET') return;
-
   if(e.request.mode==='navigate'){
     e.respondWith(
       fetch(e.request)
@@ -34,11 +30,5 @@ self.addEventListener('fetch',e=>{
     );
     return;
   }
-
-  e.respondWith(
-    caches.match(e.request).then(cached=>{
-      if(cached) return cached;
-      return fetch(e.request);
-    })
-  );
+  e.respondWith(caches.match(e.request).then(cached=>cached||fetch(e.request)));
 });
