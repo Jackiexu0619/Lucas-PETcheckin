@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#1477ef">
-<title>Lucas PET v0.5.12.7 热身启动与自动连接修复版</title>
+<title>Lucas PET v0.5.12.8 热身启动与自动连接修复版</title>
 <link rel="manifest" href="manifest.webmanifest">
 <style>
 :root{--bg:#f5f7fb;--card:#fff;--ink:#172033;--muted:#6b7280;--line:#e5e9f2;--blue:#2563eb;--soft:#eaf2ff;--good:#198754;--warn:#b97900;--bad:#c0392b;--purple:#7c3aed}
@@ -282,7 +282,7 @@ body{background:
       <div class="brandMark">L</div>
       <div><div class="brandName">Lucas <span>PET</span></div><div class="brandSub">每天一点，向 B1 稳稳前进</div></div>
     </div>
-    <span class="versionPill">v0.5.12.7</span>
+    <span class="versionPill">v0.5.12.8</span>
   </div>
 
   <div class="homeHero">
@@ -388,7 +388,7 @@ body{background:
 <div class="sub">沿用完整 Lucas PET，AI 辅导不覆盖词库、Review、Test、教材和现有云同步。AI 功能需要先配置独立、安全的服务端接口。</div><div class="gap"></div>
 <div class="ai-layout"><div>
 <div class="ai-card"><h2>AI 接口设置</h2><div class="ai-small">填入部署后的 Supabase Edge Function 完整 HTTPS 地址和单独的 AI 访问码。访问码只存在当前标签页，不会进入 WordLoop 云端备份。不要在此填写 DeepSeek API Key。</div>
-<label for="aiEndpoint">AI 服务端地址</label><input id="aiEndpoint" placeholder="https://你的项目.supabase.co/functions/v1/pet-ai-tutor" autocomplete="off" spellcheck="false">
+<label for="aiEndpoint">AI 服务端地址</label><input id="aiEndpoint" value="https://gemzboxhkkrfjqresxjt.supabase.co/functions/v1/pet-ai-tutor" placeholder="https://gemzboxhkkrfjqresxjt.supabase.co/functions/v1/pet-ai-tutor" autocomplete="off" spellcheck="false">
 <div class="gap"></div><label for="aiAccess">AI 访问码（不是 DeepSeek Key）</label><input id="aiAccess" type="password" placeholder="仅当前标签页使用" autocomplete="off"><div class="gap"></div><button class="soft" onclick="aiCheckStatus()">检查连接</button><div id="aiStatus" class="ai-status">AI 尚未连接；其他学习功能照常可用。</div></div>
 <div class="ai-card"><h2>真实答案 → AI 诊断 → 两道补练</h2><label for="aiScenario">训练主题</label><select id="aiScenario" onchange="aiChooseScenario()"><option value="be-do">Unit 1 · be / do 疑问句</option><option value="quantifiers">Unit 1 · 数量词</option><option value="read4">PET Reading Part 4</option><option value="listen4">PET Listening Part 4</option><option value="writing">PET Writing 邮件</option><option value="custom">自定义训练任务</option></select><div class="gap"></div>
 <label for="aiTask">题目或任务</label><textarea id="aiTask" rows="3" placeholder="粘贴真实教材题目或自行编写的训练题"></textarea><div class="gap"></div>
@@ -502,7 +502,7 @@ const CLOUD_ENDPOINT_PREF_STORAGE='pet_checkin_cloud_endpoint_pref';
 const CLOUD_KEY_STORAGE='pet_checkin_cloud_recovery_key';
 const CLOUD_ENABLED_STORAGE='pet_checkin_cloud_enabled';
 const CLOUD_META_STORAGE='pet_checkin_cloud_meta';
-const APP_VERSION='0.5.12.7';
+const APP_VERSION='0.5.12.8';
 let cloudTimer=null,cloudBusy=false,cloudQueued=false,cloudSuppressPush=false,cloudConflictState=null;
 const ROLLING_BACKUP_PREFIXES=[
   'pet_checkin_v1_backup_pre_cloud_autopull_',
@@ -3059,7 +3059,7 @@ renderAll();
 document.querySelectorAll('.app>.section').forEach(x=>{let on=x.id==='home';x.hidden=!on;x.classList.toggle('active',on)});
 if(cloudIsEnabled())setTimeout(()=>cloudSmartSync(false),600);
 if(bootRecoveryReport&& !sessionStorage.getItem('pet031_recovery_notice')){sessionStorage.setItem('pet031_recovery_notice','1');let r=bootRecoveryReport;setTimeout(()=>alert(r.fallback?'检测到旧数据迁移异常，已优先从升级前快照恢复，并保留异常原始数据副本。请到“词汇”和“记录”页核对。':`已自动检查升级前快照并补回缺失数据：${r.words||0} 个词、${r.tests||0} 条测试记录、${r.plans||0} 个清单项目。`),150)}
-if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('./service-worker.js?v=lucas-pet-0.5.12.0-p14-unified-r2',{updateViaCache:'none'}).catch(()=>{});
+if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('./service-worker.js?v=lucas-pet-0.5.12.8-ai-endpoint-r1',{updateViaCache:'none'}).catch(()=>{});
 </script>
 <script>
 (() => {
