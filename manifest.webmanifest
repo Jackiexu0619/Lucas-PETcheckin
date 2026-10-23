@@ -5,5 +5,5 @@
   "display": "standalone",
   "background_color": "#f4f8ff",
   "theme_color": "#1477ef",
-  "description": "Lucas PET v0.5.12.6：修复每日三题选项排版与缓存更新；Unit 2 P16–P23 教材题库 + 每日三题在线旧知热身。"
+  "description": "Lucas PET v0.5.12.7：修复共用访问码跨会话保留；每日三题选项排版与缓存更新。"
 }
