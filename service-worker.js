@@ -1,4 +1,4 @@
-const CACHE='lucas-pet-v0.5.12.7-access-persist-r1';
+const CACHE='lucas-pet-v0.5.12.8-ai-endpoint-r1';
 const ASSETS=['./index.html','./manifest.webmanifest'];
 self.addEventListener('install',e=>{
   self.skipWaiting();
