@@ -631,3 +631,15 @@ Cambridge 官方产品目录列明本书有在线可下载的 Student’s Book a
 ### 唯一下一步
 
 先核对 P9 原书与教师用书证据，解决 E2 的任务类型和音频依赖矛盾；确认后只修正该目录元数据并做只读回查，不改播放器、不改正式训练记录。E3 在找到并确认真正的 Track 02 音频资产前继续保持缺失状态。完成后再单独安排真实网页版本/刷新验证。
+
+
+## 模块 1：P9 E2 听前预测音频依赖修正（2026-10-25）
+
+- **本次目标：** 依据学生用书原页解决 E2 的 `directions` 与 `needs_audio` 冲突，使无音轨时仍可完成听前预测。
+- **修改前证据：** `CPS-U1-P9-LISTENINGPART2-E2` 的任务说明明确写明听前预测不需播放音频，但真实数据库 `needs_audio=true`，质量视图报 `missing_audio_asset_reference`。E3 同样需要音频且没有实际资产。
+- **原书依据：** 家庭提供的扫描版 *Complete Preliminary for Schools Student's Book without answers with Online Practice*，ISBN 9781108539050，PDF 第 9 页即印刷 P9。E2 要求两人阅读六道题、预测说话者及情境；耳机和 `02` 标记位于 E3，E3 才明确要求听并核对答案。该 PDF 共 166 页、无嵌入音频附件；SHA-256 为 `3F2E45C0AF386DE191D102631F2B8A531FB61F8C0993BA23FBEFB777734D01C8`。扫描件仅在本地只读核对，未加入公开仓库或上传云端。
+- **修改范围：** 新增 `supabase/migrations/20261025022920_pet_textbook_p9_e2_prelisten_audio_classification.sql`；真实数据库仅更新 `public.pet_textbook_exercises` 中 E2 的 `needs_audio=false` 并追加来源说明。保留 `audio_ref='Track 02'` 作为相邻听力任务的印刷标签；E3、播放器和练习结果均未改动。
+- **验证结果：** 质量视图中 E2 `issue_codes=[]`；E3 仍为 `needs_audio=true`、`audio_asset_ref=null`、`issue_codes=['missing_audio_asset_reference']`。目录仍为 100 组，需要音频的练习由 13 降至 12 组，12 组均无可播放资产。教材家长记录 4 组、热身记录 3 条、历史快照 84 条，与修改前一致。已核对网页源码只在 `needs_audio` 为真时渲染缺音频提示；真实浏览器 P9 页面仍需具备访问码后验证。
+- **正式数据影响：** 仅一条教材目录元数据发生变化；未改正式成绩、掌握状态、排期、家长记录或词汇数据。WordLoop Family 和 AMC8 云端项目未操作。
+- **未解决问题：** Track 02 真实授权音频文件仍未取得，E3 听力不能完成播放验收。E2 的 `task_type='listening_mcq'` 尚未按预测任务单独建模，留待训练流程设计时处理。
+- **下一项唯一任务：** 使用已取得的同版学生用书核对 P22 E4 Speaking Part 3 的四类讨论短语与原书题型；只调整有原页证据的目录字段。
