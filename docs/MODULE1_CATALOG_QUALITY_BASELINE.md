@@ -30,7 +30,7 @@ This is a catalog-data quality baseline, not a claim that every issue is an erro
 | P23 | 7 | 7 | 5 | 1 | 0 | 0 | 0 | 0 | 0 |
 | **Total** | **100** | **182** | **53** | **21** | **1** | **13** | **18** | **5** | **2** |
 
-Totals for missing-text groups, asset references and answer sources count exercise groups; the 186 figure counts individual item slots.
+Totals for missing-text groups, asset references and answer sources count exercise groups; the 182 figure counts individual item slots.
 
 ## Priority findings
 
