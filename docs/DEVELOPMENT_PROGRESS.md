@@ -3,8 +3,8 @@
 - 项目：Lucas PETcheckin
 - 计划版本：系统性开发计划 V1.0
 - 更新日期：2026-10-24
-- 正式源码基线：`main` / `de7305eb65407613ccc56e2276130acbc4d8017b`
-- 应用版本：`v0.5.13.2`
+- 正式源码基线：`main` / `ac33c861005b2d0a192da93e853d285c5f20730a`
+- 源码 / Service Worker / manifest 版本：`v0.5.13.4`（正式站点当前标签页仍显示 `v0.5.13.2`，真实网页版本待新会话复核）
 - 原则：每轮开始前核对范围；结束后记录证据、状态、风险和唯一下一步。未验证的内容不得标记为通过。
 
 ## 总体模块状态
@@ -586,3 +586,48 @@ Cambridge 官方产品目录列明本书有在线可下载的 Student’s Book a
 - 源码、Service Worker 与 manifest 均为 `v0.5.13.4`；缓存键已更新为 `lucas-pet-v0.5.13.4-catalog-audio-r1`。
 - 当前只完成部署流水线验收和源码回读；本轮无法通过网页读取工具取得正式站点页面内容，且项目没有可播放音频文件，因此**真实浏览器交互和实际音频播放仍未验收**。
 - 下一项保持既定计划：核对 P22 E4 Speaking Part 3 的短语—功能类别映射；不要因音频资源阻塞而停掉其他有来源可核对的教材目录工作。
+
+
+## 状态恢复与历史资料检索（2026-10-24）
+
+### 本轮范围与纪律
+
+- 本轮只核对 GitHub、Supabase、个人文件库和当前可读取的音频文件；没有修改应用代码、没有写入正式训练记录，也没有修改 Supabase 数据。
+- 主分支当前 HEAD：`ac33c861005b2d0a192da93e853d285c5f20730a`。PR #32 已合并（`ee5dd198696c9957fe4f654b6f0964dda8581fea`），当前无开放 PR。
+- Pages 工作流 run `40097446442` 的 `build`、`deploy`、`report-build-status` 均成功。源码、Service Worker、manifest 为 `v0.5.13.4`；当前已有浏览器标签仍显示 `v0.5.13.2`，因为本轮浏览器连接只支持读取，无法刷新/打开新标签，故真实站点版本仍待独立浏览器复核。流水线成功不等于端到端验收完成。
+
+### Supabase 与音频链路
+
+- 项目：`lucas-pet` / `gemzboxhkkrfjqresxjt`。
+- `pet-textbook-catalog` Edge Function 当前为 v6，已返回 `audio_asset_ref` 和 `audio_mime_type`。
+- 质量视图：目录 100 组；13 组标记需要音频；13 组均缺少可播放音频引用；可播放音频引用为 0。
+- `storage.buckets` 当前为 0；按 Track 02、Track02、P9、audio 等关键词检查，未找到对应的 Storage 对象。
+- 前端播放器已合并，真实音轨未接入；不得把 `audio_ref='Track 02'` 当作文件地址。
+
+### 历史资料检索结果
+
+以下资料在个人文件库中确实存在，不应再要求用户重新上传：
+
+- `712406215-Complete-PET-SB-2020.pdf`：118,419,605 bytes，150 页；文件记录 ID `file_0000000052188211aae9f330d35f2cbe`。这是英文版 Complete Preliminary for Schools Student's Book 文件名，扫描页未能由当前读取接口提取正文。
+- `《剑桥PET综合教程》（学生用书）.zip`：111,780,827 bytes；记录 ID `file_00000000b5388211add58b1214ac01ff`。标题与用户所述中文学生用书相符，但当前执行环境无法解包核对内部内容。
+- `Lucas_PET_2026-09-23_Listening_最终决定专项_学生版.html`：记录 ID `file_00000000d64481f8946fc8004f49a090`。
+- `Lucas_PET_2026-09-23_Listening_最终决定专项_家长答案.pdf`：记录 ID `file_000000007b7081f5b9ad150757e4db8d`。
+- `Lucas_PET_2026-10-18_Part3_Part4_Natural_Voice_Preview.html`：记录 ID `file_0000000021c08209bf9805f31f002b90`。
+- `Lucas_PET_Part3_Part4_Natural_Voice_Trial.zip`：记录 ID `file_00000000564482099b80ca49b4315d3b`。
+- `PET听觉词汇训练_手机离线版.html`：记录 ID `file_00000000c724822fa0ef40e043c7de84`；当前执行容器副本可读，使用浏览器 `speechSynthesis`，不是 Track 02 原始音频。
+- `PET_Week1_Day4_Auditory_Vocabulary.mp3` 与 `PET_Week1_Day4_Auditory_Vocabulary_Slow_UK.mp3`：两个自制词汇训练音频均已实际读取并确认是可解码 MP3，时长分别约 69.6 秒、171.9 秒；它们不是教材 Track 02。
+- `PET_Listening_Wrong_Questions_2_3_5_7_9_10_12_13_Part3_Part4.mp3`：可读取，约 22 分 31 秒，文件名表明是错题听力训练音频，不是已确认的 Track 02。
+- `f0aac5e2-c95e-40a4-8f21-9f38c220803c.mp3`：可读取，约 37 分 29 秒，元数据仅显示年份 2018；可能与历史 Sample Test 音频有关，但来源和试卷身份未确认，禁止直接映射为 Track 02。
+- 当前可检索到的独立 MP3 共 5 个，没有任何一个以 Track 02 / Track02 明确命名。历史 Cambridge B1 Preliminary for Schools Sample Test 1 资料包尚未找到一个可确认完整且来源明确的归档；上面的 2018 年 MP3 只能列为待识别候选。
+
+说明：大 PDF、学生专项 HTML/PDF 和部分 ZIP 的 Library 记录存在，但当前执行环境对这些 Project-backed 文件返回“无授权原始字节物化路径”，扫描 PDF 也无法提取正文。此限制不代表用户从未提供；本轮没有要求重新上传。
+
+### P9 E2 / E3 的待解决矛盾
+
+- 实时数据库中 `CPS-U1-P9-LISTENINGPART2-E2` 当前是 `task_type='listening_mcq'`、`needs_audio=true`、`audio_ref='Track 02'`、`audio_asset_ref=null`；其任务说明却明确写着听前预测不需要音频，且同一 `source_note` 同时保留“E2 不需要音频”与“E2/E3 都使用 Track 02”的互相矛盾记录。
+- E3 是实际听力选择题，当前 `needs_audio=true`、`audio_ref='Track 02'`、`audio_asset_ref=null`。
+- 用户本轮交接要求把 E2 作为听前预测任务、不需要播放音频。当前数据库标记不能自动覆盖该要求，也不能在未核对来源前直接改写；须先解决任务分类与源文证据冲突。
+
+### 唯一下一步
+
+先核对 P9 原书与教师用书证据，解决 E2 的任务类型和音频依赖矛盾；确认后只修正该目录元数据并做只读回查，不改播放器、不改正式训练记录。E3 在找到并确认真正的 Track 02 音频资产前继续保持缺失状态。完成后再单独安排真实网页版本/刷新验证。
