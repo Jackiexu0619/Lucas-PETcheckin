@@ -526,3 +526,28 @@ Cambridge 官方产品资料说明，本书的学生数字包提供 Student’s 
 - 目录仍为 100 组；家长记录 4 组、热身记录 3 条、历史快照 84 条不变。
 - 当前仍有 2 组结构化题目缺少逐题文本：P19 E2（听力笔记题，同时缺音频资产和答案核验）与 P22 E4（Speaking Part 3 讨论短语匹配）。
 - 下一步先查找 P19 E2 / P22 E4 的可核验原书来源；来源可确认时只补题干与任务结构，音频缺口继续独立跟踪。
+
+
+## 模块 1 第十项交付：P19 Emily Listening note-taking 题目恢复（2026-10-24）
+
+新增迁移：`supabase/migrations/20261024230000_pet_textbook_p19_listening_note_and_audit_rule.sql`，已在 `lucas-pet` 执行并验证。
+
+- 按学生用书 ISBN 9781108539050 Unit 2 P19，恢复准确任务说明：听 Emily 讲述不同之处，并记录三个主题——school uniform、the city、shops and entertainment。
+- 三个主题均为已核验题位；任务设为 `fully_transcribed`、`open_ended`、`manual_review`。不编造唯一答案，因本题要求学生记录听力信息。
+- 修正质量门禁：`listening_note` 是开放式笔记任务，不再因没有唯一 `answer_key` 被误报为“客观题缺答案”。
+- 复核发现 P9 E2 虽已补 Track 02 标签，但 `needs_audio` 标记意外为 false。本轮已通过独立迁移恢复为 true，和 E3 一样明确依赖 Track 02；未填入音频资产地址。
+
+### 验证结果
+
+- P19 E2：3/3 主题文字已核验；审计只剩 `missing_audio_asset_reference`，不再要求固定答案键。
+- P9 E2/E3 均依赖 Track 02；Track 标签已齐，但项目中没有真实可播放文件。
+- 当前目录 100 组；家长记录 4 组、热身记录 3 条、历史快照 84 条均未变化。
+- 目前仅剩 **1 组结构化练习**缺逐题文本：P22 E4 Speaking Part 3 讨论短语匹配。
+
+### 官方音频依赖
+
+Cambridge 官方产品目录列明本书有在线可下载的 Student’s Book audio，教师用书资源包也包含 Class Audio（<https://www.cambridge.org/ru/files/7616/1967/9501/CUP-Exams-Catalogue-2021.pdf>）。目前没有找到可合法直接映射到本项目的公开音频文件；不绕过数字资源授权，也不将录音脚本当作音频资产。当前 13 组练习需要音频，0 组配置真实可播放资产。
+
+### 唯一下一步
+
+核对 P22 E4 讨论短语匹配的四个功能类别与原书对应内容；只录入可由原书确认的短语/功能映射。之后重新审视整套目录剩余的图片资源与真实音频依赖，不扩大开发范围。
