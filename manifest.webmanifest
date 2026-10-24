@@ -5,5 +5,5 @@
   "display": "standalone",
   "background_color": "#f4f8ff",
   "theme_color": "#1477ef",
-  "description": "Lucas PET v0.5.13.3：优化教材训练中开放式任务的说明与记录提示，保留现有学习数据。"
+  "description": "Lucas PET v0.5.13.4：为教材听力练习增加音频播放支持与缺失资源提示，保留现有学习数据。"
 }
