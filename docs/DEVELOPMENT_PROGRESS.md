@@ -560,7 +560,7 @@ Cambridge 官方产品目录列明本书有在线可下载的 Student’s Book a
 - Supabase `pet-textbook-catalog` Edge Function 已部署 v6，返回 `audio_asset_ref` 与 `audio_mime_type`，供前端读取实际媒体引用。
 - `index.html` 新增 HTML5 音频播放器：仅当资源引用是有效 HTTPS URL 时显示播放器；无资源时明确提示“音频文件尚未接入本软件”，不再把 Track 标签当作文件。
 - 版本更新到 `v0.5.13.4`，同步更新 Service Worker 缓存键与 manifest 描述。
-- 质量审计视图新增 `missing_audio_asset_reference`，明确区分纸面音轨标签和真实可播放资产；该视图迁移已在 Supabase 执行并验证。
+- 复核确认 main 已包含 `missing_audio_asset_reference` 审计码和 `audio_asset_ref` / `audio_mime_type` 输出列；本分支复用既有门禁，不重复创建迁移，避免覆盖 P19 的开放式听力笔记规则。
 - 旧 PR #30 因 main 在开发期间推进了 P9 任务属性决策而关闭，避免将过期分支合并回滚更新后的目录。当前改动已从最新 main 重建分支。
 
 ### 验证与限制
