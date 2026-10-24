@@ -1,4 +1,4 @@
-const CACHE='lucas-pet-v0.5.13.3-catalog-r1';
+const CACHE='lucas-pet-v0.5.13.4-catalog-audio-r1';
 const ASSETS=['./index.html','./manifest.webmanifest'];
 self.addEventListener('install',e=>{
   self.skipWaiting();
