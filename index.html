@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#1477ef">
-<title>Lucas PET v0.5.13.3 教材任务记录优化版</title>
+<title>Lucas PET v0.5.13.4 教材任务记录优化版</title>
 <link rel="manifest" href="manifest.webmanifest">
 <style>
 :root{--bg:#f5f7fb;--card:#fff;--ink:#172033;--muted:#6b7280;--line:#e5e9f2;--blue:#2563eb;--soft:#eaf2ff;--good:#198754;--warn:#b97900;--bad:#c0392b;--purple:#7c3aed}
@@ -282,7 +282,7 @@ body{background:
       <div class="brandMark">L</div>
       <div><div class="brandName">Lucas <span>PET</span></div><div class="brandSub">每天一点，向 B1 稳稳前进</div></div>
     </div>
-    <span class="versionPill">v0.5.13.3</span>
+    <span class="versionPill">v0.5.13.4</span>
   </div>
 
   <div class="homeHero">
@@ -502,7 +502,7 @@ const CLOUD_ENDPOINT_PREF_STORAGE='pet_checkin_cloud_endpoint_pref';
 const CLOUD_KEY_STORAGE='pet_checkin_cloud_recovery_key';
 const CLOUD_ENABLED_STORAGE='pet_checkin_cloud_enabled';
 const CLOUD_META_STORAGE='pet_checkin_cloud_meta';
-const APP_VERSION='0.5.13.3';
+const APP_VERSION='0.5.13.4';
 document.querySelector('.versionPill')?.replaceChildren('v'+APP_VERSION);
 let cloudTimer=null,cloudBusy=false,cloudQueued=false,cloudSuppressPush=false,cloudConflictState=null;
 const ROLLING_BACKUP_PREFIXES=[
@@ -3142,7 +3142,7 @@ renderAll();
 document.querySelectorAll('.app>.section').forEach(x=>{let on=x.id==='home';x.hidden=!on;x.classList.toggle('active',on)});
 if(cloudIsEnabled())setTimeout(()=>cloudSmartSync(false),600);
 if(bootRecoveryReport&& !sessionStorage.getItem('pet031_recovery_notice')){sessionStorage.setItem('pet031_recovery_notice','1');let r=bootRecoveryReport;setTimeout(()=>alert(r.fallback?'检测到旧数据迁移异常，已优先从升级前快照恢复，并保留异常原始数据副本。请到“词汇”和“记录”页核对。':`已自动检查升级前快照并补回缺失数据：${r.words||0} 个词、${r.tests||0} 条测试记录、${r.plans||0} 个清单项目。`),150)}
-if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('./service-worker.js?v=lucas-pet-0.5.13.3-ai-storage-r1',{updateViaCache:'none'}).catch(()=>{});
+if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('./service-worker.js?v=lucas-pet-0.5.13.4-ai-storage-r1',{updateViaCache:'none'}).catch(()=>{});
 </script>
 <script>
 (() => {
@@ -3294,6 +3294,7 @@ const localDay=()=>{const d=new Date();return [d.getFullYear(),String(d.getMonth
 let catalog=[],history=[],loaded=false;
 let selectedUnit=1;
 const ITEMIZED_TASK_TYPES=new Set(['grammar_choice','reading_mcq','listening_mcq','vocabulary_choice','grammar_gap','vocabulary_gap','reading_gap','listening_gap','grammar_rewrite','grammar_order_matching','grammar_dialogue_gap','grammar_matching','vocabulary_matching','reading_photo_matching','grammar_correction','grammar_table','listening_note','vocabulary_grammar','past_form_pronunciation_sort','speaking_gap','speaking_matching','speaking_order']);
+function safeAudioUrl(value){try{const u=new URL(String(value||''));return u.protocol==='https:'?u.href:''}catch{return ''}}
 function token(){return (E('petCatalogToken').value||window.petSharedAccess?.get()||'').trim()}
 async function call(slug,payload){const r=await fetch(base+slug,{method:'POST',headers:{'Content-Type':'application/json','x-ai-access':token()},body:JSON.stringify(payload)});const o=await r.json().catch(()=>({error:'接口未返回 JSON'}));if(!r.ok)throw Error(o.error||'HTTP '+r.status);return o;}
 function status(s){E('petCatalogStatus').textContent=s}
@@ -3313,8 +3314,11 @@ window.petPageChange=()=>{
  const needsItemText=ITEMIZED_TASK_TYPES.has(ex.task_type);
  const directionsMissing=!needsItemText&&!String(ex.directions||'').trim()&&!allTextVerified;
  const last=history.find(h=>h.exercise_id===ex.id);
+ const audioUrl=safeAudioUrl(ex.audio_asset_ref);
+ const audioPanel=ex.needs_audio?(audioUrl?`<div class="hub-muted" style="margin:8px 0;padding:10px;background:#eef6ff;border-radius:10px"><div>教材音轨：${norm(ex.audio_ref||'已关联音频')}</div><audio controls preload="none" style="width:100%;margin-top:6px"><source src="${norm(audioUrl)}" type="${norm(ex.audio_mime_type||'audio/mpeg')}">当前浏览器不支持音频播放。</audio></div>`:`<p class="hub-muted" style="margin:8px 0;padding:10px;background:#fff7ed;border-radius:10px">教材音轨：${norm(ex.audio_ref||'待核对')}。音频文件尚未接入本软件，当前无法在页面播放；请勿用答案或文字解析代替听力训练。</p>`):'';
  return `<details class="hub-box" style="margin:10px 0" data-ex="${norm(ex.id)}"><summary><b>Exercise ${ex.exercise_no} · ${norm(ex.title)}</b> <span class="hub-muted">${ex.item_count} 题位 ${last?'· 已录过':''}</span></summary>
- <p class="hub-muted">${norm(ex.directions||'请对照教材原题作答')} · ${norm(ex.task_type)} ${ex.needs_image?'· 请看原书图片':''} ${ex.needs_audio?'· 请播放原书音频':''}</p>
+ <p class="hub-muted">${norm(ex.directions||'请对照教材原题作答')} · ${norm(ex.task_type)} ${ex.needs_image?'· 请看原书图片':''}</p>
+ ${audioPanel}
  ${needsItemText&&!allTextVerified?'<p class="hub-muted">本练习需要逐题题干；当前部分或全部原文尚未核验，请对照原书完成，不自动评分。</p>':directionsMissing?'<p class="hub-muted">本练习的任务说明尚未核对；请对照原书完成，当前只记录表现，不自动评分。</p>':(!needsItemText&&ex.directions?'<p class="hub-muted">开放式任务：按上方任务说明完成；下方仅记录表现，采用人工评价，不要求逐题录入原文。</p>':'')}
  ${(ex.items||[]).map(item=>`<div class="hub-q" style="margin:8px 0;padding:10px 0;border-bottom:1px solid #e2e8f0"><b>第 ${item.no} ${item.verified_text&&item.text?'· '+norm(item.text):needsItemText?'题（参照原书）':'表现记录'}</b>
  <div class="hub-row" style="gap:6px;flex-wrap:wrap"><select data-no="${item.no}" data-role="status" style="flex:1;min-width:115px">${options.map(o=>`<option value="${o[0]}">${o[1]}</option>`).join('')}</select>
