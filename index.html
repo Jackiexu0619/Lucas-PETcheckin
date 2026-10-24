@@ -282,7 +282,7 @@ body{background:
       <div class="brandMark">L</div>
       <div><div class="brandName">Lucas <span>PET</span></div><div class="brandSub">每天一点，向 B1 稳稳前进</div></div>
     </div>
-    <span class="versionPill">v0.5.12.9</span>
+    <span class="versionPill">v0.5.13.2</span>
   </div>
 
   <div class="homeHero">
@@ -503,6 +503,7 @@ const CLOUD_KEY_STORAGE='pet_checkin_cloud_recovery_key';
 const CLOUD_ENABLED_STORAGE='pet_checkin_cloud_enabled';
 const CLOUD_META_STORAGE='pet_checkin_cloud_meta';
 const APP_VERSION='0.5.13.2';
+document.querySelector('.versionPill')?.replaceChildren('v'+APP_VERSION);
 let cloudTimer=null,cloudBusy=false,cloudQueued=false,cloudSuppressPush=false,cloudConflictState=null;
 const ROLLING_BACKUP_PREFIXES=[
   'pet_checkin_v1_backup_pre_cloud_autopull_',
