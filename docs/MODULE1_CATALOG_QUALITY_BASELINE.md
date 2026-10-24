@@ -23,12 +23,12 @@ This is a catalog-data quality baseline, not a claim that every issue is an erro
 | P16 | 5 | 0 | 0 | 2 | 0 | 0 | 3 | 0 | 0 |
 | P17 | 4 | 7 | 3 | 2 | 0 | 0 | 1 | 0 | 0 |
 | P18 | 5 | 13 | 3 | 1 | 0 | 0 | 2 | 0 | 0 |
-| P19 | 10 | 12 | 3 | 0 | 0 | 4 | 6 | 0 | 0 |
+| P19 | 10 | 9 | 2 | 0 | 0 | 4 | 6 | 0 | 0 |
 | P20 | 9 | 9 | 7 | 1 | 0 | 3 | 2 | 0 | 0 |
 | P21 | 6 | 16 | 4 | 3 | 0 | 1 | 2 | 1 | 0 |
 | P22 | 7 | 15 | 4 | 1 | 0 | 2 | 2 | 1 | 0 |
 | P23 | 7 | 7 | 5 | 1 | 0 | 0 | 0 | 0 | 0 |
-| **Total** | **100** | **146** | **47** | **21** | **0** | **13** | **18** | **5** | **4** |
+| **Total** | **100** | **143** | **46** | **21** | **0** | **13** | **18** | **5** | **4** |
 
 Totals for missing-text groups, asset references and answer sources count exercise groups; the 182 figure counts individual item slots.
 
@@ -54,7 +54,7 @@ Totals for missing-text groups, asset references and answer sources count exerci
 ### P2 — Mapping and scoring discipline
 
 - Five section/task-type pairs are flagged by a heuristic for manual review; do not batch-change labels until the printed book confirms the intended skill.
-- Only two groups meet the current conservative metadata criteria for automatic-scoring candidates. Both still require real source and browser validation. This is not a release authorization.
+- Four groups meet the current conservative metadata criteria for automatic-scoring candidates. They still require real source and browser validation. This is not a release authorization.
 - Open-ended Speaking/Writing should use task instructions and a suitable rubric, not a fabricated single answer.
 - A complete item record must separate prompt text, answer key, source verification, required media and scoring mode.
 
@@ -68,11 +68,11 @@ Totals for missing-text groups, asset references and answer sources count exerci
 
 ## Next implementation slice
 
-Start with P12, because it has the highest confirmed gap and previously supplied source context. Build a field-by-field correction plan for E3/E4/E5/E7/E8, distinguishing exact source text from parent-provided task summaries. Correct only fields supported by those sources; leave remaining unknowns explicitly unresolved. Then re-run the view and regression-check existing learner records.
+P12 E1–E8, P13 Grammar Quantifiers E2, P9 Listening Part 2 E2/E3, and P19 Listening note-taking E2 now have source-backed task text. The only remaining structured item-text gap is P22 Speaking Part 3 E4. Reconcile that task next, then review image and audio dependencies without inventing assets.
 
 
 ## Audio asset distinction (2026-10-24)
 
 The catalog previously used `audio_ref` for labels such as `Track 02`; that is not proof a playable file exists. New nullable fields `audio_asset_ref` and `audio_mime_type` separate the real file reference and verified MIME type from the printed track label. The audit now flags both missing track labels and missing playable assets. Current evidence: 13 exercises require audio, all 13 lack a playable asset reference, and the Supabase project has zero storage buckets/objects for the queried audio patterns. No audio file has been fabricated or linked by guesswork.
 
-The current audit issue-code counts are: 6 structured exercise groups missing item prompts; 27 non-structured groups missing exercise directions; 21 groups missing image references; 1 group missing a track label; 13 groups missing playable audio assets; 18 third-party answer-source groups not officially verified; 5 section/task-type mapping flags; 1 structured task missing an answer key; and 2 groups with text that has not passed source verification.
+The current audit issue-code counts are: 1 structured exercise group missing item prompts; 27 non-structured groups missing exercise directions; 21 groups missing image references; 1 group missing a track label; 13 groups missing playable audio assets; 18 third-party answer-source groups not officially verified; 5 section/task-type mapping flags; 0 structured tasks missing an answer key; and 2 groups with text that has not passed source verification.
