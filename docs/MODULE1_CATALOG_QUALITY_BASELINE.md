@@ -16,7 +16,7 @@ This is a catalog-data quality baseline, not a claim that every issue is an erro
 | P9 | 6 | 11 | 2 | 1 | 1 | 2 | 0 | 1 | 1 |
 | P10 | 7 | 19 | 5 | 2 | 0 | 0 | 0 | 0 | 0 |
 | P11 | 3 | 6 | 2 | 2 | 0 | 0 | 0 | 0 | 0 |
-| P12 | 8 | 11 | 3 | 0 | 0 | 0 | 0 | 0 | 2 |
+| P12 | 8 | 6 | 1 | 0 | 0 | 0 | 0 | 0 | 2 |
 | P13 | 8 | 14 | 3 | 1 | 0 | 0 | 0 | 0 | 0 |
 | P14 | 8 | 1 | 1 | 2 | 0 | 1 | 0 | 1 | 1 |
 | P15 | 5 | 8 | 3 | 1 | 0 | 0 | 0 | 0 | 0 |
@@ -28,7 +28,7 @@ This is a catalog-data quality baseline, not a claim that every issue is an erro
 | P21 | 6 | 16 | 4 | 3 | 0 | 1 | 2 | 1 | 0 |
 | P22 | 7 | 15 | 4 | 1 | 0 | 2 | 2 | 1 | 0 |
 | P23 | 7 | 7 | 5 | 1 | 0 | 0 | 0 | 0 | 0 |
-| **Total** | **100** | **157** | **50** | **21** | **1** | **13** | **18** | **5** | **4** |
+| **Total** | **100** | **152** | **48** | **21** | **1** | **13** | **18** | **5** | **4** |
 
 Totals for missing-text groups, asset references and answer sources count exercise groups; the 182 figure counts individual item slots.
 
@@ -36,7 +36,7 @@ Totals for missing-text groups, asset references and answer sources count exerci
 
 ### P0 — Confirmed catalog defects or blockers
 
-1. **P12 E1–E3 are now transcribed from the Student’s Book source:** 25 structured item prompts were restored and verified (5 + 12 + 8). The remaining 11 empty item slots are response slots for open-ended E5/E7/E8, not missing fixed questions. E4/E5/E7/E8 still need exact source reconciliation; current directions for those tasks remain summaries pending that pass.
+1. **P12 E1–E8 now have source-checked task text and instructions.** The six empty item slots in E5 are intentional learner-generated question slots (three present-continuous, three present-simple), not missing fixed prompts. All eight exercise groups have no current audit issue codes; this does not itself prove the live browser UI renders every task correctly.
 2. **All 13 exercises marked `needs_audio` lack a playable `audio_asset_ref`.** P9 Exercise 2 (`CPS-U1-P9-LISTENINGPART2-E2`) also lacks a track label (`audio_ref`). The Supabase project currently has no storage buckets or audio objects. Track names such as Track 02/03 are labels, not playable files; P14 Track 03 is explicitly noted as `.lis` with browser compatibility unverified.
 3. **21 exercise groups need images but have no `image_ref`.** The new columns are intentionally blank until an actual source asset is verified.
 4. **18 groups use third-party teacher-book text without official-answer verification.** These answers must not silently become official keys or unlock automatic scoring.
