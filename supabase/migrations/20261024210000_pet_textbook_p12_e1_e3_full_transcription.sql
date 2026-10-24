@@ -31,7 +31,7 @@ SET directions = 'Complete Molly’s email with the present simple or present co
       jsonb_build_object('no',9,'text','But we always (9) (leave) the house early in the morning','skill_tag','present_simple_continuous','answer_key','leave','explanation','always 表示习惯','source','Complete Preliminary for Schools Student’s Book, p.12','verified_text',true),
       jsonb_build_object('no',10,'text','while that cool wind from out at sea (10) (blow).','skill_tag','present_simple_continuous','answer_key','is blowing','explanation','描述每天早晨离家时正在吹的风','source','Complete Preliminary for Schools Student’s Book, p.12','verified_text',true),
       jsonb_build_object('no',11,'text','I (11) (have) a really good time here','skill_tag','present_simple_continuous','answer_key','am having','explanation','当前正玩得开心','source','Complete Preliminary for Schools Student’s Book, p.12','verified_text',true),
-      jsonb_build_object('no',12,'text','and I (12) (not want) to go home! Bye for now, Molly','skill_tag','present_simple_continuous','answer_key','don’t want','explanation','want 是状态动词','source','Complete Preliminary for Schools Student’s Book, p.12','verified_text',true)
+      jsonb_build_object('no',12,'text','and I (12) (not want) to go home! Bye for now, Molly','skill_tag','present_simple_continuous','answer_key','don''t want','explanation','want 是状态动词','source','Complete Preliminary for Schools Student’s Book, p.12','verified_text',true)
     ),
     item_count = 12,
     transcription_status = 'fully_transcribed',
