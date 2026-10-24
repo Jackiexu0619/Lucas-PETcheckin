@@ -506,3 +506,23 @@ P12 已完成原书内容/任务说明核对。下一步继续 P9 Listening：�
 ### 当前状态与唯一下一步
 
 P12 的原书任务文本已完成核对，P9 Listening Part 2 的题干/选项已补齐。下一步继续确认官方可访问的 Track 02 音频交付路径；如果数字资源必须通过 Cambridge One/教师资源包授权访问，保持缺失状态并记录这个依赖，不能用音频脚本冒充真实录音。之后继续审计下一组缺失题干/选项的结构化练习。
+
+
+## 模块 1 第九项交付：P13 Grammar Quantifiers E2 原题与选项补齐（2026-10-24）
+
+新增迁移：`supabase/migrations/20261024223000_pet_textbook_p13_quantifier_source_text.sql`，已在 `lucas-pet` 执行并验证。
+
+- 来源：*Complete Preliminary for Schools Student’s Book without Answers with Online Practice*, ISBN 9781108539050，印刷 P13；答案与 Cambridge Teacher’s Book 官方节选 ISBN 9788490362181 交叉核对。
+- 补齐 6 道量词选择题的完整句子和全部斜体选项，原有答案键及解释保留。
+- 6/6 题位现在有已核验原文，`transcription_status=fully_transcribed`，质量视图问题码为空。
+- 未更改评分模式、掌握状态或任何学习记录。该组仍不是自动评分候选，因为当前评分模式仍为 `manual_review`。
+
+### 音频资源依赖核查
+
+Cambridge 官方产品资料说明，本书的学生数字包提供 Student’s eBook 内嵌音视频/学习资源，教师用书包含可下载的 Class Audio 资源包；公开资料没有提供可直接映射到项目的 Track 02 音频文件。当前仓库没有音频目录，Supabase 仍有 13 组需要音频、0 组配置真实可播放资产。继续保留音频缺失标记，不将脚本或 Track 标签当作音频文件。
+
+### 验证与下一步
+
+- 目录仍为 100 组；家长记录 4 组、热身记录 3 条、历史快照 84 条不变。
+- 当前仍有 2 组结构化题目缺少逐题文本：P19 E2（听力笔记题，同时缺音频资产和答案核验）与 P22 E4（Speaking Part 3 讨论短语匹配）。
+- 下一步先查找 P19 E2 / P22 E4 的可核验原书来源；来源可确认时只补题干与任务结构，音频缺口继续独立跟踪。
