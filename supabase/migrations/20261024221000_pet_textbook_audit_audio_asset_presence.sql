@@ -1,4 +1,5 @@
 -- Module 1: distinguish an audio track label from a real playable asset reference.
+-- New view columns are appended to preserve the existing view's column order.
 CREATE OR REPLACE VIEW public.pet_textbook_catalog_quality_audit
 WITH (security_invoker = true)
 AS
@@ -15,7 +16,7 @@ WITH item_stats AS (
 )
 SELECT e.id,e.book_code,e.unit_no,e.printed_page,e.pdf_page,e.section,e.exercise_no,e.title,e.task_type,e.item_count,
  s.actual_item_count,s.verified_text_count,s.missing_text_count,s.unverified_text_count,s.missing_answer_count,
- e.needs_image,e.image_ref,e.image_alt,e.needs_audio,e.audio_ref,e.audio_asset_ref,e.audio_mime_type,
+ e.needs_image,e.image_ref,e.image_alt,e.needs_audio,e.audio_ref,
  e.transcription_status,e.answer_status,e.answer_source,e.answer_officially_verified,e.grading_mode,
  array_remove(ARRAY[
  CASE WHEN e.item_count <> s.actual_item_count THEN 'item_count_mismatch' END,
@@ -35,7 +36,8 @@ SELECT e.id,e.book_code,e.unit_no,e.printed_page,e.pdf_page,e.section,e.exercise
   AND s.missing_text_count = 0 AND s.unverified_text_count = 0 AND s.missing_answer_count = 0
   AND (NOT e.needs_image OR nullif(btrim(coalesce(e.image_ref, '')), '') IS NOT NULL)
   AND (NOT e.needs_audio OR (nullif(btrim(coalesce(e.audio_ref, '')), '') IS NOT NULL AND nullif(btrim(coalesce(e.audio_asset_ref, '')), '') IS NOT NULL))
- ) AS auto_grading_candidate
+ ) AS auto_grading_candidate,
+ e.audio_asset_ref,e.audio_mime_type
 FROM public.pet_textbook_exercises e JOIN item_stats s ON s.id=e.id;
 
 COMMENT ON VIEW public.pet_textbook_catalog_quality_audit IS
