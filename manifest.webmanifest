@@ -5,5 +5,5 @@
   "display": "standalone",
   "background_color": "#f4f8ff",
   "theme_color": "#1477ef",
-  "description": "Lucas PET v0.5.13.1：修复 AI 自动诊断重试，并保留现有学习数据。"
+  "description": "Lucas PET v0.5.13.2：修复 AI 自动诊断结果保存，并保留现有学习数据。"
 }
