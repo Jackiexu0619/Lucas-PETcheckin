@@ -1188,7 +1188,7 @@ async function autoEvidenceDiagnosis(){
       throw Error(data.error||('HTTP '+response.status));
     }
     if(!response?.ok)throw Error(data?.error||'AI 请求失败');
-    if(!Array.isArray(data.questions)||data.questions.length!==2)throw Error('AI 返回的补练题格式不正确');
+    if(!Array.isArray(data.questions)||data.questions.length!==2||data.questions.some(q=>!q||typeof q.question!=='string'||!q.question.trim()||!Array.isArray(q.options)||q.options.length<2||q.options.some(o=>typeof o!=='string'||!o.trim())||!Number.isInteger(q.correctIndex)||q.correctIndex<0||q.correctIndex>=q.options.length||typeof q.explanation!=='string'||!q.explanation.trim()))throw Error('AI 返回的补练题格式不正确（题干、选项、正确答案或解析缺失）');
     const rec={id:'auto_'+Date.now(),ts:Date.now(),title:'自动诊断 · 词汇重复错误',skill:'vocabulary',task,answer:studentAnswer,verdict:data.verdict,issue:data.issue,reason:data.reason,nextStep:data.nextStep,questions:data.questions,model:data.model,usage:data.usage||null,followup:null,autoFingerprint:fingerprint,evidence:{periodDays:14,totalRecentWrong:recent.length,repeatedWords:repeatedWords.map(([k,xs])=>({word:xs[0].en||k,count:xs.length})),repeatedReasons:repeatedReasons.map(([reason,xs])=>({reason,count:xs.length}))}};
     rows.push(rec);localStorage.setItem(AI_HISTORY_KEY,JSON.stringify(rows.slice(-60)));
     const box=panel();if(!box)return;
