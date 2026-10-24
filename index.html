@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#1477ef">
-<title>Lucas PET v0.5.12.8 热身启动与自动连接修复版</title>
+<title>Lucas PET v0.5.12.9 热身启动与自动连接修复版</title>
 <link rel="manifest" href="manifest.webmanifest">
 <style>
 :root{--bg:#f5f7fb;--card:#fff;--ink:#172033;--muted:#6b7280;--line:#e5e9f2;--blue:#2563eb;--soft:#eaf2ff;--good:#198754;--warn:#b97900;--bad:#c0392b;--purple:#7c3aed}
@@ -282,7 +282,7 @@ body{background:
       <div class="brandMark">L</div>
       <div><div class="brandName">Lucas <span>PET</span></div><div class="brandSub">每天一点，向 B1 稳稳前进</div></div>
     </div>
-    <span class="versionPill">v0.5.12.8</span>
+    <span class="versionPill">v0.5.12.9</span>
   </div>
 
   <div class="homeHero">
@@ -502,7 +502,7 @@ const CLOUD_ENDPOINT_PREF_STORAGE='pet_checkin_cloud_endpoint_pref';
 const CLOUD_KEY_STORAGE='pet_checkin_cloud_recovery_key';
 const CLOUD_ENABLED_STORAGE='pet_checkin_cloud_enabled';
 const CLOUD_META_STORAGE='pet_checkin_cloud_meta';
-const APP_VERSION='0.5.12.8';
+const APP_VERSION='0.5.12.9';
 let cloudTimer=null,cloudBusy=false,cloudQueued=false,cloudSuppressPush=false,cloudConflictState=null;
 const ROLLING_BACKUP_PREFIXES=[
   'pet_checkin_v1_backup_pre_cloud_autopull_',
@@ -3059,7 +3059,7 @@ renderAll();
 document.querySelectorAll('.app>.section').forEach(x=>{let on=x.id==='home';x.hidden=!on;x.classList.toggle('active',on)});
 if(cloudIsEnabled())setTimeout(()=>cloudSmartSync(false),600);
 if(bootRecoveryReport&& !sessionStorage.getItem('pet031_recovery_notice')){sessionStorage.setItem('pet031_recovery_notice','1');let r=bootRecoveryReport;setTimeout(()=>alert(r.fallback?'检测到旧数据迁移异常，已优先从升级前快照恢复，并保留异常原始数据副本。请到“词汇”和“记录”页核对。':`已自动检查升级前快照并补回缺失数据：${r.words||0} 个词、${r.tests||0} 条测试记录、${r.plans||0} 个清单项目。`),150)}
-if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('./service-worker.js?v=lucas-pet-0.5.12.8-ai-endpoint-r1',{updateViaCache:'none'}).catch(()=>{});
+if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('./service-worker.js?v=lucas-pet-0.5.12.9-ai-endpoint-r1',{updateViaCache:'none'}).catch(()=>{});
 </script>
 <script>
 (() => {
@@ -3087,7 +3087,7 @@ window.aiDiagnose=async function(){const b=el('aiDiagnoseBtn'),answer=el('aiAnsw
 window.aiGrade=function(){if(!current)return;const answers=current.questions.map((q,i)=>document.querySelector(`input[name="ai-q${i}"]:checked`)?.value);if(answers.some(x=>x===undefined))return alert('请完成两道补练题');const count=answers.filter((v,i)=>Number(v)===current.questions[i].correctIndex).length;const rows=load(),ix=rows.findIndex(x=>x.id===current.id);if(ix<0)return;rows[ix].followup={correct:count,total:2,answers:answers.map(Number),at:Date.now()};try{persist(rows)}catch(e){return alert('本机保存失败：'+e.message)};render();el('aiGradeResult').innerHTML=`<div class="ai-report"><b>正确 ${count}/2</b><div>${current.questions.map((q,i)=>`${i+1}. ${Number(answers[i])===q.correctIndex?'✓':'✗'} 正确答案：${esc(q.options[q.correctIndex])}。${esc(q.explanation)}`).join('<br>')}</div><small>一次做对不代表长期掌握。</small></div>`;el('aiGradeBtn').disabled=true};
 window.aiExportHistory=function(){const url=URL.createObjectURL(new Blob([JSON.stringify({product:'lucas-pet-ai-preview',version:'0.5.11.6',records:load()},null,2)],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download='Lucas_AI_训练记录_'+new Date().toISOString().slice(0,10)+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)};
 window.aiClearHistory=function(){if(confirm('仅清空本机 AI 实验记录？不会删除正式词汇与测试记录。')){localStorage.removeItem(NAMESPACE);render();el('aiResult').hidden=true}};
-window.addEventListener('load',()=>{try{el('aiEndpoint').value=sessionStorage.getItem('lucas_ai_endpoint')||''}catch{};el('aiEndpoint').addEventListener('change',()=>{try{sessionStorage.setItem('lucas_ai_endpoint',el('aiEndpoint').value.trim())}catch{}});aiChooseScenario();render()});
+window.addEventListener('load',()=>{try{const saved=localStorage.getItem('lucas_ai_endpoint')||sessionStorage.getItem('lucas_ai_endpoint')||'';if(saved)el('aiEndpoint').value=saved;else if(!el('aiEndpoint').value)el('aiEndpoint').value='https://gemzboxhkkrfjqresxjt.supabase.co/functions/v1/pet-ai-tutor';}catch{if(!el('aiEndpoint').value)el('aiEndpoint').value='https://gemzboxhkkrfjqresxjt.supabase.co/functions/v1/pet-ai-tutor'};el('aiEndpoint').addEventListener('change',()=>{try{const v=el('aiEndpoint').value.trim();localStorage.setItem('lucas_ai_endpoint',v);sessionStorage.setItem('lucas_ai_endpoint',v)}catch{}});aiChooseScenario();render()});
 })();
 </script>
 
