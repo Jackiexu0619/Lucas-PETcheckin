@@ -76,3 +76,12 @@ P12 E1–E8, P13 Grammar Quantifiers E2, P9 Listening Part 2 E2/E3, and P19 List
 The catalog previously used `audio_ref` for labels such as `Track 02`; that is not proof a playable file exists. New nullable fields `audio_asset_ref` and `audio_mime_type` separate the real file reference and verified MIME type from the printed track label. The audit now flags both missing track labels and missing playable assets. Current evidence: 13 exercises require audio, all 13 lack a playable asset reference, and the Supabase project has zero storage buckets/objects for the queried audio patterns. No audio file has been fabricated or linked by guesswork.
 
 The current audit issue-code counts are: 1 structured exercise group missing item prompts; 27 non-structured groups missing exercise directions; 21 groups missing image references; 1 group missing a track label; 13 groups missing playable audio assets; 18 third-party answer-source groups not officially verified; 5 section/task-type mapping flags; 0 structured tasks missing an answer key; and 2 groups with text that has not passed source verification.
+
+
+## Audio player readiness update — 2026-10-24
+
+- The catalog API now returns `audio_asset_ref` and `audio_mime_type` (Supabase Edge Function `pet-textbook-catalog` v6).
+- The app shell can render an HTML5 player only when `audio_asset_ref` is a valid HTTPS URL; otherwise it explicitly says the file is not connected. It does not infer a URL from a track label.
+- This is playback plumbing only. Current live data still has 13 audio-dependent exercise groups and 0 actual playable audio references; the project has no Supabase Storage buckets. The official Cambridge product listing describes audio as a downloadable online resource, but the connected project has no authorized copy available to map.
+- The catalog audit flags `missing_audio_asset_reference` independently from a missing printed track label. This avoids counting `Track 02` as if it were an actual audio file.
+- Real audio playback remains blocked until a lawful audio asset is available and tested in the browser.
