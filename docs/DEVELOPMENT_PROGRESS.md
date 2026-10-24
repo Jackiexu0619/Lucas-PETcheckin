@@ -428,3 +428,33 @@ GitHub Pages 部署流水线已通过；当前连接的浏览器标签页仍是�
 ### 唯一下一步
 
 继续处理有明确证据支持的目录内容；当前最大内容缺口是 P12 E1/E2 的原书题干/材料以及 P12 E3 的打乱词语提示。现有仓库、Supabase Storage 和已连接 Google Drive 中均未找到可核验的原书页面或音轨文件，因此这些字段保持待核验，不从答案反推原题。若后续需要精确补齐，只需补充缺失的 P12 原书页面/音轨材料，不需要重新录入任何训练结果。
+
+
+## 模块 1 第六项交付：P12 E1–E3 原书逐题转录（2026-10-24）
+
+新增迁移：`supabase/migrations/20261024210000_pet_textbook_p12_e1_e3_full_transcription.sql`，已在 `lucas-pet` 执行并验证。
+
+### 来源证据
+
+- 学生用书：*Complete Preliminary for Schools Student’s Book without Answers with Online Practice*, ISBN 9781108539050，Unit 1，印刷页 P12。公开页面可核对具体题干：<https://fliphtml5.com/uydxs/pqnf/9781108539050/>
+- 教师用书答案：Cambridge University Press *Complete Preliminary for Schools Teacher’s Book English for Spanish Speakers*, ISBN 9788490362181 官方节选：<https://assets.cambridge.org/97884903/62181/excerpt/9788490362181_excerpt.pdf>
+
+### 本次修正
+
+- **P12 E1：** 补齐 5 个时态用法例句和完整任务说明；答案键仍与教师用书一致。
+- **P12 E2：** 补齐 Molly 邮件 12 个空的逐题上下文和任务说明；保留 12 个答案及现有可接受答案评分模式。
+- **P12 E3：** 补齐 8 条原书乱序/提示词组，保留已核验的参考问题答案。
+- 三组练习均标记为 `fully_transcribed`，每个题位均为 `verified_text=true`。没有启用新的前端自动判分；审计视图中的候选资格仅为元数据判断。
+
+### 验证结果
+
+- E1：5/5 题位有已核验原文，审计问题码为空。
+- E2：12/12 题位有已核验原文，审计问题码为空。
+- E3：8/8 题位有已核验原文，审计问题码为空。
+- 当前目录仍为 100 组；家长记录 4 组、热身记录 3 条、历史快照 84 条均未变化。
+- E2/E3 达到质量视图的自动评分元数据候选条件，但未进行真实浏览器自动判分验收，不能把“候选”当作已上线功能。
+- 公开学生用书页与官方教师用书答案来源已找到；项目仓库和 Supabase 仍没有真实可播放的音频文件，Listening 音频缺口仍未解决。
+
+### 当前状态与唯一下一步
+
+P12 E1–E3 的逐题文字已从可核验来源补齐。下一步继续修正 P12 E4/E5/E7/E8：利用同一学生用书 P12 的可核验原文，将任务说明和示例逐项补齐；开放式 Speaking 仍维持人工评价，不把回答槽当作标准答案。
