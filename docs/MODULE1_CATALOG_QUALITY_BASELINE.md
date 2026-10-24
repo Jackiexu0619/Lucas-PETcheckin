@@ -13,7 +13,7 @@ This is a catalog-data quality baseline, not a claim that every issue is an erro
 | Page | Exercise groups | Item text missing (item slots) | Groups with missing text | Missing image refs | Missing track labels | Missing playable audio assets | Third-party answer groups not officially verified | Section/type review flags | Metadata grading candidates |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
 | P8 | 2 | 8 | 2 | 1 | 0 | 0 | 0 | 1 | 0 |
-| P9 | 6 | 11 | 2 | 1 | 1 | 2 | 0 | 1 | 1 |
+| P9 | 6 | 11 | 2 | 1 | 0 | 1 | 0 | 1 | 1 |
 | P10 | 7 | 19 | 5 | 2 | 0 | 0 | 0 | 0 | 0 |
 | P11 | 3 | 6 | 2 | 2 | 0 | 0 | 0 | 0 | 0 |
 | P12 | 8 | 6 | 1 | 0 | 0 | 0 | 0 | 0 | 2 |
@@ -28,7 +28,7 @@ This is a catalog-data quality baseline, not a claim that every issue is an erro
 | P21 | 6 | 16 | 4 | 3 | 0 | 1 | 2 | 1 | 0 |
 | P22 | 7 | 15 | 4 | 1 | 0 | 2 | 2 | 1 | 0 |
 | P23 | 7 | 7 | 5 | 1 | 0 | 0 | 0 | 0 | 0 |
-| **Total** | **100** | **152** | **48** | **21** | **1** | **13** | **18** | **5** | **4** |
+| **Total** | **100** | **152** | **48** | **21** | **0** | **12** | **18** | **5** | **4** |
 
 Totals for missing-text groups, asset references and answer sources count exercise groups; the 182 figure counts individual item slots.
 
