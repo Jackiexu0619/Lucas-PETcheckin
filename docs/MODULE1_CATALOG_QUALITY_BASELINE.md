@@ -43,7 +43,7 @@ Totals for missing-text groups, asset references and answer sources count exerci
 
 ### P1 — Existing source-backed content should be reconciled first
 
-- **P12 E3:** eight expected questions are currently in `answer_key` while `text` is blank. This is a likely field-semantic mismatch. Preserve the existing values, recover the original word-order prompts, then correct the fields only with source evidence.
+- **P12 E3:** eight reference questions are stored in `answer_key`, while the original jumbled-word prompts are missing from `text`. The answer field is appropriate for reference answers; the defect is missing source prompt text, not a confirmed field swap.
 - **P12 E4:** eight partner-question slots exist but lack prompt text. Existing context confirms this exercise follows E3; populate only after confirming the correct source representation.
 - **P12 E5:** catalog says two slots; existing context says the task requires six questions (three present-continuous and three present-simple). Record the task structure without pretending newly written scaffolding is verbatim book text.
 - **P12 E7/E8:** four and one slots respectively exist, but prompt coverage is incomplete. Existing context describes the four-part family/friend description and follow-up questions; verify exact scope before editing.
