@@ -3293,6 +3293,7 @@ const options=[['','未记录'],['correct','独立正确'],['partial','提示后
 const localDay=()=>{const d=new Date();return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-')};
 let catalog=[],history=[],loaded=false;
 let selectedUnit=1;
+const ITEMIZED_TASK_TYPES=new Set(['grammar_choice','reading_mcq','listening_mcq','vocabulary_choice','grammar_gap','vocabulary_gap','reading_gap','listening_gap','grammar_rewrite','grammar_order_matching','grammar_dialogue_gap','grammar_matching','vocabulary_matching','reading_photo_matching','grammar_correction','grammar_table','listening_note','vocabulary_grammar','past_form_pronunciation_sort','speaking_gap','speaking_matching','speaking_order']);
 function token(){return (E('petCatalogToken').value||window.petSharedAccess?.get()||'').trim()}
 async function call(slug,payload){const r=await fetch(base+slug,{method:'POST',headers:{'Content-Type':'application/json','x-ai-access':token()},body:JSON.stringify(payload)});const o=await r.json().catch(()=>({error:'接口未返回 JSON'}));if(!r.ok)throw Error(o.error||'HTTP '+r.status);return o;}
 function status(s){E('petCatalogStatus').textContent=s}
@@ -3308,11 +3309,14 @@ window.petUnitChange=()=>{if(!loaded)return;selectedUnit=Number(E('petUnit').val
 window.petPageChange=()=>{
  if(!loaded)return;const page=Number(E('petPage').value),a=catalog.filter(x=>x.printed_page===page);
  E('petCatalogRows').innerHTML=a.map(ex=>{
- const hasText=(ex.items||[]).some(y=>y.verified_text),last=history.find(h=>h.exercise_id===ex.id);
+ const allTextVerified=(ex.items||[]).length>0&&(ex.items||[]).every(y=>y.verified_text&&String(y.text||'').trim());
+ const needsItemText=ITEMIZED_TASK_TYPES.has(ex.task_type);
+ const directionsMissing=!needsItemText&&!String(ex.directions||'').trim()&&!allTextVerified;
+ const last=history.find(h=>h.exercise_id===ex.id);
  return `<details class="hub-box" style="margin:10px 0" data-ex="${norm(ex.id)}"><summary><b>Exercise ${ex.exercise_no} · ${norm(ex.title)}</b> <span class="hub-muted">${ex.item_count} 题位 ${last?'· 已录过':''}</span></summary>
  <p class="hub-muted">${norm(ex.directions||'请对照教材原题作答')} · ${norm(ex.task_type)} ${ex.needs_image?'· 请看原书图片':''} ${ex.needs_audio?'· 请播放原书音频':''}</p>
- ${!hasText?'<p class="hub-muted">本练习的逐字题干尚未核对；下面按原书题号录入，不展示未经核实的题目文字。</p>':''}
- ${(ex.items||[]).map(item=>`<div class="hub-q" style="margin:8px 0;padding:10px 0;border-bottom:1px solid #e2e8f0"><b>第 ${item.no} ${item.verified_text?'· '+norm(item.text||''):'题（参照原书）'}</b>
+ ${needsItemText&&!allTextVerified?'<p class="hub-muted">本练习需要逐题题干；当前部分或全部原文尚未核验，请对照原书完成，不自动评分。</p>':directionsMissing?'<p class="hub-muted">本练习的任务说明尚未核对；请对照原书完成，当前只记录表现，不自动评分。</p>':(!needsItemText&&ex.directions?'<p class="hub-muted">开放式任务：按上方任务说明完成；下方仅记录表现，采用人工评价，不要求逐题录入原文。</p>':'')}
+ ${(ex.items||[]).map(item=>`<div class="hub-q" style="margin:8px 0;padding:10px 0;border-bottom:1px solid #e2e8f0"><b>第 ${item.no} ${item.verified_text&&item.text?'· '+norm(item.text):needsItemText?'题（参照原书）':'表现记录'}</b>
  <div class="hub-row" style="gap:6px;flex-wrap:wrap"><select data-no="${item.no}" data-role="status" style="flex:1;min-width:115px">${options.map(o=>`<option value="${o[0]}">${o[1]}</option>`).join('')}</select>
  <input data-no="${item.no}" data-role="answer" maxlength="300" placeholder="Lucas实际答案（可选）" style="flex:2;min-width:130px"></div>
  <input data-no="${item.no}" data-role="remark" maxlength="400" placeholder="错因 / 提示 / 口语表达（可选）" style="width:100%;margin-top:5px"></div>`).join('')}
