@@ -16,7 +16,7 @@ This is a catalog-data quality baseline, not a claim that every issue is an erro
 | P9 | 6 | 11 | 2 | 1 | 1 | 0 | 1 | 1 |
 | P10 | 7 | 19 | 5 | 2 | 0 | 0 | 0 | 0 |
 | P11 | 3 | 6 | 2 | 2 | 0 | 0 | 0 | 0 |
-| P12 | 8 | 40 | 7 | 0 | 0 | 0 | 0 | 0 |
+| P12 | 8 | 36 | 6 | 0 | 0 | 0 | 0 | 0 |
 | P13 | 8 | 14 | 3 | 1 | 0 | 0 | 0 | 0 |
 | P14 | 8 | 1 | 1 | 2 | 0 | 0 | 1 | 1 |
 | P15 | 5 | 8 | 3 | 1 | 0 | 0 | 0 | 0 |
@@ -28,7 +28,7 @@ This is a catalog-data quality baseline, not a claim that every issue is an erro
 | P21 | 6 | 16 | 4 | 3 | 0 | 2 | 1 | 0 |
 | P22 | 7 | 15 | 4 | 1 | 0 | 2 | 1 | 0 |
 | P23 | 7 | 7 | 5 | 1 | 0 | 0 | 0 | 0 |
-| **Total** | **100** | **186** | **54** | **21** | **1** | **18** | **5** | **2** |
+| **Total** | **100** | **182** | **53** | **21** | **1** | **18** | **5** | **2** |
 
 Totals for missing-text groups, asset references and answer sources count exercise groups; the 186 figure counts individual item slots.
 
@@ -36,7 +36,7 @@ Totals for missing-text groups, asset references and answer sources count exerci
 
 ### P0 — Confirmed catalog defects or blockers
 
-1. **P12 is the largest content gap:** 40 of 66 item slots have no item text; 7 of 8 exercise groups contain at least one missing-text item. Previously supplied material identifies concrete gaps in Exercises 3, 4, 5, 7 and 8. Do not fill the missing text from guesses; recover the existing source and map each field correctly.
+1. **P12 remains the largest structured-content gap:** 36 of 66 item slots have no item text, across 6 of 8 exercise groups. The raw count includes response slots for open-ended tasks; after task-type-aware rules, E1–E3 remain the clear item-text gaps. E4's eight known questions and E5/E7/E8 task directions have now been restored from existing parent-provided notes, while non-verbatim summaries remain labelled as such.
 2. **P9 Exercise 2** (`CPS-U1-P9-LISTENINGPART2-E2`) needs audio but has no `audio_ref`. It must not be treated as a complete Listening exercise until the genuine track is mapped.
 3. **21 exercise groups need images but have no `image_ref`.** The new columns are intentionally blank until an actual source asset is verified.
 4. **18 groups use third-party teacher-book text without official-answer verification.** These answers must not silently become official keys or unlock automatic scoring.
@@ -44,12 +44,12 @@ Totals for missing-text groups, asset references and answer sources count exerci
 ### P1 — Existing source-backed content should be reconciled first
 
 - **P12 E3:** eight reference questions are stored in `answer_key`, while the original jumbled-word prompts are missing from `text`. The answer field is appropriate for reference answers; the defect is missing source prompt text, not a confirmed field swap.
-- **P12 E4:** eight partner-question slots exist but lack prompt text. Existing context confirms this exercise follows E3; populate only after confirming the correct source representation.
-- **P12 E5:** catalog says two slots; existing context says the task requires six questions (three present-continuous and three present-simple). Record the task structure without pretending newly written scaffolding is verbatim book text.
-- **P12 E7/E8:** four and one slots respectively exist, but prompt coverage is incomplete. Existing context describes the four-part family/friend description and follow-up questions; verify exact scope before editing.
+- **P12 E4:** the eight partner questions have now been restored from existing parent-provided P12/E3 notes and are retained as open-ended speaking prompts.
+- **P12 E5:** corrected from two to six response slots (three present-continuous and three present-simple). The directions explicitly state that this is a task summary, not verbatim book text.
+- **P12 E7/E8:** task directions have been restored from prior notes; E8's exact original follow-up list/count remains unverified.
 - **P14 E2:** preserve the home/room description, furniture and spatial-layout requirements, not just a one-line summary.
 - **P14 E7:** the catalog references Track 03 as a `.lis` file with browser compatibility unverified. A track label is not proof that audio playback works.
-- **P13 E3/E5:** prior context identifies concrete free-time/quantifier practice and a task listing three countable plus three uncountable kitchen items. Reconcile those with the existing two-slot and six-slot records.
+- **P13 E3/E5:** task directions have been restored from prior notes. E3 targets home/free-time/TV-games/time expressions and quantifiers; E5 requires three countable and three uncountable kitchen items with explanations. Both remain open-ended/manual review.
 
 ### P2 — Mapping and scoring discipline
 
