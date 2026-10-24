@@ -3357,7 +3357,7 @@ window.petExport=()=>{const blob=new Blob([JSON.stringify({product:'lucas-pet',b
   let auth=get();
   if(!auth)auth=found.map(e=>e.value.trim()).find(Boolean)||'';
   if(auth)found.forEach(e=>{if(!e.value)e.value=auth});
-  found.forEach(e=>e.addEventListener('input',()=>{const v=e.value.trim();if(v){set(v);found.forEach(peer=>{if(peer!==e)peer.value=v})}}));
+  found.forEach(e=>e.addEventListener('input',()=>{const v=e.value.trim();if(v){set(v);found.forEach(peer=>{if(peer!==e)peer.value=v});if(v.length>=24&&document.getElementById('petAutoEvidenceDiagnosis')?.dataset.state==='waiting')setTimeout(()=>window.petAutoEvidenceDiagnosis?.(),0)}}));
   // Auto-load only when the access code is already available in this browser session.
   if(auth){set(auth);setTimeout(()=>{if(typeof window.petCatalogLoad==='function')window.petCatalogLoad();},0)}
   const status=document.getElementById('petCatalogStatus');
