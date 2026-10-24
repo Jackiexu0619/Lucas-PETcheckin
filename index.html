@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#1477ef">
-<title>Lucas PET v0.5.13.1 自动诊断重试修复版</title>
+<title>Lucas PET v0.5.13.2 自动诊断保存修复版</title>
 <link rel="manifest" href="manifest.webmanifest">
 <style>
 :root{--bg:#f5f7fb;--card:#fff;--ink:#172033;--muted:#6b7280;--line:#e5e9f2;--blue:#2563eb;--soft:#eaf2ff;--good:#198754;--warn:#b97900;--bad:#c0392b;--purple:#7c3aed}
@@ -502,7 +502,7 @@ const CLOUD_ENDPOINT_PREF_STORAGE='pet_checkin_cloud_endpoint_pref';
 const CLOUD_KEY_STORAGE='pet_checkin_cloud_recovery_key';
 const CLOUD_ENABLED_STORAGE='pet_checkin_cloud_enabled';
 const CLOUD_META_STORAGE='pet_checkin_cloud_meta';
-const APP_VERSION='0.5.13.1';
+const APP_VERSION='0.5.13.2';
 let cloudTimer=null,cloudBusy=false,cloudQueued=false,cloudSuppressPush=false,cloudConflictState=null;
 const ROLLING_BACKUP_PREFIXES=[
   'pet_checkin_v1_backup_pre_cloud_autopull_',
@@ -1127,6 +1127,7 @@ function pronLabel(x){return x==='correct'?'✓ 正确':x==='practice'?'需练�
 /* ===== v0.5.10.9 测试结果显示词性：开始 ===== */
 
 async function autoEvidenceDiagnosis(){
+  const AI_HISTORY_KEY='lucas_pet_ai_tutor_preview_v05116';
   const panelId='petAutoEvidenceDiagnosis';
   if(!Array.isArray(state?.tests))return;
   const existingPanel=document.getElementById(panelId);
@@ -1152,7 +1153,7 @@ async function autoEvidenceDiagnosis(){
     words:repeatedWords.map(([k,xs])=>[k,xs.map(t=>t.id).sort()]).sort((a,b)=>String(a[0]).localeCompare(String(b[0]))),
     reasons:repeatedReasons.map(([k,xs])=>[k,xs.map(t=>t.id).sort()]).sort((a,b)=>String(a[0]).localeCompare(String(b[0])))
   });
-  let rows=[];try{const x=JSON.parse(localStorage.getItem(NAMESPACE)||'[]');rows=Array.isArray(x)?x:[]}catch{}
+  let rows=[];try{const x=JSON.parse(localStorage.getItem(AI_HISTORY_KEY)||'[]');rows=Array.isArray(x)?x:[]}catch{}
   if(rows.some(r=>r.autoFingerprint===fingerprint)){if(existingPanel)existingPanel.dataset.state='done';return}
   const result=document.getElementById('result');
   if(!existingPanel&&result)result.insertAdjacentHTML('beforeend','<div id="'+panelId+'" class="notice" data-state="waiting" style="margin-top:14px">发现近期重复错误，正在整理学习证据并尝试 AI 诊断……</div>');
@@ -1188,15 +1189,15 @@ async function autoEvidenceDiagnosis(){
     if(!response?.ok)throw Error(data?.error||'AI 请求失败');
     if(!Array.isArray(data.questions)||data.questions.length!==2)throw Error('AI 返回的补练题格式不正确');
     const rec={id:'auto_'+Date.now(),ts:Date.now(),title:'自动诊断 · 词汇重复错误',skill:'vocabulary',task,answer:studentAnswer,verdict:data.verdict,issue:data.issue,reason:data.reason,nextStep:data.nextStep,questions:data.questions,model:data.model,usage:data.usage||null,followup:null,autoFingerprint:fingerprint,evidence:{periodDays:14,totalRecentWrong:recent.length,repeatedWords:repeatedWords.map(([k,xs])=>({word:xs[0].en||k,count:xs.length})),repeatedReasons:repeatedReasons.map(([reason,xs])=>({reason,count:xs.length}))}};
-    rows.push(rec);localStorage.setItem(NAMESPACE,JSON.stringify(rows.slice(-60)));
+    rows.push(rec);localStorage.setItem(AI_HISTORY_KEY,JSON.stringify(rows.slice(-60)));
     const box=panel();if(!box)return;
     box.dataset.state='done';box.className='ai-report';box.innerHTML='<h3>自动诊断 · 词汇重复错误</h3><div><b>判断：</b>'+esc(data.verdict)+'</div><div><b>发现：</b>'+esc(data.issue)+'</div><div><b>原因分析：</b>'+esc(data.reason)+'</div><div><b>下一步：</b>'+esc(data.nextStep)+'</div><h4>针对性补练（2题）</h4>'+data.questions.map((q,i)=>'<div class="ai-case"><b>'+(i+1)+'. '+esc(q.question)+'</b><div class="ai-options">'+q.options.map((o,k)=>'<label><input type="radio" name="petAutoQ'+i+'" value="'+k+'"> '+esc(o)+'</label>').join('')+'</div></div>').join('')+'<button type="button" class="primary" id="petAutoGrade">提交补练</button><div id="petAutoGradeResult"></div><small>本次诊断与补练保存在本机 AI 记录中，不会直接改写正式词汇掌握状态。</small>';
     document.getElementById('petAutoGrade').onclick=()=>{
       const answers=data.questions.map((q,i)=>box.querySelector('input[name="petAutoQ'+i+'"]:checked')?.value);
       if(answers.some(v=>v===undefined)){alert('请先完成两道补练题');return}
       const correct=answers.filter((v,i)=>Number(v)===data.questions[i].correctIndex).length;
-      const saved=JSON.parse(localStorage.getItem(NAMESPACE)||'[]'),idx=saved.findIndex(x=>x.id===rec.id);
-      if(idx>=0){saved[idx].followup={correct,total:2,answers:answers.map(Number),at:Date.now()};localStorage.setItem(NAMESPACE,JSON.stringify(saved.slice(-60)))}
+      const saved=JSON.parse(localStorage.getItem(AI_HISTORY_KEY)||'[]'),idx=saved.findIndex(x=>x.id===rec.id);
+      if(idx>=0){saved[idx].followup={correct,total:2,answers:answers.map(Number),at:Date.now()};localStorage.setItem(AI_HISTORY_KEY,JSON.stringify(saved.slice(-60)))}
       document.getElementById('petAutoGradeResult').innerHTML='<b>补练结果：'+correct+'/2</b>'+data.questions.map((q,i)=>'<div>'+(Number(answers[i])===q.correctIndex?'✓':'✗')+' 正确答案：'+esc(q.options[q.correctIndex])+'。'+esc(q.explanation)+'</div>').join('');
       document.getElementById('petAutoGrade').disabled=true;
     };
@@ -3139,7 +3140,7 @@ renderAll();
 document.querySelectorAll('.app>.section').forEach(x=>{let on=x.id==='home';x.hidden=!on;x.classList.toggle('active',on)});
 if(cloudIsEnabled())setTimeout(()=>cloudSmartSync(false),600);
 if(bootRecoveryReport&& !sessionStorage.getItem('pet031_recovery_notice')){sessionStorage.setItem('pet031_recovery_notice','1');let r=bootRecoveryReport;setTimeout(()=>alert(r.fallback?'检测到旧数据迁移异常，已优先从升级前快照恢复，并保留异常原始数据副本。请到“词汇”和“记录”页核对。':`已自动检查升级前快照并补回缺失数据：${r.words||0} 个词、${r.tests||0} 条测试记录、${r.plans||0} 个清单项目。`),150)}
-if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('./service-worker.js?v=lucas-pet-0.5.13.1-ai-loop-r1',{updateViaCache:'none'}).catch(()=>{});
+if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('./service-worker.js?v=lucas-pet-0.5.13.2-ai-storage-r1',{updateViaCache:'none'}).catch(()=>{});
 </script>
 <script>
 (() => {
