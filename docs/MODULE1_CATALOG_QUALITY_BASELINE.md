@@ -85,3 +85,10 @@ The current audit issue-code counts are: 1 structured exercise group missing ite
 - This is playback plumbing only. Current live data still has 13 audio-dependent exercise groups and 0 actual playable audio references; the project has no Supabase Storage buckets. The official Cambridge product listing describes audio as a downloadable online resource, but the connected project has no authorized copy available to map.
 - The catalog audit flags `missing_audio_asset_reference` independently from a missing printed track label. This avoids counting `Track 02` as if it were an actual audio file.
 - Real audio playback remains blocked until a lawful audio asset is available and tested in the browser.
+
+
+## P9 source correction — 2026-10-25
+
+The family-provided scanned Student's Book (ISBN 9781108539050, printed p.9) confirms that E2 is a partner prediction task based on the six printed questions. The Track 02 headphone icon and explicit listening instruction appear at E3. The catalog's E2 `needs_audio=true` flag contradicted its own directions and has been corrected to `false`; the printed `audio_ref` label remains for context.
+
+Read-only audit after the one-row correction: E2 has no issue codes; E3 still has `missing_audio_asset_reference`. Across the 100 exercise groups, **12** now require audio and all 12 lack a playable asset. The earlier 13-group counts above are historical snapshots, not current counts. The PDF contains no embedded audio attachment, so P9 E3 playback remains blocked pending a verified, usable Track 02 file.
