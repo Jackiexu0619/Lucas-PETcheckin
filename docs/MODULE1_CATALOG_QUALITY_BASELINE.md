@@ -13,7 +13,7 @@ This is a catalog-data quality baseline, not a claim that every issue is an erro
 | Page | Exercise groups | Item text missing (item slots) | Groups with missing text | Missing image refs | Missing track labels | Missing playable audio assets | Third-party answer groups not officially verified | Section/type review flags | Metadata grading candidates |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
 | P8 | 2 | 8 | 2 | 1 | 0 | 0 | 0 | 1 | 0 |
-| P9 | 6 | 11 | 2 | 1 | 1 | 2 | 0 | 1 | 1 |
+| P9 | 6 | 11 | 2 | 1 | 0 | 2 | 0 | 1 | 1 |
 | P10 | 7 | 19 | 5 | 2 | 0 | 0 | 0 | 0 | 0 |
 | P11 | 3 | 6 | 2 | 2 | 0 | 0 | 0 | 0 | 0 |
 | P12 | 8 | 6 | 1 | 0 | 0 | 0 | 0 | 0 | 2 |
@@ -28,7 +28,7 @@ This is a catalog-data quality baseline, not a claim that every issue is an erro
 | P21 | 6 | 16 | 4 | 3 | 0 | 1 | 2 | 1 | 0 |
 | P22 | 7 | 15 | 4 | 1 | 0 | 2 | 2 | 1 | 0 |
 | P23 | 7 | 7 | 5 | 1 | 0 | 0 | 0 | 0 | 0 |
-| **Total** | **100** | **152** | **48** | **21** | **1** | **13** | **18** | **5** | **4** |
+| **Total** | **100** | **152** | **48** | **21** | **0** | **13** | **18** | **5** | **4** |
 
 Totals for missing-text groups, asset references and answer sources count exercise groups; the 182 figure counts individual item slots.
 
@@ -37,7 +37,7 @@ Totals for missing-text groups, asset references and answer sources count exerci
 ### P0 — Confirmed catalog defects or blockers
 
 1. **P12 E1–E8 now have source-checked task text and instructions.** The six empty item slots in E5 are intentional learner-generated question slots (three present-continuous, three present-simple), not missing fixed prompts. All eight exercise groups have no current audit issue codes; this does not itself prove the live browser UI renders every task correctly.
-2. **All 13 exercises marked `needs_audio` lack a playable `audio_asset_ref`.** P9 Exercise 2 (`CPS-U1-P9-LISTENINGPART2-E2`) also lacks a track label (`audio_ref`). The Supabase project currently has no storage buckets or audio objects. Track names such as Track 02/03 are labels, not playable files; P14 Track 03 is explicitly noted as `.lis` with browser compatibility unverified.
+2. **All 13 exercises marked `needs_audio` lack a playable `audio_asset_ref`.** P9 Exercises 2–3 now share the verified Track 02 label, but both still lack a playable `audio_asset_ref`. The Supabase project currently has no storage buckets or audio objects. Track names such as Track 02/03 are labels, not playable files; P14 Track 03 is explicitly noted as `.lis` with browser compatibility unverified.
 3. **21 exercise groups need images but have no `image_ref`.** The new columns are intentionally blank until an actual source asset is verified.
 4. **18 groups use third-party teacher-book text without official-answer verification.** These answers must not silently become official keys or unlock automatic scoring.
 
