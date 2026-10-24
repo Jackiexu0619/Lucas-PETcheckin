@@ -5,5 +5,5 @@
   "display": "standalone",
   "background_color": "#f4f8ff",
   "theme_color": "#1477ef",
-  "description": "Lucas PET v0.5.12.8：自动配置 AI 服务地址，保留共享访问码；修复缓存更新。"
+  "description": "Lucas PET v0.5.12.9：修复 AI 服务地址初始化与持久化，保留共享访问码。"
 }
