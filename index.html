@@ -1135,7 +1135,7 @@ async function autoEvidenceDiagnosis(){
   const existingPanel=document.getElementById(panelId);
   if(existingPanel?.dataset.state==='running'||existingPanel?.dataset.state==='done')return;
   const cutoff=Date.now()-14*86400000;
-  const recent=state.tests.filter(t=>Number(t.ts)>=cutoff&&t.result==='wrong'&&t.itemType!=='structure');
+  const recent=state.tests.filter(t=>Number(t.ts)>=cutoff&&effectiveResult(t)==='wrong'&&t.itemType!=='structure');
   const byWord=new Map(),byReason=new Map();
   for(const t of recent){
     const k=String(t.wordId||t.en||'').trim();
