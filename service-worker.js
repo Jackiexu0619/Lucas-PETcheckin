@@ -1,4 +1,4 @@
-const CACHE='lucas-pet-v0.5.13.4-collocation-nav-r3';
+const CACHE='lucas-pet-v0.5.13.4-ai-daily-trial-r4';
 const ASSETS=['./index.html','./manifest.webmanifest'];
 self.addEventListener('install',e=>{
   self.skipWaiting();
