@@ -3511,7 +3511,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 (()=>{'use strict';
  const API='https://gemzboxhkkrfjqresxjt.supabase.co/functions/v1/pet-ai-daily';
  const el=id=>document.getElementById(id);
- const esc=v=>String(v??'').replace(/[&<>"']/g,x=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','"':'&quot;'}[x]));
+ const esc=v=>String(v??'').replace(/[&<>"]/g,x=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[x]));
  const date=()=>new Date(Date.now()+8*3600000).toISOString().slice(0,10);
  let busy=false,base=[],extras=[],submitted=0;
  const slot=()=>el('petAiDailyTrialBody');
