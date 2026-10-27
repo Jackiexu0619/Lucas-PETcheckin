@@ -93,6 +93,20 @@ Deno.serve(async req=>{
    if(changed.length!==1)return reply(409,{error:'concurrent_submission'},origin);
    return reply(200,{ok:true,correct:results.filter((v:any)=>v.correct).length,graded:results,followupQuestions:extra.map((q:any,i:number)=>({id:'q'+(i+4),type:q.type,skill:q.skill,question:q.question,options:q.options})),done:extra.length===0},origin);
   }
+  if(x.action==='submit_extra'){
+   if(existing.length!==1)return reply(404,{error:'plan_not_found'},origin);
+   const row=existing[0],extras=row.extra_questions;
+   if(row.submitted_answers.length!==3)return reply(409,{error:'base_required_or_already_submitted'},origin);
+   if(!Array.isArray(extras)||extras.length===0)return reply(409,{error:'no_extra'},origin);
+   if(!Array.isArray(x.answers)||x.answers.length!==extras.length||x.answers.some((v:any)=>!Number.isInteger(v)||v<0||v>3))return reply(400,{error:'answer_shape'},origin);
+   const added=extras.map((q:any,i:number)=>({id:'q'+(i+4),skill:q.skill,selected:x.answers[i],correct:x.answers[i]===q.correctIndex,correctIndex:q.correctIndex,explanation:q.explanation}));
+   const newAnswers=[...row.submitted_answers,...added];
+   const changed=await db('pet_ai_daily_practice','PATCH',{
+     profile_id:'eq.'+profile,session_date:'eq.'+x.date,submitted_answers:'eq.'+JSON.stringify(row.submitted_answers)
+   },{submitted_answers:newAnswers,updated_at:new Date().toISOString()});
+   if(changed.length!==1)return reply(409,{error:'concurrent_submission'},origin);
+   return reply(200,{ok:true,graded:added,correct:added.filter((v:any)=>v.correct).length,done:true},origin);
+  }
   return reply(400,{error:'action'},origin);
  }catch(e){console.error('daily practice',e instanceof Error?e.message:'unknown');return reply(502,{error:'ai_daily_unavailable'},origin)}
 });
