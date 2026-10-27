@@ -1208,7 +1208,47 @@ async function autoEvidenceDiagnosis(){
 }
 window.petAutoEvidenceDiagnosis=autoEvidenceDiagnosis;
 
-function finish(){testCard.classList.add('hidden');result.classList.remove('hidden');let ok=records.filter(x=>effectiveResult(x)!=='wrong'),a=records.length?ok.length/records.length:0,r=avg(ok.map(effectiveRt)),wrong=records.filter(x=>effectiveResult(x)==='wrong'),spAfter=smartPlanSummary(),remainAfter=spAfter.e.length+spAfter.z.length+spAfter.s.length;let rows=records.map(x=>{let isStruct=x.itemType==='structure',w=isStruct?null:wordById(x.wordId),pos=isStruct?'搭配':String(w?.pos||'').trim()||'未标注';return`<tr><td><b>${esc(x.en)}</b>${isStruct?'<div class="small">固定搭配</div>':''}</td><td>${isStruct?'<span class="badge pos">搭配</span>':`<span class="badge pos">${esc(pos)}</span>`}</td><td>${x.mode==='structure_e2z'?'搭配英→中':x.mode==='e2z'?'英→中':'中→英'}</td><td class="res-${x.result}">${resultLabel(x.result)}</td><td>${Number(x.rt).toFixed(1)}s${x.excludeRt?'<div class="small">已剔除</div>':''}</td><td>${isStruct?'—':(x.replays||0)}</td><td>${x.mode==='z2e'?pronLabel(x.pronunciation):'—'}</td><td>${esc(x.reason||'—')}</td></tr>`}).join('');result.innerHTML=`<h2>本次完成</h2><div class="grid"><div class="metric"><div class="k">正确/慢合计</div><div class="v">${pct(a)}</div></div><div class="metric"><div class="k">有效平均反应</div><div class="v">${isFinite(r)?r.toFixed(1)+'s':'—'}</div></div></div><div class="small">正确 ${records.filter(x=>x.result==='correct').length} · 慢 ${records.filter(x=>x.result==='slow').length} · 错误 ${records.filter(x=>x.result==='wrong').length}</div><div style="overflow-x:auto"><table class="resultTable"><thead><tr><th>项目</th><th>词性</th><th>方向</th><th>结果</th><th>反应</th><th>重听</th><th>发音</th><th>原因</th></tr></thead><tbody>${rows}</tbody></table></div>${wrong.length?`<div class="gap"></div><div class="warning">本轮 ${wrong.length} 个错项已经自动安排到下一复查日。今天不会再次自动加入测试，避免短时记忆造成“假掌握”。</div>`:''}${remainAfter?`<div class="gap"></div><div class="notice">今日智能测试还剩 <b>${remainAfter}</b> 个：英→中单词 ${spAfter.e.length} 个，固定搭配 ${spAfter.s.length} 个，中→英单词 ${spAfter.z.length} 个。</div><div class="gap"></div><button class="primary wide" onclick="continueSmartTest()">继续清测试红点</button>`:`<div class="gap"></div><div class="notice">✅ 今日智能测试已全部完成，测试红点已清零。</div>`}<div class="gap"></div><button class="soft wide" onclick="openHistoryFromResult()">查看全部测试记录</button>`;save();if(!remainAfter)queueMicrotask(()=>window.petWarmupAfterTest?.());queueMicrotask(()=>window.petAutoEvidenceDiagnosis?.());}
+function compactTestFinishView(){
+  // Presentation-only: preserve all record data and existing submission/AI flow.
+  const resultPanel=document.getElementById('result');
+  const warmup=document.getElementById('petWarmupSlot');
+  const dailyRecap=document.getElementById('dailyTestRecap');
+  if(!resultPanel||!warmup||!dailyRecap)return;
+  const table=resultPanel.querySelector('table.resultTable');
+  if(table){
+    const tableBox=table.parentElement;
+    const details=document.createElement('details');
+    details.className='pet-finish-details';
+    details.style.cssText='margin-top:12px;padding:12px;border:1px solid #dce7ef;border-radius:12px';
+    const summary=document.createElement('summary');
+    summary.textContent='查看本次逐题详情';
+    summary.style.cssText='cursor:pointer;font-weight:700';
+    details.appendChild(summary);
+    tableBox.parentNode.insertBefore(details,tableBox);
+    details.appendChild(tableBox);
+    const historyButton=Array.from(resultPanel.querySelectorAll('button')).find(b=>b.textContent.includes('查看全部测试记录'));
+    if(historyButton){details.appendChild(historyButton)}
+  }
+  // Daily recap has its own renderer. Keep its DOM id intact but collapse it.
+  let recapDetails=document.getElementById('petFinishDailyRecapDetails');
+  if(!recapDetails){
+    recapDetails=document.createElement('details');
+    recapDetails.id='petFinishDailyRecapDetails';
+    recapDetails.className='pet-finish-details';
+    recapDetails.style.cssText='margin-top:12px;padding:12px;border:1px solid #dce7ef;border-radius:12px';
+    const summary=document.createElement('summary');
+    summary.textContent='查看今日完整 Test 汇总与历史逐题记录';
+    summary.style.cssText='cursor:pointer;font-weight:700';
+    recapDetails.appendChild(summary);
+    dailyRecap.parentNode.insertBefore(recapDetails,dailyRecap);
+    recapDetails.appendChild(dailyRecap);
+  }
+  // The three-question practice comes before the long daily recap.
+  recapDetails.parentNode.insertBefore(warmup,recapDetails);
+  resultPanel.scrollIntoView({block:'start',behavior:'smooth'});
+}
+
+function finish(){testCard.classList.add('hidden');result.classList.remove('hidden');let ok=records.filter(x=>effectiveResult(x)!=='wrong'),a=records.length?ok.length/records.length:0,r=avg(ok.map(effectiveRt)),wrong=records.filter(x=>effectiveResult(x)==='wrong'),spAfter=smartPlanSummary(),remainAfter=spAfter.e.length+spAfter.z.length+spAfter.s.length;let rows=records.map(x=>{let isStruct=x.itemType==='structure',w=isStruct?null:wordById(x.wordId),pos=isStruct?'搭配':String(w?.pos||'').trim()||'未标注';return`<tr><td><b>${esc(x.en)}</b>${isStruct?'<div class="small">固定搭配</div>':''}</td><td>${isStruct?'<span class="badge pos">搭配</span>':`<span class="badge pos">${esc(pos)}</span>`}</td><td>${x.mode==='structure_e2z'?'搭配英→中':x.mode==='e2z'?'英→中':'中→英'}</td><td class="res-${x.result}">${resultLabel(x.result)}</td><td>${Number(x.rt).toFixed(1)}s${x.excludeRt?'<div class="small">已剔除</div>':''}</td><td>${isStruct?'—':(x.replays||0)}</td><td>${x.mode==='z2e'?pronLabel(x.pronunciation):'—'}</td><td>${esc(x.reason||'—')}</td></tr>`}).join('');result.innerHTML=`<h2>本次完成</h2><div class="grid"><div class="metric"><div class="k">正确/慢合计</div><div class="v">${pct(a)}</div></div><div class="metric"><div class="k">有效平均反应</div><div class="v">${isFinite(r)?r.toFixed(1)+'s':'—'}</div></div></div><div class="small">正确 ${records.filter(x=>x.result==='correct').length} · 慢 ${records.filter(x=>x.result==='slow').length} · 错误 ${records.filter(x=>x.result==='wrong').length}</div><div style="overflow-x:auto"><table class="resultTable"><thead><tr><th>项目</th><th>词性</th><th>方向</th><th>结果</th><th>反应</th><th>重听</th><th>发音</th><th>原因</th></tr></thead><tbody>${rows}</tbody></table></div>${wrong.length?`<div class="gap"></div><div class="warning">本轮 ${wrong.length} 个错项已经自动安排到下一复查日。今天不会再次自动加入测试，避免短时记忆造成“假掌握”。</div>`:''}${remainAfter?`<div class="gap"></div><div class="notice">今日智能测试还剩 <b>${remainAfter}</b> 个：英→中单词 ${spAfter.e.length} 个，固定搭配 ${spAfter.s.length} 个，中→英单词 ${spAfter.z.length} 个。</div><div class="gap"></div><button class="primary wide" onclick="continueSmartTest()">继续清测试红点</button>`:`<div class="gap"></div><div class="notice">✅ 今日智能测试已全部完成，测试红点已清零。</div>`}<div class="gap"></div><button class="soft wide" onclick="openHistoryFromResult()">查看全部测试记录</button>`;compactTestFinishView();save();if(!remainAfter)queueMicrotask(()=>window.petWarmupAfterTest?.());queueMicrotask(()=>window.petAutoEvidenceDiagnosis?.());}
 /* ===== v0.5.10.9 测试结果显示词性：结束 ===== */
 function retestWrong(){let wrong=records.filter(x=>effectiveResult(x)==='wrong');if(!wrong.length)return;session=wrong.map(x=>x.itemType==='structure'?structureById(x.structureId)&&structureTestItem(structureById(x.structureId)):wordById(x.wordId)&&wordTestItem(wordById(x.wordId))).filter(Boolean);showSecById('test');currentMode=wrong.some(x=>x.itemType==='structure')?'e2z':currentMode;mode.value=currentMode;cur=-1;records=[];result.classList.add('hidden');testCard.classList.remove('hidden');nextQ()}
 function retestOne(id,m){startSpecific([id],m)}
