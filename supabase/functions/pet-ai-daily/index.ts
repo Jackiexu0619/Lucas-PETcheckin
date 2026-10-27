@@ -66,7 +66,7 @@ Deno.serve(async req=>{
   const query={select:'*',profile_id:'eq.'+profile,session_date:'eq.'+x.date,limit:'1'};
   const existing=await db('pet_ai_daily_practice','GET',query);
   if(x.action==='questions'){
-   if(existing.length){const row=existing[0];return reply(200,{ok:true,date:x.date,questions:publicQuestions([...row.base_questions,...row.extra_questions]),answerCount:row.submitted_answers.length,completed:row.submitted_answers.length>=row.base_questions.length+row.extra_questions.length},origin)}
+   if(existing.length){const row=existing[0];const all=[...row.base_questions,...row.extra_questions];const answers=Array.isArray(row.submitted_answers)?row.submitted_answers:[];const graded=answers.map((a:any,i:number)=>({id:a.id,skill:a.skill,selected:a.selected,correct:a.correct,correctIndex:all[i]?.correctIndex,explanation:all[i]?.explanation}));return reply(200,{ok:true,date:x.date,questions:publicQuestions(all),answerCount:answers.length,graded,completed:answers.length>=all.length},origin)}
    const states=await db('pet_current_state','GET',{select:'payload',profile_id:'eq.'+profile,limit:'1'});
    if(!states.length)return reply(404,{error:'state_not_found'},origin);
    const previous=await db('pet_ai_daily_practice','GET',{select:'submitted_answers',profile_id:'eq.'+profile,order:'session_date.desc',limit:'30'});
