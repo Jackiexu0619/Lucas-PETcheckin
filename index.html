@@ -3507,6 +3507,16 @@ function init(){if(!el('petWarmupSlot'))return;render();const links=document.que
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
 })();
 </script>
+<style id="pet-ai-choice-layout">
+#petAiDailyTrial .pet-ai-options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:12px}
+#petAiDailyTrial .pet-ai-option{display:flex;align-items:center;gap:10px;min-height:60px;padding:12px 14px;box-sizing:border-box;border:2px solid #dce5f3;border-radius:14px;background:#fff;color:#1f344f;cursor:pointer;font-size:16px;font-weight:600;line-height:1.4;min-width:0}
+#petAiDailyTrial .pet-ai-option input[type=radio]{width:20px;height:20px;flex:0 0 20px;margin:0;accent-color:#1677e8}
+#petAiDailyTrial .pet-ai-letter{display:inline-grid;place-items:center;width:25px;height:25px;flex:0 0 25px;border-radius:7px;background:#edf4ff;color:#1f5aab;font-weight:800;font-size:13px}
+#petAiDailyTrial .pet-ai-option-text{min-width:0;overflow-wrap:anywhere}
+#petAiDailyTrial .pet-ai-option:has(input:checked){background:#eaf4ff;border-color:#1677e8;box-shadow:0 0 0 1px #1677e8}
+#petAiDailyTrial .pet-ai-question{margin-bottom:22px}
+@media(max-width:680px){#petAiDailyTrial .pet-ai-options{grid-template-columns:1fr;gap:9px}#petAiDailyTrial .pet-ai-option{min-height:54px}}
+</style>
 <script id="petAiDailyTrialClient">
 (()=>{'use strict';
  const API='https://gemzboxhkkrfjqresxjt.supabase.co/functions/v1/pet-ai-daily';
@@ -3527,7 +3537,13 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
  }
  function choices(q,i,group){
    const name='pet_ai_'+group+'_'+i;
-   return '<div class="wu-q"><div class="small">第 '+(group==='base'?i+1:i+4)+' 题 · '+esc(q.skill)+'</div><p><b>'+esc(q.question)+'</b></p><div class="wu-choices">'+q.options.map((o,k)=>'<label class="wu-choice"><input type="radio" name="'+name+'" value="'+k+'"> '+esc(o)+'</label>').join('')+'</div></div>';
+   // Stable per-question display order: submit original option indices to the server.
+   // This also reshuffles already-frozen daily plans without changing their answer keys.
+   const order=q.options.map((_,k)=>k);
+   const salt=String(q.question||'')+date()+'pet-option-order';
+   let h=2166136261;for(let j=0;j<salt.length;j++)h=Math.imul(h^salt.charCodeAt(j),16777619)>>>0;
+   for(let j=order.length-1;j>0;j--){h=Math.imul(h^h>>>13,16777619)>>>0;const k=h%(j+1);[order[j],order[k]]=[order[k],order[j]];}
+   return '<div class="wu-q pet-ai-question"><div class="small">第 '+(group==='base'?i+1:i+4)+' 题</div><p><b>'+esc(q.question)+'</b></p><div class="pet-ai-options">'+order.map((original,k)=>'<label class="pet-ai-option"><input type="radio" name="'+name+'" value="'+original+'"><span class="pet-ai-letter">'+String.fromCharCode(65+k)+'</span><span class="pet-ai-option-text">'+esc(q.options[original])+'</span></label>').join('')+'</div></div>';
  }
  function questions(group){
    const list=group==='base'?base:extras;
