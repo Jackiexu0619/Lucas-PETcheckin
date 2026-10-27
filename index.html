@@ -3564,9 +3564,12 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
      const list=res.questions||[];
      if(list.length<3)throw Error('今天的题目数量不完整');
      base=list.slice(0,3);extras=list.slice(3);submitted=Number(res.answerCount||0);
-     if(res.completed)show('<p class="small">今日 AI 专项已完成，成绩已保存在云端。明天将根据真实表现继续调整题目。</p>');
-     else if(submitted>=3&&extras.length)questions('extra');
-     else if(submitted>=3)show('<p class="small">今日基础三题已经提交，无需补练。</p>');
+     const grades=Array.isArray(res.graded)?res.graded:[];
+     const recap=grades.length?'<details style="margin:8px 0"><summary>查看已完成题目与解析 · '+grades.filter(r=>r.correct).length+'/'+grades.length+'</summary>'+
+       grades.map((r,i)=>'<div class="wu-feedback">第 '+(i+1)+' 题：'+(r.correct?'正确':'错误')+' · 正确选项 '+(Number(r.correctIndex)+1)+'<p>'+esc(r.explanation)+'</p></div>').join('')+'</details>':'';
+     if(res.completed)show('<p class="small">今日 AI 专项已完成，成绩已保存在云端。</p>'+recap);
+     else if(submitted>=3&&extras.length){questions('extra');slot().insertAdjacentHTML('afterbegin',recap);}
+     else if(submitted>=3)show('<p class="small">今日基础三题已经提交，无需补练。</p>'+recap);
      else questions('base');
    }catch(e){show('<p class="small">加载失败：'+esc(e.message)+'。不影响原有 Review、Test。</p><button class="soft" id="petAiRetry">重试</button>');el('petAiRetry').onclick=load;}
    finally{busy=false}
