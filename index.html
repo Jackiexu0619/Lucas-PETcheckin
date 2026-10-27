@@ -407,7 +407,12 @@ body{background:
 <div id="pronArea" class="hidden" style="width:100%;margin-top:10px"><div class="small" style="margin-top:7px">记录 Lucas 刚才的发音：</div><div class="pronBtns"><button id="pronGood" class="good" onclick="setPron('correct')">发音正确</button><button id="pronPractice" class="slow" onclick="setPron('practice')">需要练习</button></div></div>
 <div id="gradeBtns" class="answerBtns hidden"><button class="good" onclick="mark('correct')">词义正确</button><button class="slow" onclick="mark('slow')">反应较慢</button><button class="bad" onclick="mark('wrong')">回答错误</button></div>
 <div id="reasonPanel" class="hidden" style="width:100%;margin-top:14px"><div class="small">给这次慢/错标一个原因（可跳过）：</div><div class="reasonBtns" id="reasonBtns"></div><button class="gray wide" style="margin-top:8px" onclick="finishPendingRecord('')">暂不标记</button></div>
-</div><div id="result" class="card hidden"></div><div class="gap"></div><div id="dailyTestRecap" class="card" aria-live="polite"></div><div id="petWarmupSlot" class="card" aria-live="polite"><h2>每日旧知识热身 · 3 题</h2><p class="small">完成今日词汇 Test 后，直接在这里做 3 道旧知巩固；答完自动判分并提供讲解。</p><div id="petWarmupArea"><p class="small">正在准备……</p></div></div></section>
+</div><div id="result" class="card hidden"></div><div class="gap"></div><div id="petAiDailyTrial" class="card" aria-live="polite" style="border:1px solid #dbeafe">
+ <h2>AI 词汇专项 · 试运行</h2>
+ <p class="small">每天基础 3 题，答错时最多补练 2 题。独立保存，不计入正式 Test；旧三题目前继续保留，切换前用于验收。</p>
+ <div id="petAiDailyTrialBody"><button type="button" class="soft" id="petAiDailyLoad">读取今天的 AI 三题</button></div>
+</div>
+<div id="dailyTestRecap" class="card" aria-live="polite"></div><div id="petWarmupSlot" class="card" aria-live="polite"><h2>每日旧知识热身 · 3 题</h2><p class="small">完成今日词汇 Test 后，直接在这里做 3 道旧知巩固；答完自动判分并提供讲解。</p><div id="petWarmupArea"><p class="small">正在准备……</p></div></div></section>
 
 <section id="review" class="section" hidden><h1>今日复习</h1><div class="sub">每天先 Review、再 Test。默认最多 12 个词，优先顺序：①新加入的陌生词；②之前答错/不稳定且到期的词；③以前会、但到了维护复查期的词。当天 Review 过的词不会再进入当天 Test。</div><div id="reviewClearSummary" class="notice" style="margin-top:10px"></div><div class="gap"></div><div class="card"><div class="reviewStudyToolbar"><div><h2 style="margin-bottom:2px">逐词复习</h2><div class="small">每张卡至少停留 5 秒，并且必须先揭晓答案，才能完成并进入下一词。揭晓答案不会自动算作完成复习。</div></div></div><div id="reviewUnified"></div></div><div class="gap"></div><div id="dailyReviewRecap" class="card" aria-live="polite"></div></section>
 
@@ -3500,6 +3505,73 @@ function init(){if(!el('petWarmupSlot'))return;render();const links=document.que
  if(!pendingWords()&&key())load(true);
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
+})();
+</script>
+<script id="petAiDailyTrialClient">
+(()=>{'use strict';
+ const API='https://gemzboxhkkrfjqresxjt.supabase.co/functions/v1/pet-ai-daily';
+ const el=id=>document.getElementById(id);
+ const esc=v=>String(v??'').replace(/[&<>"']/g,x=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','"':'&quot;'}[x]));
+ const date=()=>new Date(Date.now()+8*3600000).toISOString().slice(0,10);
+ let busy=false,base=[],extras=[],submitted=0;
+ const slot=()=>el('petAiDailyTrialBody');
+ const show=html=>{if(slot())slot().innerHTML=html};
+ const token=()=>String(window.petSharedAccess?.get?.()||el('aiAccess')?.value||el('petCatalogToken')?.value||'').trim();
+ const recovery=()=>String(localStorage.getItem('pet_checkin_cloud_recovery_key')||'').trim();
+ async function call(action,answers){
+   if(!token()||!recovery())throw Error('请先确认 AI 访问码和已启用的云端同步恢复码');
+   const response=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json','x-ai-access':token()},body:JSON.stringify({action,date:date(),recovery_key:recovery(),...(answers?{answers}:{})}),cache:'no-store'});
+   const data=await response.json().catch(()=>({}));
+   if(!response.ok)throw Error(data.error||('HTTP '+response.status));
+   return data;
+ }
+ function choices(q,i,group){
+   const name='pet_ai_'+group+'_'+i;
+   return '<div class="wu-q"><div class="small">第 '+(group==='base'?i+1:i+4)+' 题 · '+esc(q.skill)+'</div><p><b>'+esc(q.question)+'</b></p><div class="wu-choices">'+q.options.map((o,k)=>'<label class="wu-choice"><input type="radio" name="'+name+'" value="'+k+'"> '+esc(o)+'</label>').join('')+'</div></div>';
+ }
+ function questions(group){
+   const list=group==='base'?base:extras;
+   show('<p class="small">请先独立完成，再统一提交显示正确答案与解析。</p>'+list.map((q,i)=>choices(q,i,group)).join('')+'<button class="primary wide" type="button" id="petAiSubmit">'+(group==='base'?'提交基础三题':'提交补练题')+'</button><p id="petAiDailyMessage" class="small"></p>');
+   el('petAiSubmit').onclick=()=>submit(group);
+ }
+ async function submit(group){
+   if(busy)return;
+   const list=group==='base'?base:extras;
+   const answers=list.map((q,i)=>{
+     const selected=slot().querySelector('input[name="pet_ai_'+group+'_'+i+'"]:checked');
+     return selected?Number(selected.value):null;
+   });
+   if(answers.some(v=>v===null)){el('petAiDailyMessage').textContent='请先完成全部题目';return}
+   busy=true;el('petAiSubmit').disabled=true;el('petAiDailyMessage').textContent='正在提交并判分…';
+   try{
+     const result=await call(group==='base'?'submit':'submit_extra',answers);
+     submitted+=answers.length;
+     let feedback='<div class="notice">本轮答对 '+result.correct+' / '+answers.length+' 题</div>';
+     feedback+=(result.graded||[]).map((r,i)=>'<div class="wu-feedback">第 '+(i+1)+' 题：'+(r.correct?'正确':'错误')+' · 正确选项 '+(r.correctIndex+1)+'<p>'+esc(r.explanation)+'</p></div>').join('');
+     if(group==='base'&&result.followupQuestions?.length){
+       extras=result.followupQuestions;
+       show(feedback+'<button type="button" class="primary wide" id="petAiGoExtra">继续针对性补练 · '+extras.length+' 题</button>');
+       el('petAiGoExtra').onclick=()=>questions('extra');
+     }else show(feedback+'<p class="small">今日 AI 专项已完成。正式 Test 记录未受影响。</p>');
+   }catch(e){el('petAiDailyMessage').textContent='未提交成功：'+esc(e.message);el('petAiSubmit').disabled=false;}
+   finally{busy=false}
+ }
+ async function load(){
+   if(busy)return;busy=true;
+   show('<p class="small">读取云端 AI 题目中……</p>');
+   try{
+     const res=await call('questions');
+     const list=res.questions||[];
+     if(list.length<3)throw Error('今天的题目数量不完整');
+     base=list.slice(0,3);extras=list.slice(3);submitted=Number(res.answerCount||0);
+     if(submitted>=3&&extras.length===0)show('<p class="small">今日基础三题已经提交。需要查看判分明细请在后续学习报告中查看。</p>');
+     else if(submitted>=3&&extras.length)questions('extra');
+     else questions('base');
+   }catch(e){show('<p class="small">加载失败：'+esc(e.message)+'。不影响原有 Review、Test。</p><button class="soft" id="petAiRetry">重试</button>');el('petAiRetry').onclick=load;}
+   finally{busy=false}
+ }
+ function init(){if(!el('petAiDailyTrial'))return;el('petAiDailyLoad').onclick=load;}
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
 })();
 </script>
 </body></html>
