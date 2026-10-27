@@ -3442,7 +3442,7 @@ window.petExport=()=>{const blob=new Blob([JSON.stringify({product:'lucas-pet',b
        const click=b.getAttribute('onclick')||'';
        if(click.includes("'learnHub'"))b.innerHTML='<span class="navIcon">▤</span><span>教材训练</span>';
        if(click.includes("'schoolStudy'"))b.style.display='none';
-       if(click.includes("'structures'"))b.style.display='none';
+       if(click.includes("'structures'"))b.style.display=''; // Core feature: keep collocations visible
        if(click.includes("'history'"))b.style.display='none';
        if(click.includes("'stats'"))b.innerHTML='<span class="navIcon">▥</span><span>学习档案</span>';
        if(click.includes("'data'"))b.innerHTML='<span class="navIcon">⚙</span><span>设置</span>';
