@@ -670,3 +670,12 @@ Cambridge 官方产品目录列明本书有在线可下载的 Student’s Book a
 - **部署：** pet-sync Edge Function v8 已 ACTIVE；未更改 JWT 模式、访问码机制、数据表结构与生产前端。
 - **待实测：** 目前未拥有 Lucas 设备端的恢复码，所以无法代发真实 `pull` 请求；真实云端回读尚不能声称恢复完成。首次已授权设备正常同步后核对 `structures=65` 且 `tests>=984`，并检查 `payload_hash` 同步一致。
 - **注意：** 本轮是针对这批历史遗失素材的自修复，不是对任意增删条目进行全面冲突解决。之后须增加用户主动删除区分及回归验收；不会把这轮视为多设备同步的全面根治。
+
+## 2026-10-27 词汇精简版：AI 每日三题服务端第 1 轮
+
+- 核心范围：原 Review/Test 与搭配库保持不变。新增独立 AI 每日三题服务，基础 3 题 + 根据正确率最多 2 道额外练习，当日最多 5 题。
+- 云端创建 `pet_ai_daily_practice`，复合主键 `profile_id, session_date`，JSONB 约束基础 3 题、额外不超过 2 题、答题总数不超过 5；启用 RLS，移除 anon/authenticated 数据表权限；不修改 `pet_current_state` 正式词汇训练 JSON。
+- 新增 `supabase/functions/pet-ai-daily/index.ts` 并部署 Edge Function **v1 ACTIVE**；接口 `status/questions/submit/submit_extra`。使用既有 AI 访问码和设备云端恢复码双重校验，按北京时间当天且绑定 profile；读取单词/固定搭配当前状态及近 30 日正式历史，对薄弱项进行优先排序，调用已配置 DeepSeek，严格 JSON 校验，保存当日生成题目；返回客户端题面时不泄露标准答案，提交后服务端判分。支持基础提交与 1–2 道后续补练。
+- `questions` 首次保存后再次读取、按 `profile_id+date` 唯一约束避免双设备重复记录。提交条件性更新避免重复交卷。缺失/不合格 AI 输出则报错，不悄悄回退为旧题库。
+- 验证：Supabase 表列表显示新表 RLS 开启（0 行，尚未生成真实题）；Edge Function v1 ACTIVE 且存在 `submit_extra`。尚无带真实账号恢复码的端到端出题与判分验证；暂未连接生产前端；**旧每日 3 题及 AI 两题仍运行**。因此该阶段状态只能标注 **服务端基础完成、功能验收未完成**。
+- 下一项唯一任务：新增独立试运行入口，在非破坏性条件下完成真实账号全流程（出题→冻结→3 题提交→必要时补练→复测→跨设备与刷新验证）后，才切换正式入口并关闭旧两套重复训练。
