@@ -3496,10 +3496,8 @@ function render(){
 }
 async function load(force=false){if(busy)return;if(pendingWords()){render();return}if(!key()){render();return}busy=true;try{setUI('<p class="wu-message">正在从云端读取今日题目及已完成记录……</p>');const [p,h]=await Promise.all([call({action:'questions',date:date()}),call({action:'history'})]);questions=p.questions||[];records=h.records||[];setId=p.set_id||'adapt-'+date();loaded=true;render()}catch(e){setUI('<p class="wu-message">读取失败：'+esc(e.message)+'。词汇 Test 不受影响。</p><button type="button" class="soft" id="wuTry">重试加载</button>');el('wuTry').onclick=()=>load(true)}finally{busy=false}}
 async function submit(){const answers=questions.map(q=>({id:q.id,answer:el('petWarmupSlot').querySelector('input[name="pw_'+q.id+'"]:checked')?.value||''}));if(answers.some(x=>!x.answer)){message('请先答完 3 道题');return}el('wuSubmit').disabled=true;message('正在自动判分并云端保存……');try{let res=await call({action:'submit',date:date(),set_id:setId,answers});let results=new Map((res.results||[]).map(x=>[x.id,x]));let html='<p class="wu-message">✅ 今日热身完成，答对 '+res.correct+'/3。可在此回看解析。</p>';for(const [i,q] of questions.entries()){const r=results.get(q.id);html+='<div class="wu-q"><span class="small">第 '+(i+1)+' 题 · '+esc(q.skill)+'</span><p><b>'+esc(q.q)+'</b></p><div class="wu-feedback">你的答案：'+esc(answers[i].answer)+' · '+(r?.correct?'✓ 正确':'✗ 错误，正确答案：'+esc(r?.answer))+'<p>'+esc(r?.why||'')+'</p></div></div>'}setUI(html);await load(true)}catch(e){message('提交失败：'+e.message+'。已保留所选答案，可重试。');el('wuSubmit').disabled=false}}
-window.petWarmupAfterTest=()=>{if(pendingWords())return;const slot=el('petWarmupSlot');if(!slot)return;load(true);setTimeout(()=>slot.scrollIntoView({behavior:'smooth',block:'start'}),120)};
-function init(){if(!el('petWarmupSlot'))return;render();const links=document.querySelectorAll('[onclick*="showSecById(\'test\')"]');for(const link of links){link.addEventListener('click',()=>setTimeout(()=>{if(!pendingWords())load(true);else render()},200))}
- if(!pendingWords()&&key())load(true);
-}
+// Legacy fixed warmup is disabled: retain historical code/data, but do not render or fetch.
+function init(){return;}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
 })();
 </script>
