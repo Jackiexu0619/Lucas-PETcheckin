@@ -3557,7 +3557,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
      const result=await call(group==='base'?'submit':'submit_extra',answers);
      submitted+=answers.length;
      let feedback='<div class="notice">本轮答对 '+result.correct+' / '+answers.length+' 题</div>';
-     feedback+=(result.graded||[]).map((r,i)=>'<div class="wu-feedback">第 '+(i+1)+' 题：'+(r.correct?'正确':'错误')+' · 正确选项 '+(r.correctIndex+1)+'<p>'+esc(r.explanation)+'</p></div>').join('');
+     feedback+=(result.graded||[]).map((r,i)=>'<div class="wu-feedback">第 '+(i+1)+' 题：'+(r.correct?'正确':'错误')+' · 正确答案：'+esc(list[i]?.options?.[Number(r.correctIndex)]??'—')+'<p>'+esc(r.explanation)+'</p></div>').join('');
      if(group==='base'&&result.followupQuestions?.length){
        extras=result.followupQuestions;
        show(feedback+'<button type="button" class="primary wide" id="petAiGoExtra">继续针对性补练 · '+extras.length+' 题</button>');
@@ -3576,7 +3576,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
      base=list.slice(0,3);extras=list.slice(3);submitted=Number(res.answerCount||0);
      const grades=Array.isArray(res.graded)?res.graded:[];
      const recap=grades.length?'<details style="margin:8px 0"><summary>查看已完成题目与解析 · '+grades.filter(r=>r.correct).length+'/'+grades.length+'</summary>'+
-       grades.map((r,i)=>'<div class="wu-feedback">第 '+(i+1)+' 题：'+(r.correct?'正确':'错误')+' · 正确选项 '+(Number(r.correctIndex)+1)+'<p>'+esc(r.explanation)+'</p></div>').join('')+'</details>':'';
+       grades.map((r,i)=>'<div class="wu-feedback">第 '+(i+1)+' 题：'+(r.correct?'正确':'错误')+' · 正确答案：'+esc(list[i]?.options?.[Number(r.correctIndex)]??'—')+'<p>'+esc(r.explanation)+'</p></div>').join('')+'</details>':'';
      if(res.completed)show('<p class="small">今日 AI 专项已完成，成绩已保存在云端。</p>'+recap);
      else if(submitted>=3&&extras.length){questions('extra');slot().insertAdjacentHTML('afterbegin',recap);}
      else if(submitted>=3)show('<p class="small">今日基础三题已经提交，无需补练。</p>'+recap);
