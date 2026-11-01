@@ -123,7 +123,7 @@ Deno.serve(async req=>{
    if(!evidence.length)return reply(422,{error:'no_learned_vocabulary'},origin);
    const recentQuestions=questionHistory(previous);
    const generated=await generate(evidence,3,recentQuestions);
-   await db('pet_ai_daily_practice','POST',{},[{profile_id:profile,session_date:x.date,base_questions:generated,focus_evidence:{targets:evidence,source:'cloud_formal_tests',rotation:{cooldown_days:rotation.cooldownDays,available_targets:rotation.availableTargets,eligible_targets:rotation.eligibleTargets},history_stems_checked:recentQuestions.length},model:MODEL}],'resolution=ignore-duplicates,return=representation');
+   await db('pet_ai_daily_practice','POST',{},[{profile_id:profile,session_date:x.date,base_questions:generated,focus_evidence:{targets:evidence,source:'cloud_formal_tests',rotation:{cooldown_days:rotation.cooldownDays,available_targets:rotation.availableTargets,eligible_targets:rotation.eligibleTargets},history_stems_checked:Math.min(recentQuestions.length,24)},model:MODEL}],'resolution=ignore-duplicates,return=representation');
    const fresh=await db('pet_ai_daily_practice','GET',query);
    if(!fresh.length)throw Error('plan_not_saved');
    return reply(200,{ok:true,date:x.date,questions:publicQuestions(fresh[0].base_questions),answerCount:0,completed:false},origin);
