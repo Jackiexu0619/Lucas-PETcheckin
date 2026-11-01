@@ -25,7 +25,7 @@ function questionHistory(history:any[]){
  return rows;
 }
 function dayDistance(today:string,then:string){
- if(!/^\\d{4}-\\d{2}-\\d{2}$/.test(today)||!/^\\d{4}-\\d{2}-\\d{2}$/.test(then))return 999;
+ if(!/^\d{4}-\d{2}-\d{2}$/.test(today)||!/^\d{4}-\d{2}-\d{2}$/.test(then))return 999;
  return Math.max(0,Math.floor((Date.parse(today+'T00:00:00Z')-Date.parse(then+'T00:00:00Z'))/86400000));
 }
 function priority(data:any,history:any[],today:string,max=8){
@@ -33,7 +33,6 @@ function priority(data:any,history:any[],today:string,max=8){
  for(const w of data.words||[])if(w?.en)items.push({name:clip(w.en,80),kind:'word',mastery:w.mastery?.e2z||w.status||'unknown',id:w.id});
  for(const w of data.structures||[])if(w?.title)items.push({name:clip(w.title,80),kind:'structure',mastery:w.mastery||'unknown',id:w.id});
  const tests=Array.isArray(data.tests)?data.tests:[];
- const questions=questionHistory(history);
  const scored=items.map(v=>{
   const recent=tests.filter((t:any)=>t&&(v.kind==='structure'?t.structureId===v.id:t.wordId===v.id)&&Number(t.ts)>Date.now()-30*86400000);
   const wrong=recent.filter((t:any)=>t.result==='wrong').length;
@@ -88,7 +87,8 @@ async function generate(evidence:any[],count:number,previous:any[]=[]){
    if(!valid(output.questions,count))throw Error('invalid_generated_questions');
    const allowed=new Set(evidence.map(x=>x.name));if(!output.questions.every((q:any)=>allowed.has(q.skill)))throw Error('outside_learner_vocabulary');
    if(count>=2&&new Set(output.questions.map((q:any)=>q.skill)).size<Math.min(count,evidence.length))throw Error('repeated_target_in_set');
-   if(output.questions.some((q:any)=>repeatsRecent(q,avoid)))throw Error('repeated_recent_stem');
+   if(output.questions.some((q:any,i:number)=>repeatsRecent(q,[...avoid,...output.questions.slice(0,i)])))throw Error('repeated_recent_stem');
+   if(count===3&&new Set(output.questions.map((q:any)=>q.type)).size<2)throw Error('insufficient_question_type_mix');
    return output.questions.map((q:any)=>({type:q.type,skill:clip(q.skill,80),question:clip(q.question,460),options:q.options.map((v:any)=>clip(v,150)),correctIndex:q.correctIndex,explanation:clip(q.explanation,500)}));
   }catch(e){lastError=e instanceof Error?e.message:'generation_failed';}
   finally{clearTimeout(timeout);}
