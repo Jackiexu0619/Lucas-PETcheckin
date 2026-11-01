@@ -56,7 +56,7 @@ function priority(data:any,history:any[],today:string,max=8){
  const selected=eligible.slice(0,max).map(({name,kind,wrong,slow,pastWrong,mastery,lastSeen,daysSince,priority})=>({name,kind,wrong,slow,pastWrong,mastery,lastSeen,daysSince,priority}));
  return {targets:selected,cooldownDays,availableTargets:scored.length,eligibleTargets:eligible.length};
 }
-function normalizedTokens(value:string){return clip(value,460).toLowerCase().replace(/[^a-z0-9\\s]/g,' ').split(/\\s+/).filter((v:string)=>v.length>1);}
+function normalizedTokens(value:string){return clip(value,460).toLowerCase().replace(/[^a-z0-9\s]/g,' ').split(/\s+/).filter((v:string)=>v.length>1);}
 function similarity(a:string,b:string){
  const aa=new Set(normalizedTokens(a)),bb=new Set(normalizedTokens(b));
  if(!aa.size||!bb.size)return 0;
@@ -83,7 +83,8 @@ async function generate(evidence:any[],count:number,previous:any[]=[]){
    const r=await fetch(DS,{method:'POST',headers:{Authorization:'Bearer '+DSKEY,'Content-Type':'application/json'},body:JSON.stringify({model:MODEL,temperature:0.65,max_tokens:2000,response_format:{type:'json_object'},messages:[{role:'system',content:sys},{role:'user',content:JSON.stringify({eligible_targets:evidence,recent_questions_to_avoid:avoid,attempt_instruction:attempt?'The previous draft was too similar to recent questions. Produce clearly different sentence frames and contexts.':''})}]}),signal:controller.signal});
    if(!r.ok)throw Error('model_'+r.status);
    const j=await r.json();const content=j?.choices?.[0]?.message?.content;if(typeof content!=='string')throw Error('model_empty');
-   const output=JSON.parse(content.replace(/^\\`\\`\\`(?:json)?\\s*|\\s*\\`\\`\\`$/g,''));
+   const cleaned=content.replace(/^\x60{3}(?:json)?\s*|\s*\x60{3}$/g,'');
+   const output=JSON.parse(cleaned);
    if(!valid(output.questions,count))throw Error('invalid_generated_questions');
    const allowed=new Set(evidence.map(x=>x.name));if(!output.questions.every((q:any)=>allowed.has(q.skill)))throw Error('outside_learner_vocabulary');
    if(count>=2&&new Set(output.questions.map((q:any)=>q.skill)).size<Math.min(count,evidence.length))throw Error('repeated_target_in_set');
