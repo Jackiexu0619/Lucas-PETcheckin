@@ -19,33 +19,80 @@ async function db(table:string,method:string,query:Record<string,string>,body?:u
 const clip=(v:unknown,n=260)=>String(v??'').slice(0,n).trim();
 function valid(questions:any[],count:number){return Array.isArray(questions)&&questions.length===count&&questions.every((q:any)=>q&&['choice','cloze'].includes(q.type)&&clip(q.question).length>=10&&clip(q.skill).length>0&&clip(q.explanation).length>0&&Array.isArray(q.options)&&q.options.length>=3&&q.options.length<=4&&new Set(q.options.map((o:unknown)=>clip(o).toLowerCase())).size===q.options.length&&q.options.every((o:unknown)=>clip(o).length>0)&&Number.isInteger(q.correctIndex)&&q.correctIndex>=0&&q.correctIndex<q.options.length)&&new Set(questions.map(q=>clip(q.question).toLowerCase())).size===count;}
 function publicQuestions(q:any[]){return q.map((x,i)=>({id:'q'+(i+1),type:x.type,skill:x.skill,question:x.question,options:x.options}));}
-function priority(data:any,history:any[],max=8){
+function questionHistory(history:any[]){
+ const rows:any[]=[];
+ for(const r of history||[])for(const q of [...(r.base_questions||[]),...(r.extra_questions||[])])if(q?.question)rows.push({date:r.session_date||'',skill:clip(q.skill,80),question:clip(q.question,460)});
+ return rows;
+}
+function dayDistance(today:string,then:string){
+ if(!/^\\d{4}-\\d{2}-\\d{2}$/.test(today)||!/^\\d{4}-\\d{2}-\\d{2}$/.test(then))return 999;
+ return Math.max(0,Math.floor((Date.parse(today+'T00:00:00Z')-Date.parse(then+'T00:00:00Z'))/86400000));
+}
+function priority(data:any,history:any[],today:string,max=8){
  const items:any[]=[];
  for(const w of data.words||[])if(w?.en)items.push({name:clip(w.en,80),kind:'word',mastery:w.mastery?.e2z||w.status||'unknown',id:w.id});
  for(const w of data.structures||[])if(w?.title)items.push({name:clip(w.title,80),kind:'structure',mastery:w.mastery||'unknown',id:w.id});
  const tests=Array.isArray(data.tests)?data.tests:[];
- const now=Date.now();
- const score=items.map(v=>{
-  const recent=tests.filter((t:any)=>t&&(v.kind==='structure'?t.structureId===v.id:t.wordId===v.id)&&Number(t.ts)>now-30*86400000);
+ const questions=questionHistory(history);
+ const scored=items.map(v=>{
+  const recent=tests.filter((t:any)=>t&&(v.kind==='structure'?t.structureId===v.id:t.wordId===v.id)&&Number(t.ts)>Date.now()-30*86400000);
   const wrong=recent.filter((t:any)=>t.result==='wrong').length;
   const slow=recent.filter((t:any)=>t.result==='slow').length;
-  const past=history.flatMap((r:any)=>r.submitted_answers||[]).filter((x:any)=>x.skill===v.name&&!x.correct).length;
-  return {...v,wrong,slow,priority:wrong*8+slow*3+past*4+(v.mastery==='unmastered'?5:v.mastery==='unstable'?3:0)};
+  const pastWrong=history.flatMap((r:any)=>r.submitted_answers||[]).filter((x:any)=>x.skill===v.name&&!x.correct).length;
+  const dates=history.filter((r:any)=>[...(r.base_questions||[]),...(r.extra_questions||[])].some((q:any)=>q?.skill===v.name)).map((r:any)=>r.session_date).filter(Boolean).sort().reverse();
+  const lastSeen=dates[0]||'';
+  const daysSince=lastSeen?dayDistance(today,lastSeen):999;
+  const recencyPenalty=daysSince===0?24:daysSince===1?18:daysSince===2?12:daysSince===3?7:daysSince<=6?3:0;
+  const base=wrong*8+slow*3+pastWrong*4+(v.mastery==='unmastered'?5:v.mastery==='unstable'?3:0);
+  return {...v,wrong,slow,pastWrong,lastSeen,daysSince,base,priority:Math.max(0,base-recencyPenalty)};
  });
- return score.sort((a,b)=>b.priority-a.priority).slice(0,max).map(({name,kind,wrong,slow,mastery})=>({name,kind,wrong,slow,mastery}));
+ // Prefer targets not used in the last 3 calendar days. Relax only when fewer than 3 remain.
+ let eligible=scored.filter(v=>v.daysSince>2);
+ let cooldownDays=3;
+ if(eligible.length<3){eligible=scored.filter(v=>v.daysSince>1);cooldownDays=2;}
+ if(eligible.length<3){eligible=scored.filter(v=>v.daysSince>0);cooldownDays=1;}
+ if(eligible.length<3){eligible=scored;cooldownDays=0;}
+ eligible.sort((a,b)=>b.priority-a.priority||b.daysSince-a.daysSince||a.name.localeCompare(b.name));
+ const selected=eligible.slice(0,max).map(({name,kind,wrong,slow,pastWrong,mastery,lastSeen,daysSince,priority})=>({name,kind,wrong,slow,pastWrong,mastery,lastSeen,daysSince,priority}));
+ return {targets:selected,cooldownDays,availableTargets:scored.length,eligibleTargets:eligible.length};
 }
-async function generate(evidence:any[],count:number,previous:string[]=[]){
- const sys='You make Cambridge B1 English vocabulary/collocation practice for one 10-year-old learner. Use ONLY supplied learned word or collocation targets, natural English, one unambiguous correct option, 3 options per question, short Chinese explanation. Mix multiple-choice and short contextual cloze. Do not reveal solutions inside question. Respond JSON object {"questions":[{"type":"choice|cloze","skill":"exact target name","question":"English sentence/question","options":["A","B","C"],"correctIndex":0,"explanation":"Chinese explanation"}]}. Exactly '+count+' questions. Do not repeat prior stems.';
+function normalizedTokens(value:string){return clip(value,460).toLowerCase().replace(/[^a-z0-9\\s]/g,' ').split(/\\s+/).filter((v:string)=>v.length>1);}
+function similarity(a:string,b:string){
+ const aa=new Set(normalizedTokens(a)),bb=new Set(normalizedTokens(b));
+ if(!aa.size||!bb.size)return 0;
+ let overlap=0;for(const token of aa)if(bb.has(token))overlap++;
+ return overlap/(aa.size+bb.size-overlap);
+}
+function repeatsRecent(q:any,previous:any[]){
+ const stem=clip(q.question,460),skill=clip(q.skill,80).toLowerCase();
+ return previous.some(p=>{
+  const old=clip(p?.question,460);if(!old)return false;
+  const sameSkill=clip(p?.skill,80).toLowerCase()===skill;
+  const score=similarity(stem,old);
+  return stem.toLowerCase().replace(/[^a-z0-9]/g,'')===old.toLowerCase().replace(/[^a-z0-9]/g,'') || score>=(sameSkill?0.52:0.78);
+ });
+}
+async function generate(evidence:any[],count:number,previous:any[]=[]){
  if(!DSKEY)throw Error('model_not_configured');
- const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),28000);
- try{
- const r=await fetch(DS,{method:'POST',headers:{Authorization:'Bearer '+DSKEY,'Content-Type':'application/json'},body:JSON.stringify({model:MODEL,temperature:0.3,max_tokens:1600,response_format:{type:'json_object'},messages:[{role:'system',content:sys},{role:'user',content:JSON.stringify({evidence,avoid:previous.slice(-5)})}]}),signal:controller.signal});
- if(!r.ok)throw Error('model_'+r.status);
- const j=await r.json();const content=j?.choices?.[0]?.message?.content;if(typeof content!=='string')throw Error('model_empty');
- const output=JSON.parse(content.replace(/^```(?:json)?\s*|\s*```$/g,''));if(!valid(output.questions,count))throw Error('invalid_generated_questions');
- const allowed=new Set(evidence.map(x=>x.name));if(!output.questions.every((q:any)=>allowed.has(q.skill)))throw Error('outside_learner_vocabulary');
- return output.questions.map((q:any)=>({type:q.type,skill:clip(q.skill,80),question:clip(q.question,460),options:q.options.map((v:any)=>clip(v,150)),correctIndex:q.correctIndex,explanation:clip(q.explanation,500)}));
- }finally{clearTimeout(timeout)}
+ const avoid=previous.slice(0,24).map((q:any)=>({skill:clip(q.skill,80),question:clip(q.question,460)}));
+ let lastError='generation_failed';
+ for(let attempt=0;attempt<2;attempt++){
+  const sys='You create fresh Cambridge B1 English vocabulary and collocation practice for one 10-year-old learner. Use ONLY the supplied learned targets. Each question must test its stated target naturally in a NEW context. Use a balanced mix of multiple-choice and contextual cloze; when making 3 questions, include both types. Use 3 options, one unambiguous correct answer, and a short Chinese explanation. Never reveal the answer in the stem. Do not reuse the same scenario, subject, sentence frame, opening phrase, or collocation pattern from the recent questions supplied. Do not merely replace one noun in an old sentence. Prefer different settings and sentence structures. Avoid targets practiced in the last 3 days when other targets are available. Within this set, use different target skills whenever at least '+count+' targets are supplied. Return JSON {"questions":[{"type":"choice|cloze","skill":"exact target name","question":"English sentence/question","options":["A","B","C"],"correctIndex":0,"explanation":"Chinese explanation"}]}. Exactly '+count+' questions.';
+  const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),28000);
+  try{
+   const r=await fetch(DS,{method:'POST',headers:{Authorization:'Bearer '+DSKEY,'Content-Type':'application/json'},body:JSON.stringify({model:MODEL,temperature:0.65,max_tokens:2000,response_format:{type:'json_object'},messages:[{role:'system',content:sys},{role:'user',content:JSON.stringify({eligible_targets:evidence,recent_questions_to_avoid:avoid,attempt_instruction:attempt?'The previous draft was too similar to recent questions. Produce clearly different sentence frames and contexts.':''})}]}),signal:controller.signal});
+   if(!r.ok)throw Error('model_'+r.status);
+   const j=await r.json();const content=j?.choices?.[0]?.message?.content;if(typeof content!=='string')throw Error('model_empty');
+   const output=JSON.parse(content.replace(/^\\`\\`\\`(?:json)?\\s*|\\s*\\`\\`\\`$/g,''));
+   if(!valid(output.questions,count))throw Error('invalid_generated_questions');
+   const allowed=new Set(evidence.map(x=>x.name));if(!output.questions.every((q:any)=>allowed.has(q.skill)))throw Error('outside_learner_vocabulary');
+   if(count>=2&&new Set(output.questions.map((q:any)=>q.skill)).size<Math.min(count,evidence.length))throw Error('repeated_target_in_set');
+   if(output.questions.some((q:any)=>repeatsRecent(q,avoid)))throw Error('repeated_recent_stem');
+   return output.questions.map((q:any)=>({type:q.type,skill:clip(q.skill,80),question:clip(q.question,460),options:q.options.map((v:any)=>clip(v,150)),correctIndex:q.correctIndex,explanation:clip(q.explanation,500)}));
+  }catch(e){lastError=e instanceof Error?e.message:'generation_failed';}
+  finally{clearTimeout(timeout);}
+ }
+ throw Error(lastError);
 }
 Deno.serve(async req=>{
  const origin=req.headers.get('origin');
@@ -69,11 +116,13 @@ Deno.serve(async req=>{
    if(existing.length){const row=existing[0];const all=[...row.base_questions,...row.extra_questions];const answers=Array.isArray(row.submitted_answers)?row.submitted_answers:[];const graded=answers.map((a:any,i:number)=>({id:a.id,skill:a.skill,selected:a.selected,correct:a.correct,correctIndex:all[i]?.correctIndex,explanation:all[i]?.explanation}));return reply(200,{ok:true,date:x.date,questions:publicQuestions(all),answerCount:answers.length,graded,completed:answers.length>=all.length},origin)}
    const states=await db('pet_current_state','GET',{select:'payload',profile_id:'eq.'+profile,limit:'1'});
    if(!states.length)return reply(404,{error:'state_not_found'},origin);
-   const previous=await db('pet_ai_daily_practice','GET',{select:'submitted_answers',profile_id:'eq.'+profile,order:'session_date.desc',limit:'30'});
-   const evidence=priority(states[0].payload,previous);
+   const previous=await db('pet_ai_daily_practice','GET',{select:'session_date,base_questions,extra_questions,submitted_answers',profile_id:'eq.'+profile,order:'session_date.desc',limit:'30'});
+   const rotation=priority(states[0].payload,previous,x.date);
+   const evidence=rotation.targets;
    if(!evidence.length)return reply(422,{error:'no_learned_vocabulary'},origin);
-   const generated=await generate(evidence,3);
-   await db('pet_ai_daily_practice','POST',{},[{profile_id:profile,session_date:x.date,base_questions:generated,focus_evidence:{targets:evidence,source:'cloud_formal_tests'},model:MODEL}],'resolution=ignore-duplicates,return=representation');
+   const recentQuestions=questionHistory(previous);
+   const generated=await generate(evidence,3,recentQuestions);
+   await db('pet_ai_daily_practice','POST',{},[{profile_id:profile,session_date:x.date,base_questions:generated,focus_evidence:{targets:evidence,source:'cloud_formal_tests',rotation:{cooldown_days:rotation.cooldownDays,available_targets:rotation.availableTargets,eligible_targets:rotation.eligibleTargets},history_stems_checked:recentQuestions.length},model:MODEL}],'resolution=ignore-duplicates,return=representation');
    const fresh=await db('pet_ai_daily_practice','GET',query);
    if(!fresh.length)throw Error('plan_not_saved');
    return reply(200,{ok:true,date:x.date,questions:publicQuestions(fresh[0].base_questions),answerCount:0,completed:false},origin);
@@ -86,7 +135,7 @@ Deno.serve(async req=>{
    const results=row.base_questions.map((q:any,i:number)=>({id:'q'+(i+1),skill:q.skill,selected:x.answers[i],correct:x.answers[i]===q.correctIndex,correctIndex:q.correctIndex,explanation:q.explanation}));
    const wrong=results.filter((v:any)=>!v.correct);
    const count=Math.min(2,wrong.length>=2?2:wrong.length);
-   let extra:any[]=[];if(count){try{extra=await generate(row.focus_evidence.targets.filter((t:any)=>wrong.some((v:any)=>v.skill===t.name)),count,row.base_questions.map((q:any)=>q.question))}catch{extra=[]}}
+   let extra:any[]=[];if(count){try{const prior=[...questionHistory([{base_questions:row.base_questions,extra_questions:row.extra_questions}]),...questionHistory(await db('pet_ai_daily_practice','GET',{select:'session_date,base_questions,extra_questions',profile_id:'eq.'+profile,session_date:'lt.'+x.date,order:'session_date.desc',limit:'30'}))];extra=await generate(row.focus_evidence.targets.filter((t:any)=>wrong.some((v:any)=>v.skill===t.name)),count,prior)}catch(e){console.error('followup generation',e instanceof Error?e.message:'unknown');extra=[]}}
    const changed=await db('pet_ai_daily_practice','PATCH',{profile_id:'eq.'+profile,session_date:'eq.'+x.date,submitted_answers:'eq.[]'},{
      submitted_answers:results,extra_questions:extra,updated_at:new Date().toISOString()
    });
