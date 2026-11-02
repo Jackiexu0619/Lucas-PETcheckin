@@ -102,6 +102,7 @@ async function generate(evidence:any[],count:number,previous:any[]=[]){
    const output=JSON.parse(cleaned);
    if(!valid(output.questions,count))throw Error('invalid_generated_questions');
    const allowed=new Set(evidence.map(x=>x.name));if(!output.questions.every((q:any)=>allowed.has(q.skill)))throw Error('outside_learner_vocabulary');
+   const dueTargets=new Set(evidence.filter((x:any)=>x.reviewDue).map((x:any)=>x.name));if(dueTargets.size&&!output.questions.some((q:any)=>dueTargets.has(q.skill)))throw Error('missing_due_review_target');
    if(count>=2&&new Set(output.questions.map((q:any)=>q.skill)).size<Math.min(count,evidence.length))throw Error('repeated_target_in_set');
    if(output.questions.some((q:any,i:number)=>repeatsRecent(q,[...avoid,...output.questions.slice(0,i)])))throw Error('repeated_recent_stem');
    if(count===3&&new Set(output.questions.map((q:any)=>q.type)).size<2)throw Error('insufficient_question_type_mix');
