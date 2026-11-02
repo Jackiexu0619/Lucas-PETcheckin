@@ -28,6 +28,9 @@ function dayDistance(today:string,then:string){
  if(!/^\d{4}-\d{2}-\d{2}$/.test(today)||!/^\d{4}-\d{2}-\d{2}$/.test(then))return 999;
  return Math.max(0,Math.floor((Date.parse(today+'T00:00:00Z')-Date.parse(then+'T00:00:00Z'))/86400000));
 }
+function addDays(date:string,count:number){
+ const d=new Date(date+'T00:00:00Z');d.setUTCDate(d.getUTCDate()+count);return d.toISOString().slice(0,10);
+}
 function priority(data:any,history:any[],today:string,max=8){
  const items:any[]=[];
  for(const w of data.words||[])if(w?.en)items.push({name:clip(w.en,80),kind:'word',mastery:w.mastery?.e2z||w.status||'unknown',id:w.id});
@@ -37,23 +40,31 @@ function priority(data:any,history:any[],today:string,max=8){
   const recent=tests.filter((t:any)=>t&&(v.kind==='structure'?t.structureId===v.id:t.wordId===v.id)&&Number(t.ts)>Date.now()-30*86400000);
   const wrong=recent.filter((t:any)=>t.result==='wrong').length;
   const slow=recent.filter((t:any)=>t.result==='slow').length;
-  const pastWrong=history.flatMap((r:any)=>r.submitted_answers||[]).filter((x:any)=>x.skill===v.name&&!x.correct).length;
+  const pastWrong=history.flatMap((r:any)=>r.submitted_answers||[]).filter((x:any)=>x.skill===v.name&&x.correct===false).length;
   const dates=history.filter((r:any)=>[...(r.base_questions||[]),...(r.extra_questions||[])].some((q:any)=>q?.skill===v.name)).map((r:any)=>r.session_date).filter(Boolean).sort().reverse();
   const lastSeen=dates[0]||'';
   const daysSince=lastSeen?dayDistance(today,lastSeen):999;
+  const wrongDates=history.filter((r:any)=>(r.submitted_answers||[]).some((x:any)=>x.skill===v.name&&x.correct===false)).map((r:any)=>r.session_date).filter(Boolean).sort().reverse();
+  const lastWrongDate=wrongDates[0]||'';
+  const daysSinceWrong=lastWrongDate?dayDistance(today,lastWrongDate):999;
+  // A wrong answer becomes due for spaced retrieval on the next practice day.
+  // It may bypass the ordinary 3-day cooldown, but never returns as an immediate same-session question.
+  const reviewDue=daysSinceWrong>=1&&daysSinceWrong<=7;
   const recencyPenalty=daysSince===0?24:daysSince===1?18:daysSince===2?12:daysSince===3?7:daysSince<=6?3:0;
+  const reviewBoost=reviewDue?(daysSinceWrong===1?24:daysSinceWrong<=3?18:12):0;
   const base=wrong*8+slow*3+pastWrong*4+(v.mastery==='unmastered'?5:v.mastery==='unstable'?3:0);
-  return {...v,wrong,slow,pastWrong,lastSeen,daysSince,base,priority:Math.max(0,base-recencyPenalty)};
+  return {...v,wrong,slow,pastWrong,lastSeen,daysSince,lastWrongDate,daysSinceWrong,reviewDue,base,priority:Math.max(0,base-recencyPenalty+reviewBoost)};
  });
- // Prefer targets not used in the last 3 calendar days. Relax only when fewer than 3 remain.
- let eligible=scored.filter(v=>v.daysSince>2);
+ // Normal targets cool down for 3 days. A recently missed target is an explicit exception:
+ // bring it back from the next day onward for a fresh-context spaced-retrieval question.
+ let eligible=scored.filter(v=>v.daysSince>2||v.reviewDue);
  let cooldownDays=3;
- if(eligible.length<3){eligible=scored.filter(v=>v.daysSince>1);cooldownDays=2;}
- if(eligible.length<3){eligible=scored.filter(v=>v.daysSince>0);cooldownDays=1;}
+ if(eligible.length<3){eligible=scored.filter(v=>v.daysSince>1||v.reviewDue);cooldownDays=2;}
+ if(eligible.length<3){eligible=scored.filter(v=>v.daysSince>0||v.reviewDue);cooldownDays=1;}
  if(eligible.length<3){eligible=scored;cooldownDays=0;}
  eligible.sort((a,b)=>b.priority-a.priority||b.daysSince-a.daysSince||a.name.localeCompare(b.name));
- const selected=eligible.slice(0,max).map(({name,kind,wrong,slow,pastWrong,mastery,lastSeen,daysSince,priority})=>({name,kind,wrong,slow,pastWrong,mastery,lastSeen,daysSince,priority}));
- return {targets:selected,cooldownDays,availableTargets:scored.length,eligibleTargets:eligible.length};
+ const selected=eligible.slice(0,max).map(({name,kind,wrong,slow,pastWrong,mastery,lastSeen,daysSince,lastWrongDate,daysSinceWrong,reviewDue,priority})=>({name,kind,wrong,slow,pastWrong,mastery,lastSeen,daysSince,lastWrongDate,daysSinceWrong,reviewDue,priority}));
+ return {targets:selected,cooldownDays,availableTargets:scored.length,eligibleTargets:eligible.length,reviewDueTargets:selected.filter(v=>v.reviewDue).length};
 }
 function normalizedTokens(value:string){return clip(value,460).toLowerCase().replace(/[^a-z0-9\s]/g,' ').split(/\s+/).filter((v:string)=>v.length>1);}
 function similarity(a:string,b:string){
@@ -76,10 +87,10 @@ async function generate(evidence:any[],count:number,previous:any[]=[]){
  const avoid=previous.slice(0,24).map((q:any)=>({skill:clip(q.skill,80),question:clip(q.question,460)}));
  let lastError='generation_failed';
  for(let attempt=0;attempt<2;attempt++){
-  const sys='You create fresh Cambridge B1 English vocabulary and collocation practice for one 10-year-old learner. Use ONLY the supplied learned targets. Each question must test its stated target naturally in a NEW context. Use a balanced mix of multiple-choice and contextual cloze; when making 3 questions, include both types. Use 3 options, one unambiguous correct answer, and a short Chinese explanation. Never reveal the answer in the stem. Do not reuse the same scenario, subject, sentence frame, opening phrase, or collocation pattern from the recent questions supplied. Do not merely replace one noun in an old sentence. Prefer different settings and sentence structures. Avoid targets practiced in the last 3 days when other targets are available. Within this set, use different target skills whenever at least '+count+' targets are supplied. Return JSON {"questions":[{"type":"choice|cloze","skill":"exact target name","question":"English sentence/question","options":["A","B","C"],"correctIndex":0,"explanation":"Chinese explanation"}]}. Exactly '+count+' questions.';
+  const sys='You create fresh Cambridge B1 English vocabulary and collocation practice for one 10-year-old learner. Use ONLY the supplied learned targets. Each question must test its stated target naturally in a NEW context. Use a balanced mix of multiple-choice and contextual cloze; when making 3 questions, include both types. Use 3 options, one unambiguous correct answer, and a short Chinese explanation. Never reveal the answer in the stem. Do not reuse the same scenario, subject, sentence frame, opening phrase, or collocation pattern from the recent questions supplied. Do not merely replace one noun in an old sentence. Prefer different settings and sentence structures. Avoid targets practiced in the last 3 days when other targets are available. If any supplied target has reviewDue=true, include at least one such target for spaced retrieval in a fresh context. Within this set, use different target skills whenever at least '+count+' targets are supplied. Return JSON {"questions":[{"type":"choice|cloze","skill":"exact target name","question":"English sentence/question","options":["A","B","C"],"correctIndex":0,"explanation":"Chinese explanation"}]}. Exactly '+count+' questions.';
   const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),28000);
   try{
-   const r=await fetch(DS,{method:'POST',headers:{Authorization:'Bearer '+DSKEY,'Content-Type':'application/json'},body:JSON.stringify({model:MODEL,temperature:0.65,max_tokens:2000,response_format:{type:'json_object'},messages:[{role:'system',content:sys},{role:'user',content:JSON.stringify({eligible_targets:evidence,recent_questions_to_avoid:avoid,attempt_instruction:attempt?'The previous draft was too similar to recent questions. Produce clearly different sentence frames and contexts.':''})}]}),signal:controller.signal});
+   const r=await fetch(DS,{method:'POST',headers:{Authorization:'Bearer '+DSKEY,'Content-Type':'application/json'},body:JSON.stringify({model:MODEL,temperature:0.65,max_tokens:2000,response_format:{type:'json_object'},messages:[{role:'system',content:sys},{role:'user',content:JSON.stringify({eligible_targets:evidence,due_review_targets:evidence.filter((x:any)=>x.reviewDue).map((x:any)=>x.name),recent_questions_to_avoid:avoid,attempt_instruction:attempt?'The previous draft was too similar to recent questions. Produce clearly different sentence frames and contexts.':''})}]}),signal:controller.signal});
    if(!r.ok)throw Error('model_'+r.status);
    const j=await r.json();const content=j?.choices?.[0]?.message?.content;if(typeof content!=='string')throw Error('model_empty');
    const cleaned=content.replace(/^\x60{3}(?:json)?\s*|\s*\x60{3}$/g,'');
@@ -135,13 +146,14 @@ Deno.serve(async req=>{
    if(!Array.isArray(x.answers)||x.answers.length!==3||x.answers.some((v:any)=>!Number.isInteger(v)||v<0||v>3))return reply(400,{error:'answer_shape'},origin);
    const results=row.base_questions.map((q:any,i:number)=>({id:'q'+(i+1),skill:q.skill,selected:x.answers[i],correct:x.answers[i]===q.correctIndex,correctIndex:q.correctIndex,explanation:q.explanation}));
    const wrong=results.filter((v:any)=>!v.correct);
-   const count=Math.min(2,wrong.length>=2?2:wrong.length);
-   let extra:any[]=[];if(count){try{const prior=[...questionHistory([{base_questions:row.base_questions,extra_questions:row.extra_questions}]),...questionHistory(await db('pet_ai_daily_practice','GET',{select:'session_date,base_questions,extra_questions',profile_id:'eq.'+profile,session_date:'lt.'+x.date,order:'session_date.desc',limit:'30'}))];extra=await generate(row.focus_evidence.targets.filter((t:any)=>wrong.some((v:any)=>v.skill===t.name)),count,prior)}catch(e){console.error('followup generation',e instanceof Error?e.message:'unknown');extra=[]}}
+   // Do not immediately retest the answer that was just revealed.
+   // Show the explanation now; schedule a fresh-context retrieval question from the next practice day.
+   const nextReviewDate=wrong.length?addDays(x.date,1):null;
    const changed=await db('pet_ai_daily_practice','PATCH',{profile_id:'eq.'+profile,session_date:'eq.'+x.date,submitted_answers:'eq.[]'},{
-     submitted_answers:results,extra_questions:extra,updated_at:new Date().toISOString()
+     submitted_answers:results,extra_questions:[],updated_at:new Date().toISOString()
    });
    if(changed.length!==1)return reply(409,{error:'concurrent_submission'},origin);
-   return reply(200,{ok:true,correct:results.filter((v:any)=>v.correct).length,graded:results,followupQuestions:extra.map((q:any,i:number)=>({id:'q'+(i+4),type:q.type,skill:q.skill,question:q.question,options:q.options})),done:extra.length===0},origin);
+   return reply(200,{ok:true,correct:results.filter((v:any)=>v.correct).length,graded:results,followupQuestions:[],reviewPlan:wrong.map((v:any)=>({skill:v.skill,dueDate:nextReviewDate,mode:'spaced_retrieval_new_context'})),done:true},origin);
   }
   if(x.action==='submit_extra'){
    if(existing.length!==1)return reply(404,{error:'plan_not_found'},origin);
