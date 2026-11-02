@@ -62,7 +62,7 @@ function priority(data:any,history:any[],today:string,max=8){
  if(eligible.length<3){eligible=scored.filter(v=>v.daysSince>1||v.reviewDue);cooldownDays=2;}
  if(eligible.length<3){eligible=scored.filter(v=>v.daysSince>0||v.reviewDue);cooldownDays=1;}
  if(eligible.length<3){eligible=scored;cooldownDays=0;}
- eligible.sort((a,b)=>b.priority-a.priority||b.daysSince-a.daysSince||a.name.localeCompare(b.name));
+ eligible.sort((a,b)=>Number(b.reviewDue)-Number(a.reviewDue)||b.priority-a.priority||b.daysSince-a.daysSince||a.name.localeCompare(b.name));
  const selected=eligible.slice(0,max).map(({name,kind,wrong,slow,pastWrong,mastery,lastSeen,daysSince,lastWrongDate,daysSinceWrong,reviewDue,priority})=>({name,kind,wrong,slow,pastWrong,mastery,lastSeen,daysSince,lastWrongDate,daysSinceWrong,reviewDue,priority}));
  return {targets:selected,cooldownDays,availableTargets:scored.length,eligibleTargets:eligible.length,reviewDueTargets:selected.filter(v=>v.reviewDue).length};
 }
