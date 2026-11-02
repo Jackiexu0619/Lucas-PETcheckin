@@ -40,16 +40,21 @@ function priority(data:any,history:any[],today:string,max=8){
   const recent=tests.filter((t:any)=>t&&(v.kind==='structure'?t.structureId===v.id:t.wordId===v.id)&&Number(t.ts)>Date.now()-30*86400000);
   const wrong=recent.filter((t:any)=>t.result==='wrong').length;
   const slow=recent.filter((t:any)=>t.result==='slow').length;
-  const pastWrong=history.flatMap((r:any)=>r.submitted_answers||[]).filter((x:any)=>x.skill===v.name&&x.correct===false).length;
+  // Only the three base questions count as mastery evidence. Legacy q4/q5 add-ons
+  // immediately revealed the answer and must not cancel or satisfy a spaced review.
+  const baseAttempts=history.flatMap((r:any)=>(r.submitted_answers||[])
+   .filter((x:any)=>x.skill===v.name&&/^q[1-3]$/.test(String(x.id||'')))
+   .map((x:any)=>({date:r.session_date||'',correct:x.correct===true}))).filter((x:any)=>x.date).sort((a:any,b:any)=>b.date.localeCompare(a.date));
+  const pastWrong=baseAttempts.filter((x:any)=>!x.correct).length;
   const dates=history.filter((r:any)=>[...(r.base_questions||[]),...(r.extra_questions||[])].some((q:any)=>q?.skill===v.name)).map((r:any)=>r.session_date).filter(Boolean).sort().reverse();
   const lastSeen=dates[0]||'';
   const daysSince=lastSeen?dayDistance(today,lastSeen):999;
-  const wrongDates=history.filter((r:any)=>(r.submitted_answers||[]).some((x:any)=>x.skill===v.name&&x.correct===false)).map((r:any)=>r.session_date).filter(Boolean).sort().reverse();
-  const lastWrongDate=wrongDates[0]||'';
+  const lastBaseAttempt=baseAttempts[0];
+  const lastWrongDate=baseAttempts.filter((x:any)=>!x.correct).map((x:any)=>x.date).sort().reverse()[0]||'';
   const daysSinceWrong=lastWrongDate?dayDistance(today,lastWrongDate):999;
-  // A wrong answer becomes due for spaced retrieval on the next practice day.
-  // It may bypass the ordinary 3-day cooldown, but never returns as an immediate same-session question.
-  const reviewDue=daysSinceWrong>=1&&daysSinceWrong<=7;
+  // A wrong base answer becomes due on the next practice day, unless a later base attempt corrected it.
+  // Legacy immediate add-ons never count as proof of mastery.
+  const reviewDue=lastBaseAttempt?.correct===false&&daysSinceWrong>=1&&daysSinceWrong<=7;
   const recencyPenalty=daysSince===0?24:daysSince===1?18:daysSince===2?12:daysSince===3?7:daysSince<=6?3:0;
   const reviewBoost=reviewDue?(daysSinceWrong===1?24:daysSinceWrong<=3?18:12):0;
   const base=wrong*8+slow*3+pastWrong*4+(v.mastery==='unmastered'?5:v.mastery==='unstable'?3:0);
