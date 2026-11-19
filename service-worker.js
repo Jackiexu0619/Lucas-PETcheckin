@@ -1,4 +1,4 @@
-const CACHE='lucas-pet-v0.5.13.4-single-ai-flow-r10';
+const CACHE='lucas-pet-v0.5.13.5-ai-vocab-r11';
 const ASSETS=['./index.html','./manifest.webmanifest'];
 self.addEventListener('install',e=>{
   self.skipWaiting();
