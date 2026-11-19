@@ -5,5 +5,5 @@
   "display": "standalone",
   "background_color": "#f4f8ff",
   "theme_color": "#1477ef",
-  "description": "Lucas PET v0.5.13.4：为教材听力练习增加音频播放支持与缺失资源提示，保留现有学习数据。"
+  "description": "Lucas PET v0.5.13.5：更新 B2 首页目标文案；AI 每日题目支持点击英文生词查看语境释义并加入词库。"
 }

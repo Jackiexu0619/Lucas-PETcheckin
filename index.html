@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#1477ef">
-<title>Lucas PET v0.5.13.4 教材任务记录优化版</title>
+<title>Lucas PET v0.5.13.5 AI 生词点释版</title>
 <link rel="manifest" href="manifest.webmanifest">
 <style>
 :root{--bg:#f5f7fb;--card:#fff;--ink:#172033;--muted:#6b7280;--line:#e5e9f2;--blue:#2563eb;--soft:#eaf2ff;--good:#198754;--warn:#b97900;--bad:#c0392b;--purple:#7c3aed}
@@ -280,9 +280,9 @@ body{background:
   <div class="homeTopbar">
     <div class="brandBlock">
       <div class="brandMark">L</div>
-      <div><div class="brandName">Lucas <span>PET</span></div><div class="brandSub">每天一点，向 B1 稳稳前进</div></div>
+      <div><div class="brandName">Lucas <span>PET</span></div><div class="brandSub">每天一点，向 B2 稳稳前进</div></div>
     </div>
-    <span class="versionPill">v0.5.13.4</span>
+    <span class="versionPill">v0.5.13.5</span>
   </div>
 
   <div class="homeHero">
@@ -507,7 +507,7 @@ const CLOUD_ENDPOINT_PREF_STORAGE='pet_checkin_cloud_endpoint_pref';
 const CLOUD_KEY_STORAGE='pet_checkin_cloud_recovery_key';
 const CLOUD_ENABLED_STORAGE='pet_checkin_cloud_enabled';
 const CLOUD_META_STORAGE='pet_checkin_cloud_meta';
-const APP_VERSION='0.5.13.4';
+const APP_VERSION='0.5.13.5';
 document.querySelector('.versionPill')?.replaceChildren('v'+APP_VERSION);
 let cloudTimer=null,cloudBusy=false,cloudQueued=false,cloudSuppressPush=false,cloudConflictState=null;
 const ROLLING_BACKUP_PREFIXES=[
@@ -3183,7 +3183,7 @@ renderAll();
 document.querySelectorAll('.app>.section').forEach(x=>{let on=x.id==='home';x.hidden=!on;x.classList.toggle('active',on)});
 if(cloudIsEnabled())setTimeout(()=>cloudSmartSync(false),600);
 if(bootRecoveryReport&& !sessionStorage.getItem('pet031_recovery_notice')){sessionStorage.setItem('pet031_recovery_notice','1');let r=bootRecoveryReport;setTimeout(()=>alert(r.fallback?'检测到旧数据迁移异常，已优先从升级前快照恢复，并保留异常原始数据副本。请到“词汇”和“记录”页核对。':`已自动检查升级前快照并补回缺失数据：${r.words||0} 个词、${r.tests||0} 条测试记录、${r.plans||0} 个清单项目。`),150)}
-if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('./service-worker.js?v=lucas-pet-0.5.13.4-ai-storage-r1',{updateViaCache:'none'}).catch(()=>{});
+if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('./service-worker.js?v=lucas-pet-0.5.13.5-ai-vocab-r11',{updateViaCache:'none'}).catch(()=>{});
 </script>
 <script>
 (() => {
@@ -3511,6 +3511,20 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 #petAiDailyTrial .pet-ai-question{margin-bottom:22px}
 @media(max-width:680px){#petAiDailyTrial .pet-ai-options{grid-template-columns:1fr;gap:9px}#petAiDailyTrial .pet-ai-option{min-height:54px}}
 </style>
+<style id="pet-ai-vocab-lookup-style">
+#petAiDailyTrial .pet-ai-vocab-token{color:#1557a5;border-bottom:1px dashed #6b91c8;cursor:pointer;border-radius:3px;padding:0 1px;text-underline-offset:3px}
+#petAiDailyTrial .pet-ai-vocab-token:hover,#petAiDailyTrial .pet-ai-vocab-token:focus{background:#eaf3ff;outline:2px solid #b8d5fa;outline-offset:1px}
+.pet-ai-vocab-overlay{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(15,23,42,.52)}
+.pet-ai-vocab-overlay.hidden{display:none!important}
+.pet-ai-vocab-dialog{width:min(540px,100%);max-height:88vh;overflow:auto;background:#fff;color:#1e293b;border-radius:18px;padding:18px;box-shadow:0 18px 55px rgba(15,23,42,.28)}
+.pet-ai-vocab-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.pet-ai-vocab-head h3{margin:3px 0 0;font-size:23px;overflow-wrap:anywhere}
+.pet-ai-vocab-detail{margin:12px 0;padding:13px;border:1px solid #dbe5f1;border-radius:13px;background:#f8fbff;line-height:1.65}
+.pet-ai-vocab-detail .line{margin:5px 0}
+.pet-ai-vocab-detail .line b{display:inline-block;min-width:82px;color:#475569}
+#petAiVocabNote{margin-top:10px;line-height:1.5}
+@media(max-width:520px){.pet-ai-vocab-dialog{padding:15px}.pet-ai-vocab-head h3{font-size:21px}}
+</style>
 <script id="petAiDailyTrialClient">
 (()=>{'use strict';
  const API='https://gemzboxhkkrfjqresxjt.supabase.co/functions/v1/pet-ai-daily';
@@ -3522,13 +3536,168 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
  const show=html=>{if(slot())slot().innerHTML=html};
  const token=()=>String(window.petSharedAccess?.get?.()||el('aiAccess')?.value||el('petCatalogToken')?.value||'').trim();
  const recovery=()=>String(localStorage.getItem('pet_checkin_cloud_recovery_key')||'').trim();
- async function call(action,answers){
+ async function call(action,answers,extra={}){
    if(!token()||!recovery())throw Error('请先确认 AI 访问码和已启用的云端同步恢复码');
-   const response=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json','x-ai-access':token()},body:JSON.stringify({action,date:date(),recovery_key:recovery(),...(answers?{answers}:{})}),cache:'no-store'});
+   const response=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json','x-ai-access':token()},body:JSON.stringify({action,date:date(),recovery_key:recovery(),...(answers?{answers}:{}),...(extra&&typeof extra==='object'?extra:{})}),cache:'no-store'});
    const data=await response.json().catch(()=>({}));
    if(!response.ok)throw Error(data.error||('HTTP '+response.status));
    return data;
  }
+  const DEF_CACHE_KEY='pet_ai_daily_word_definitions_v1';
+  let definitionCache={},definitionSeq=0,currentWord='',currentDefinition=null;
+  try{definitionCache=JSON.parse(localStorage.getItem(DEF_CACHE_KEY)||'{}')||{}}catch{}
+  function saveDefinitionCache(){
+    try{
+      const keys=Object.keys(definitionCache).sort((a,b)=>(definitionCache[b]?.cachedAt||0)-(definitionCache[a]?.cachedAt||0));
+      for(const key of keys.slice(120))delete definitionCache[key];
+      localStorage.setItem(DEF_CACHE_KEY,JSON.stringify(definitionCache));
+    }catch{}
+  }
+  function wordMarkup(value,context){
+    const source=String(value??''),ctx=String(context||source).slice(0,900);
+    const re=/[A-Za-z]+(?:[-'’][A-Za-z]+)*/g;
+    let out='',last=0,m;
+    while((m=re.exec(source))){
+      out+=esc(source.slice(last,m.index));
+      const shown=m[0],lookup=shown.replace(/’/g,"'");
+      if(shown.length>=2&&/^[A-Za-z]+(?:[-'][A-Za-z]+)*$/.test(lookup)){
+        out+='<span class="pet-ai-vocab-token" role="button" tabindex="0" data-pet-ai-word="'+esc(lookup)+'" data-pet-ai-context="'+esc(ctx)+'" title="点击查看释义">'+esc(shown)+'</span>';
+      }else out+=esc(shown);
+      last=re.lastIndex;
+    }
+    return out+esc(source.slice(last));
+  }
+  function wordInBank(...forms){
+    try{
+      const keys=new Set(forms.map(v=>String(v||'').trim().toLowerCase()).filter(Boolean));
+      return (state.words||[]).find(w=>keys.has(String(w.en||'').trim().toLowerCase()))||null;
+    }catch{return null}
+  }
+  async function dictionaryFallback(word){
+    let d=null,lemma=word;
+    try{d=await dictLookup(word)}catch{}
+    if(!d&&typeof inflectionCandidates==='function'){
+      for(const candidate of inflectionCandidates(word).slice(0,5)){
+        try{d=await dictLookup(candidate)}catch{}
+        if(d){lemma=candidate;break}
+      }
+    }
+    if(!d)return null;
+    const zh=String(d.zh||d.fullZh||'').trim();
+    if(!zh)return null;
+    return {word,lemma,pos:d.pos||'n./v.',zh,contextMeaning:zh.split(/[；;]/)[0],usageNote:'备用词典释义，请结合本题语境理解。',example:'',source:'词典备用'};
+  }
+  function ensureVocabModal(){
+    if(el('petAiVocabModal'))return;
+    document.body.insertAdjacentHTML('beforeend','<div id="petAiVocabModal" class="pet-ai-vocab-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="petAiVocabTitle"><div class="pet-ai-vocab-dialog"><div class="pet-ai-vocab-head"><div><div class="small">AI 每日题目 · 生词释义</div><h3 id="petAiVocabTitle"></h3></div><button type="button" class="gray" id="petAiVocabClose">关闭</button></div><div id="petAiVocabStatus" class="small" role="status">正在查询…</div><div id="petAiVocabDetail" class="pet-ai-vocab-detail"></div><div class="row"><button type="button" class="primary" id="petAiVocabAdd" disabled>加入词库</button><button type="button" class="gray" id="petAiVocabCancel">关闭</button></div><div id="petAiVocabNote" class="small">加入后进入现有 Review 排期，不会自动标记为已掌握。</div></div></div>');
+    const modal=el('petAiVocabModal'),close=()=>{definitionSeq++;modal.classList.add('hidden')};
+    el('petAiVocabClose').onclick=close;
+    el('petAiVocabCancel').onclick=close;
+    el('petAiVocabAdd').onclick=addCurrentDefinition;
+    modal.addEventListener('click',e=>{if(e.target===modal)close()});
+    document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!modal.classList.contains('hidden'))close()});
+  }
+  function renderDefinition(){
+    const d=currentDefinition;if(!d)return;
+    const lemma=String(d.lemma||currentWord),meaning=String(d.contextMeaning||d.zh||'');
+    el('petAiVocabDetail').innerHTML=
+      '<div class="line"><b>词性</b>'+esc(d.pos||'未标注')+'</div>'+
+      '<div class="line"><b>中文释义</b>'+esc(d.zh||'')+'</div>'+
+      '<div class="line"><b>本句意思</b>'+esc(meaning)+'</div>'+
+      (d.usageNote?'<div class="line"><b>用法提示</b>'+esc(d.usageNote)+'</div>':'')+
+      (d.example?'<div class="line"><b>例句</b>'+esc(d.example)+'</div>':'')+
+      '<div class="small" style="margin-top:8px">词库收录形式：<b>'+esc(lemma)+'</b>'+(lemma.toLowerCase()!==currentWord.toLowerCase()?'（题目中出现：'+esc(currentWord)+'）':'')+'</div>';
+    const existing=wordInBank(lemma,currentWord),button=el('petAiVocabAdd');
+    if(d.added){
+      el('petAiVocabStatus').textContent='已加入词库';
+      button.disabled=true;button.textContent='已加入';
+      el('petAiVocabNote').textContent='本机已保存；如果已启用云端备份，将按原有机制自动同步。新词明天先进入 Review。';
+    }else if(existing){
+      el('petAiVocabStatus').textContent='词库已收录：'+existing.en;
+      button.disabled=true;button.textContent='已在词库';
+      el('petAiVocabNote').textContent='这个词已经存在，不会重复添加。';
+    }else{
+      el('petAiVocabStatus').textContent=d.source==='词典备用'?'AI 语境释义暂不可用，已切换到备用词典。':'已结合本题语境生成释义。';
+      button.disabled=false;button.textContent='加入词库';
+      el('petAiVocabNote').textContent='加入后按现有新词规则排期：明天先进入 Review，之后再进入正式 Test；不会自动标记为已掌握。';
+    }
+  }
+  async function openWordDefinition(word,context){
+    const clean=String(word||'').replace(/[’]/g,"'").trim();
+    if(!/^[A-Za-z]+(?:[-'][A-Za-z]+)*$/.test(clean))return;
+    const seq=++definitionSeq;currentWord=clean;currentDefinition=null;
+    ensureVocabModal();
+    el('petAiVocabTitle').textContent=clean;
+    el('petAiVocabStatus').textContent='正在结合本题语境查询释义…';
+    el('petAiVocabDetail').innerHTML='';
+    el('petAiVocabAdd').disabled=true;el('petAiVocabAdd').textContent='查询中…';
+    el('petAiVocabNote').textContent='正在查询，不会影响答题进度。';
+    el('petAiVocabModal').classList.remove('hidden');
+    const ctx=String(context||'').slice(0,900);
+    const key=clean.toLowerCase()+'|'+ctx.toLowerCase().replace(/\s+/g,' ').trim();
+    let definition=definitionCache[key]?.definition||null;
+    if(!definition){
+      try{
+        const result=await call('define_word',null,{word:clean,context:ctx});
+        definition=result.definition||null;
+      }catch{}
+      if(!definition)definition=await dictionaryFallback(clean);
+      if(!definition){
+        if(seq!==definitionSeq)return;
+        el('petAiVocabStatus').textContent='暂时无法获取释义，请检查网络后重试。';
+        el('petAiVocabDetail').innerHTML='<div class="small">AI 语境释义与备用词典都没有返回结果。</div>';
+        el('petAiVocabAdd').disabled=true;el('petAiVocabAdd').textContent='暂不可加入';
+        return;
+      }
+      if(seq!==definitionSeq)return;
+      definitionCache[key]={definition,cachedAt:Date.now()};saveDefinitionCache();
+    }
+    if(seq!==definitionSeq)return;
+    currentDefinition=definition;renderDefinition();
+  }
+  function addCurrentDefinition(){
+    const d=currentDefinition;if(!d)return;
+    const lemma=String(d.lemma||currentWord).trim().toLowerCase();
+    if(!/^[A-Za-z]+(?:[-'][A-Za-z]+)*$/.test(lemma)||!String(d.zh||'').trim()){
+      el('petAiVocabStatus').textContent='释义信息不完整，暂不能加入词库。';return;
+    }
+    const existing=wordInBank(lemma,currentWord);
+    if(existing){renderDefinition();return}
+    const now=Date.now(),eDue=scheduleDays(1,now),zDue=scheduleDays(2,now);
+    const note=[
+      '来源：AI 每日题目生词',
+      currentWord.toLowerCase()!==lemma?'题目词形：'+currentWord:'',
+      d.contextMeaning?'本句意思：'+d.contextMeaning:'',
+      d.usageNote?'用法：'+d.usageNote:'',
+      d.example?'例句：'+d.example:''
+    ].filter(Boolean).join('；');
+    const w=migrateWord({
+      id:'w'+now+'_ai_'+Math.random().toString(36).slice(2,6),
+      en:lemma,zh:String(d.zh).trim(),pos:String(d.pos||'n./v.').trim(),note,family:'',
+      createdAt:now,addedAtSource:'exact',addedDate:localDateKey(new Date(now)),introSeenDate:'',
+      status:'active',due:eDue,history:[],
+      mastery:{e2z:'unstable',z2e:'unstable'},
+      review:{e2z:{due:eDue,level:0,fastStreak:0,lastTs:0},z2e:{due:zDue,level:0,fastStreak:0,lastTs:0}}
+    });
+    state.words.push(w);
+    try{save()}catch(e){
+      state.words=state.words.filter(x=>x.id!==w.id);
+      el('petAiVocabStatus').textContent='本机保存失败：'+esc(e.message||'存储空间不足');
+      return;
+    }
+    currentDefinition={...d,added:true};renderDefinition();
+  }
+  function onWordTokenClick(e){
+    const target=e.target.closest?.('[data-pet-ai-word]');
+    if(!target||!slot()?.contains(target))return;
+    e.preventDefault();e.stopPropagation();
+    openWordDefinition(target.dataset.petAiWord,target.dataset.petAiContext||'');
+  }
+  function onWordTokenKeydown(e){
+    if((e.key!=='Enter'&&e.key!==' ')||!e.target.matches?.('[data-pet-ai-word]'))return;
+    e.preventDefault();e.stopPropagation();
+    openWordDefinition(e.target.dataset.petAiWord,e.target.dataset.petAiContext||'');
+  }
  function choices(q,i,group){
    const name='pet_ai_'+group+'_'+i;
    // Stable per-question display order: submit original option indices to the server.
@@ -3537,11 +3706,11 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
    const salt=String(q.question||'')+date()+'pet-option-order';
    let h=2166136261;for(let j=0;j<salt.length;j++)h=Math.imul(h^salt.charCodeAt(j),16777619)>>>0;
    for(let j=order.length-1;j>0;j--){h=Math.imul(h^h>>>13,16777619)>>>0;const k=h%(j+1);[order[j],order[k]]=[order[k],order[j]];}
-   return '<div class="wu-q pet-ai-question"><div class="small">第 '+(group==='base'?i+1:i+4)+' 题</div><p><b>'+esc(q.question)+'</b></p><div class="pet-ai-options">'+order.map((original,k)=>'<label class="pet-ai-option"><input type="radio" name="'+name+'" value="'+original+'"><span class="pet-ai-letter">'+String.fromCharCode(65+k)+'</span><span class="pet-ai-option-text">'+esc(q.options[original])+'</span></label>').join('')+'</div></div>';
+   return '<div class="wu-q pet-ai-question"><div class="small">第 '+(group==='base'?i+1:i+4)+' 题</div><p><b>'+wordMarkup(q.question,q.question)+'</b></p><div class="pet-ai-options">'+order.map((original,k)=>'<label class="pet-ai-option"><input type="radio" name="'+name+'" value="'+original+'"><span class="pet-ai-letter">'+String.fromCharCode(65+k)+'</span><span class="pet-ai-option-text">'+wordMarkup(q.options[original],q.question+'\n选项：'+q.options[original])+'</span></label>').join('')+'</div></div>';
  }
  function questions(group){
    const list=group==='base'?base:extras;
-   show('<p class="small">请先独立完成，再统一提交显示正确答案与解析。</p>'+list.map((q,i)=>choices(q,i,group)).join('')+'<button class="primary wide" type="button" id="petAiSubmit">'+(group==='base'?'提交基础三题':'提交补练题')+'</button><p id="petAiDailyMessage" class="small"></p>');
+   show('<p class="small">请先独立完成，再统一提交显示正确答案与解析。题目和选项中的英文单词都可以点按查看释义。</p>'+list.map((q,i)=>choices(q,i,group)).join('')+'<button class="primary wide" type="button" id="petAiSubmit">'+(group==='base'?'提交基础三题':'提交补练题')+'</button><p id="petAiDailyMessage" class="small"></p>');
    el('petAiSubmit').onclick=()=>submit(group);
  }
  async function submit(group){
@@ -3557,7 +3726,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
      const result=await call(group==='base'?'submit':'submit_extra',answers);
      submitted+=answers.length;
      let feedback='<div class="notice">本轮答对 '+result.correct+' / '+answers.length+' 题</div>';
-     feedback+=(result.graded||[]).map((r,i)=>'<div class="wu-feedback">第 '+(i+1)+' 题：'+(r.correct?'正确':'错误')+' · 正确答案：'+esc(list[i]?.options?.[Number(r.correctIndex)]??'—')+'<p>'+esc(r.explanation)+'</p></div>').join('');
+     feedback+=(result.graded||[]).map((r,i)=>{const q=list[i]||{},context=q.question||'',answer=q.options?.[Number(r.correctIndex)]??'—';return '<div class="wu-feedback"><div>第 '+(i+1)+' 题：'+(r.correct?'正确':'错误')+'</div><p>'+wordMarkup(q.question||'',context)+'</p><p>正确答案：'+wordMarkup(answer,context+'\n正确答案：'+answer)+'</p><p>'+wordMarkup(r.explanation,context+'\\n'+answer+'\\n'+r.explanation)+'</p></div>'}).join('');
      if(group==='base'&&result.followupQuestions?.length){
        extras=result.followupQuestions;
        show(feedback+'<button type="button" class="primary wide" id="petAiGoExtra">继续针对性补练 · '+extras.length+' 题</button>');
@@ -3576,7 +3745,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
      base=list.slice(0,3);extras=list.slice(3);submitted=Number(res.answerCount||0);
      const grades=Array.isArray(res.graded)?res.graded:[];
      const recap=grades.length?'<details style="margin:8px 0"><summary>查看已完成题目与解析 · '+grades.filter(r=>r.correct).length+'/'+grades.length+'</summary>'+
-       grades.map((r,i)=>'<div class="wu-feedback">第 '+(i+1)+' 题：'+(r.correct?'正确':'错误')+' · 正确答案：'+esc(list[i]?.options?.[Number(r.correctIndex)]??'—')+'<p>'+esc(r.explanation)+'</p></div>').join('')+'</details>':'';
+       grades.map((r,i)=>{const q=list[i]||{},context=q.question||'',answer=q.options?.[Number(r.correctIndex)]??'—';return '<div class="wu-feedback"><div>第 '+(i+1)+' 题：'+(r.correct?'正确':'错误')+'</div><p>'+wordMarkup(q.question||'',context)+'</p><p>正确答案：'+wordMarkup(answer,context+'\n正确答案：'+answer)+'</p><p>'+wordMarkup(r.explanation,context+'\\n'+answer+'\\n'+r.explanation)+'</p></div>'}).join('')+'</details>':'';
      if(res.completed)show('<p class="small">今日 AI 专项已完成，成绩已保存在云端。</p>'+recap);
      else if(submitted>=3&&extras.length){questions('extra');slot().insertAdjacentHTML('afterbegin',recap);}
      else if(submitted>=3)show('<p class="small">今日基础三题已经提交，无需补练。</p>'+recap);
@@ -3584,7 +3753,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
    }catch(e){show('<p class="small">加载失败：'+esc(e.message)+'。不影响原有 Review、Test。</p><button class="soft" id="petAiRetry">重试</button>');el('petAiRetry').onclick=load;}
    finally{busy=false}
  }
- function init(){if(!el('petAiDailyTrial'))return;el('petAiDailyLoad').onclick=load;}
+ function init(){if(!el('petAiDailyTrial'))return;ensureVocabModal();slot()?.addEventListener('click',onWordTokenClick);slot()?.addEventListener('keydown',onWordTokenKeydown);el('petAiDailyLoad').onclick=load;}
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
 })();
 </script>
