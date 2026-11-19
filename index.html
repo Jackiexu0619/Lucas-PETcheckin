@@ -282,7 +282,7 @@ body{background:
       <div class="brandMark">L</div>
       <div><div class="brandName">Lucas <span>PET</span></div><div class="brandSub">每天一点，向 B2 稳稳前进</div></div>
     </div>
-    <span class="versionPill">v0.5.13.4</span>
+    <span class="versionPill">v0.5.13.5</span>
   </div>
 
   <div class="homeHero">
@@ -3183,7 +3183,7 @@ renderAll();
 document.querySelectorAll('.app>.section').forEach(x=>{let on=x.id==='home';x.hidden=!on;x.classList.toggle('active',on)});
 if(cloudIsEnabled())setTimeout(()=>cloudSmartSync(false),600);
 if(bootRecoveryReport&& !sessionStorage.getItem('pet031_recovery_notice')){sessionStorage.setItem('pet031_recovery_notice','1');let r=bootRecoveryReport;setTimeout(()=>alert(r.fallback?'检测到旧数据迁移异常，已优先从升级前快照恢复，并保留异常原始数据副本。请到“词汇”和“记录”页核对。':`已自动检查升级前快照并补回缺失数据：${r.words||0} 个词、${r.tests||0} 条测试记录、${r.plans||0} 个清单项目。`),150)}
-if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('./service-worker.js?v=lucas-pet-0.5.13.4-ai-storage-r1',{updateViaCache:'none'}).catch(()=>{});
+if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('./service-worker.js?v=lucas-pet-0.5.13.5-ai-vocab-r11',{updateViaCache:'none'}).catch(()=>{});
 </script>
 <script>
 (() => {
@@ -3726,7 +3726,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
      const result=await call(group==='base'?'submit':'submit_extra',answers);
      submitted+=answers.length;
      let feedback='<div class="notice">本轮答对 '+result.correct+' / '+answers.length+' 题</div>';
-     feedback+=(result.graded||[]).map((r,i)=>{const q=list[i]||{},context=q.question||'',answer=q.options?.[Number(r.correctIndex)]??'—';return '<div class="wu-feedback"><div>第 '+(i+1)+' 题：'+(r.correct?'正确':'错误')+'</div><p>'+wordMarkup(q.question||'',context)+'</p><p>正确答案：'+wordMarkup(answer,context+'\n正确答案：'+answer)+'</p><p>'+esc(r.explanation)+'</p></div>'}).join('');
+     feedback+=(result.graded||[]).map((r,i)=>{const q=list[i]||{},context=q.question||'',answer=q.options?.[Number(r.correctIndex)]??'—';return '<div class="wu-feedback"><div>第 '+(i+1)+' 题：'+(r.correct?'正确':'错误')+'</div><p>'+wordMarkup(q.question||'',context)+'</p><p>正确答案：'+wordMarkup(answer,context+'\n正确答案：'+answer)+'</p><p>'+wordMarkup(r.explanation,context+'\\n'+answer+'\\n'+r.explanation)+'</p></div>'}).join('');
      if(group==='base'&&result.followupQuestions?.length){
        extras=result.followupQuestions;
        show(feedback+'<button type="button" class="primary wide" id="petAiGoExtra">继续针对性补练 · '+extras.length+' 题</button>');
@@ -3745,7 +3745,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
      base=list.slice(0,3);extras=list.slice(3);submitted=Number(res.answerCount||0);
      const grades=Array.isArray(res.graded)?res.graded:[];
      const recap=grades.length?'<details style="margin:8px 0"><summary>查看已完成题目与解析 · '+grades.filter(r=>r.correct).length+'/'+grades.length+'</summary>'+
-       grades.map((r,i)=>{const q=list[i]||{},context=q.question||'',answer=q.options?.[Number(r.correctIndex)]??'—';return '<div class="wu-feedback"><div>第 '+(i+1)+' 题：'+(r.correct?'正确':'错误')+'</div><p>'+wordMarkup(q.question||'',context)+'</p><p>正确答案：'+wordMarkup(answer,context+'\n正确答案：'+answer)+'</p><p>'+esc(r.explanation)+'</p></div>'}).join('')+'</details>':'';
+       grades.map((r,i)=>{const q=list[i]||{},context=q.question||'',answer=q.options?.[Number(r.correctIndex)]??'—';return '<div class="wu-feedback"><div>第 '+(i+1)+' 题：'+(r.correct?'正确':'错误')+'</div><p>'+wordMarkup(q.question||'',context)+'</p><p>正确答案：'+wordMarkup(answer,context+'\n正确答案：'+answer)+'</p><p>'+wordMarkup(r.explanation,context+'\\n'+answer+'\\n'+r.explanation)+'</p></div>'}).join('')+'</details>':'';
      if(res.completed)show('<p class="small">今日 AI 专项已完成，成绩已保存在云端。</p>'+recap);
      else if(submitted>=3&&extras.length){questions('extra');slot().insertAdjacentHTML('afterbegin',recap);}
      else if(submitted>=3)show('<p class="small">今日基础三题已经提交，无需补练。</p>'+recap);
